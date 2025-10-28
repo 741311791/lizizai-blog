@@ -1,0 +1,131 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  frontend-e2e:
+    name: Frontend E2E Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm --filter frontend exec playwright install --with-deps chromium
+
+      - name: Build frontend
+        run: pnpm --filter frontend build
+
+      - name: Run Playwright tests
+        run: pnpm --filter frontend test:e2e
+        env:
+          CI: true
+          BASE_URL: http://localhost:3000
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 30
+
+  cms-smoke:
+    name: CMS Smoke Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Start Strapi (background)
+        run: |
+          cd cms
+          cp .env.example .env
+          pnpm develop > strapi.log 2>&1 &
+          echo $! > strapi.pid
+        env:
+          NODE_ENV: development
+
+      - name: Wait for Strapi to be ready
+        run: |
+          timeout 120 bash -c 'until curl -f http://localhost:1337/_health 2>/dev/null || curl -f http://localhost:1337 2>/dev/null; do sleep 2; done' || true
+
+      - name: Run CMS smoke tests
+        run: pnpm --filter cms test
+        env:
+          STRAPI_URL: http://localhost:1337
+
+      - name: Stop Strapi
+        if: always()
+        run: |
+          if [ -f cms/strapi.pid ]; then
+            kill $(cat cms/strapi.pid) || true
+          fi
+
+      - name: Upload Strapi logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: strapi-logs
+          path: cms/strapi.log
+          retention-days: 7
