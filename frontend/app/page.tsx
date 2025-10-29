@@ -10,7 +10,7 @@ const mockArticles = [
     title: 'You have about 36 months to make it',
     subtitle: 'why everyone is racing to get rich',
     slug: 'you-have-36-months-to-make-it',
-    featuredImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop',
+    featuredImage: 'https://picsum.photos/seed/article1/800/600',
     author: {
       name: 'DAN KOE',
       avatar: '',
@@ -28,7 +28,7 @@ const mockArticles = [
     title: 'A dopamine detox to reset your life in 30 days',
     subtitle: 'Because most of modern life has become a blur',
     slug: 'dopamine-detox-reset-life-30-days',
-    featuredImage: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=1920&h=1080&fit=crop',
+    featuredImage: 'https://picsum.photos/seed/article2/800/600',
     author: {
       name: 'DAN KOE',
       avatar: '',
@@ -46,7 +46,7 @@ const mockArticles = [
     title: 'A Prompt To Reset Your Life In 30 Days',
     subtitle: 'Use AI to design your ideal life',
     slug: 'prompt-reset-life-30-days',
-    featuredImage: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1920&h=1080&fit=crop',
+    featuredImage: 'https://picsum.photos/seed/article3/800/600',
     author: {
       name: 'DAN KOE',
       avatar: '',
@@ -64,7 +64,7 @@ const mockArticles = [
     title: 'HUMAN 3.0 – A Map To Reach The Top 1%',
     subtitle: 'The evolution of human potential',
     slug: 'human-3-0-map-top-1-percent',
-    featuredImage: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&h=1080&fit=crop',
+    featuredImage: 'https://picsum.photos/seed/article4/800/600',
     author: {
       name: 'DAN KOE',
       avatar: '',
@@ -81,7 +81,7 @@ const mockArticles = [
 
 export default function Home() {
   return (
-    <div className="container py-8">
+    <div className="container mx-auto max-w-7xl px-4 py-8">
       {/* Hero Section */}
       <Hero />
 

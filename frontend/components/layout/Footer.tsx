@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 export default function Footer() {
   return (
     <footer className="border-t border-border bg-card">
-      <div className="container py-12">
+      <div className="container mx-auto max-w-7xl px-4 py-12">
         {/* Newsletter subscription */}
         <div className="mb-8 text-center">
           <h3 className="mb-4 text-lg font-semibold">future/proof</h3>

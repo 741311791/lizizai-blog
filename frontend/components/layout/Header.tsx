@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container mx-auto max-w-7xl px-4 flex h-16 items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center space-x-2">
@@ -34,7 +34,7 @@ export default function Header() {
 
       {/* Navigation */}
       <nav className="border-t border-border">
-        <div className="container flex items-center gap-6 py-3 text-sm">
+        <div className="container mx-auto max-w-7xl px-4 flex items-center gap-6 py-3 text-sm">
           <Link href="/" className="hover:text-primary transition-colors">
             Home
           </Link>
