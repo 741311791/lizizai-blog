@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, MessageCircle } from 'lucide-react';
+import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface Article {
   id: string;
@@ -70,28 +71,56 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             </p>
           )}
           <div className="mt-auto pt-4 border-t border-border">
-            <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1.5 min-w-0 flex-1 mr-3">
-                <span className="text-muted-foreground font-medium truncate">{author.name}</span>
-                <span className="text-muted-foreground shrink-0">•</span>
-                <span className="text-muted-foreground shrink-0">
-                  {new Date(publishedAt).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
-                </span>
-              </div>
-              <div className="flex items-center gap-3 shrink-0">
-                <div className="flex items-center gap-1">
-                  <Heart className="h-3.5 w-3.5" />
-                  <span className="font-medium">{likes}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <MessageCircle className="h-3.5 w-3.5" />
-                  <span className="font-medium">{commentsCount}</span>
-                </div>
-              </div>
+            {/* Default state: Author and Date */}
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground group-hover:mb-3 transition-all">
+              <span className="font-medium truncate">{author.name}</span>
+              <span className="shrink-0">•</span>
+              <span className="shrink-0">
+                {new Date(publishedAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </span>
+            </div>
+            
+            {/* Hover state: Action buttons */}
+            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity max-h-0 group-hover:max-h-10 overflow-hidden">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 gap-1.5 text-xs"
+                onClick={(e) => {
+                  e.preventDefault();
+                  // TODO: Implement like functionality
+                }}
+              >
+                <Heart className="h-3.5 w-3.5" />
+                <span>{likes}</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 gap-1.5 text-xs"
+                onClick={(e) => {
+                  e.preventDefault();
+                  // TODO: Implement comment functionality
+                }}
+              >
+                <MessageCircle className="h-3.5 w-3.5" />
+                <span>{commentsCount}</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 gap-1.5 text-xs"
+                onClick={(e) => {
+                  e.preventDefault();
+                  // TODO: Implement share functionality
+                }}
+              >
+                <Share2 className="h-3.5 w-3.5" />
+              </Button>
             </div>
           </div>
         </CardContent>

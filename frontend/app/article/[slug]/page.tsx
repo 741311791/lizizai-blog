@@ -1,4 +1,6 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import AuthorCard from '@/components/article/AuthorCard';
 import ArticleActions from '@/components/article/ArticleActions';
@@ -62,13 +64,13 @@ On the other hand, we crave the potential for failure. We love the final batter 
 
 The future belongs to those who lean into their humanity.
   `,
-  featuredImage: 'https://picsum.photos/seed/article-detail/1200/600',
+  slug: 'you-have-36-months-to-make-it',
+  featuredImage: 'https://picsum.photos/seed/article1/800/600',
   author: {
     name: 'DAN KOE',
     avatar: 'https://picsum.photos/seed/author/200/200',
-    bio: 'Entrepreneur, writer, and creator helping people build one-person businesses.',
   },
-  publishedAt: '2025-07-21',
+  publishedAt: '2025-07-20',
   likes: 1844,
   commentsCount: 146,
   shares: 326,
@@ -172,7 +174,25 @@ const mockRelatedArticles = [
 
 export default function ArticlePage({ params }: { params: { slug: string } }) {
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-12">
+    <div className="container mx-auto max-w-7xl px-4 py-8">
+      {/* Breadcrumb Navigation */}
+      <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
+        <Link href="/" className="hover:text-primary transition-colors">
+          Home
+        </Link>
+        <ChevronRight className="h-4 w-4" />
+        <Link 
+          href={`/category/${mockArticle.category.slug}`} 
+          className="hover:text-primary transition-colors"
+        >
+          {mockArticle.category.name}
+        </Link>
+        <ChevronRight className="h-4 w-4" />
+        <span className="text-foreground truncate max-w-[200px] sm:max-w-none">
+          {mockArticle.title}
+        </span>
+      </nav>
+
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_250px] gap-12">
         {/* Main Content */}
         <article className="max-w-3xl">

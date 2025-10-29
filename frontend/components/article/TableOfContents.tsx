@@ -50,6 +50,17 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
     return () => observer.disconnect();
   }, []);
 
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, headingId: string) => {
+    e.preventDefault();
+    const element = document.getElementById(headingId);
+    if (element) {
+      const yOffset = -100; // Offset for sticky header
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+      setActiveId(headingId);
+    }
+  };
+
   if (headings.length === 0) return null;
 
   return (
@@ -61,8 +72,9 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
             <a
               key={heading.id}
               href={`#${heading.id}`}
+              onClick={(e) => handleClick(e, heading.id)}
               className={cn(
-                'block text-sm transition-colors hover:text-primary',
+                'block text-sm transition-colors hover:text-primary cursor-pointer',
                 heading.level === 2 && 'pl-0',
                 heading.level === 3 && 'pl-4',
                 activeId === heading.id

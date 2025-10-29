@@ -18,7 +18,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-md px-4 py-16">
+    <div className="w-full max-w-md px-4">
       <div className="space-y-8">
         {/* Header */}
         <div className="text-center space-y-2">
