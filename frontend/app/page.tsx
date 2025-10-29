@@ -93,7 +93,7 @@ export default function Home() {
             VIEW ALL
           </Button>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {mockArticles.map((article) => (
             <ArticleCard key={article.id} {...article} />
           ))}
@@ -108,19 +108,19 @@ export default function Home() {
             <TabsTrigger value="top">Top</TabsTrigger>
             <TabsTrigger value="discussions">Discussions</TabsTrigger>
           </TabsList>
-          <TabsContent value="latest" className="space-y-6">
-            {mockArticles.map((article) => (
-              <div key={article.id} className="border-b border-border pb-6 last:border-0">
-                <ArticleCard {...article} />
-              </div>
-            ))}
+          <TabsContent value="latest">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {mockArticles.map((article) => (
+                <ArticleCard key={article.id} {...article} />
+              ))}
+            </div>
           </TabsContent>
-          <TabsContent value="top" className="space-y-6">
-            {mockArticles.slice().reverse().map((article) => (
-              <div key={article.id} className="border-b border-border pb-6 last:border-0">
-                <ArticleCard {...article} />
-              </div>
-            ))}
+          <TabsContent value="top">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {mockArticles.slice().reverse().map((article) => (
+                <ArticleCard key={article.id} {...article} />
+              ))}
+            </div>
           </TabsContent>
           <TabsContent value="discussions" className="space-y-6">
             <p className="text-center text-muted-foreground py-12">
