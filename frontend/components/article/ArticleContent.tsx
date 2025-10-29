@@ -17,15 +17,21 @@ export default function ArticleContent({ content }: ArticleContentProps) {
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight, rehypeRaw]}
         components={{
-          h1: ({ node, ...props }) => (
-            <h1 className="text-4xl font-bold mb-6 mt-8" {...props} />
-          ),
-          h2: ({ node, ...props }) => (
-            <h2 className="text-3xl font-bold mb-4 mt-8" {...props} />
-          ),
-          h3: ({ node, ...props }) => (
-            <h3 className="text-2xl font-semibold mb-3 mt-6" {...props} />
-          ),
+          h1: ({ node, children, ...props }) => {
+            const text = String(children);
+            const id = `heading-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+            return <h1 id={id} className="text-4xl font-bold mb-6 mt-8 scroll-mt-24" {...props}>{children}</h1>;
+          },
+          h2: ({ node, children, ...props }) => {
+            const text = String(children);
+            const id = `heading-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+            return <h2 id={id} className="text-3xl font-bold mb-4 mt-8 scroll-mt-24" {...props}>{children}</h2>;
+          },
+          h3: ({ node, children, ...props }) => {
+            const text = String(children);
+            const id = `heading-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+            return <h3 id={id} className="text-2xl font-semibold mb-3 mt-6 scroll-mt-24" {...props}>{children}</h3>;
+          },
           p: ({ node, ...props }) => (
             <p className="mb-4 leading-relaxed text-muted-foreground" {...props} />
           ),

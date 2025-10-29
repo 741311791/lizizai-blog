@@ -23,11 +23,15 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
     const headingRegex = /^(#{1,3})\s+(.+)$/gm;
     const matches = Array.from(content.matchAll(headingRegex));
     
-    const extractedHeadings = matches.map((match, index) => ({
-      id: `heading-${index}`,
-      text: match[2],
-      level: match[1].length,
-    }));
+    const extractedHeadings = matches.map((match) => {
+      const text = match[2];
+      const id = `heading-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+      return {
+        id,
+        text,
+        level: match[1].length,
+      };
+    });
 
     setHeadings(extractedHeadings);
   }, [content]);
