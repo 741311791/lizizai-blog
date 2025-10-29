@@ -1,0 +1,66 @@
+.
+├── DEPLOYMENT.md
+├── FEATURES.md
+├── PROJECT_SUMMARY.md
+├── QUICKSTART.md
+├── README.md
+├── backend
+│   ├── README.md
+│   ├── config
+│   │   ├── admin.ts
+│   │   ├── api.ts
+│   │   ├── database.ts
+│   │   ├── middlewares.ts
+│   │   ├── plugins.ts
+│   │   └── server.ts
+│   ├── database
+│   │   └── migrations
+│   ├── favicon.png
+│   ├── package.json
+│   ├── pnpm-lock.yaml
+│   ├── public
+│   │   ├── robots.txt
+│   │   └── uploads
+│   ├── src
+│   │   ├── admin
+│   │   ├── api
+│   │   ├── components
+│   │   ├── extensions
+│   │   └── index.ts
+│   └── tsconfig.json
+├── frontend
+│   ├── README.md
+│   ├── app
+│   │   ├── article
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components
+│   │   ├── article
+│   │   ├── home
+│   │   ├── layout
+│   │   └── ui
+│   ├── components.json
+│   ├── eslint.config.mjs
+│   ├── lib
+│   │   ├── api.ts
+│   │   ├── apollo-client.ts
+│   │   ├── graphql
+│   │   ├── store.ts
+│   │   └── utils.ts
+│   ├── next-env.d.ts
+│   ├── next.config.ts
+│   ├── package.json
+│   ├── pnpm-lock.yaml
+│   ├── postcss.config.mjs
+│   ├── public
+│   │   ├── file.svg
+│   │   ├── globe.svg
+│   │   ├── next.svg
+│   │   ├── vercel.svg
+│   │   └── window.svg
+│   └── tsconfig.json
+└── project_structure.txt
+
+22 directories, 41 files

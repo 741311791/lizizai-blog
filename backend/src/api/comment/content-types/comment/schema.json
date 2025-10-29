@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "comments",
+  "info": {
+    "singularName": "comment",
+    "pluralName": "comments",
+    "displayName": "Comment",
+    "description": "Article comments"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "content": {
+      "type": "text",
+      "required": true
+    },
+    "article": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::article.article"
+    },
+    "author": {
+      "type": "string",
+      "required": true
+    },
+    "authorAvatar": {
+      "type": "string"
+    },
+    "likes": {
+      "type": "integer",
+      "default": 0
+    },
+    "parentComment": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::comment.comment"
+    }
+  }
+}
