@@ -95,7 +95,7 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {mockArticles.map((article) => (
-            <ArticleCard key={article.id} {...article} />
+            <ArticleCard key={article.id} article={article} />
           ))}
         </div>
       </section>
@@ -111,14 +111,14 @@ export default function Home() {
           <TabsContent value="latest">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {mockArticles.map((article) => (
-                <ArticleCard key={article.id} {...article} />
+                <ArticleCard key={article.id} article={article} />
               ))}
             </div>
           </TabsContent>
           <TabsContent value="top">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {mockArticles.slice().reverse().map((article) => (
-                <ArticleCard key={article.id} {...article} />
+                <ArticleCard key={article.id} article={article} />
               ))}
             </div>
           </TabsContent>

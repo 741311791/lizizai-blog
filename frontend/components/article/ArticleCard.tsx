@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Heart, MessageCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
-interface ArticleCardProps {
+interface Article {
   id: string;
   title: string;
   subtitle?: string;
@@ -24,18 +24,23 @@ interface ArticleCardProps {
   };
 }
 
-export default function ArticleCard({
-  id,
-  title,
-  subtitle,
-  slug,
-  featuredImage,
-  author,
-  publishedAt,
-  likes,
-  commentsCount = 0,
-  category,
-}: ArticleCardProps) {
+interface ArticleCardProps {
+  article: Article;
+}
+
+export default function ArticleCard({ article }: ArticleCardProps) {
+  const {
+    id,
+    title,
+    subtitle,
+    slug,
+    featuredImage,
+    author,
+    publishedAt,
+    likes,
+    commentsCount = 0,
+    category,
+  } = article;
   return (
     <Card className="group overflow-hidden border-border bg-card hover:border-primary/50 transition-all">
       <Link href={`/article/${slug}`}>
