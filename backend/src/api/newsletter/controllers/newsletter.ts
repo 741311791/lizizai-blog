@@ -22,6 +22,8 @@ export default factories.createCoreController('api::newsletter.newsletter', ({ s
         .service('api::newsletter.newsletter')
         .subscribe(email);
 
+      strapi.log.info('Newsletter subscribe result:', result);
+
       if (!result.success) {
         if (result.code === 'ALREADY_SUBSCRIBED') {
           return ctx.badRequest(result.message);
