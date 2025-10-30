@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Search, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import UserMenu from '@/components/auth/UserMenu';
 
 export default function Header() {
   const pathname = usePathname();
@@ -39,11 +40,7 @@ export default function Header() {
               Subscribe
             </Button>
           </Link>
-          <Link href="/login">
-            <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary/10">
-              Sign in
-            </Button>
-          </Link>
+          <UserMenu />
         </div>
       </div>
 
