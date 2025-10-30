@@ -49,6 +49,18 @@
       "target": "api::category.category",
       "inversedBy": "articles"
     },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag",
+      "inversedBy": "articles"
+    },
+    "comments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::comment.comment",
+      "mappedBy": "article"
+    },
     "likes": {
       "type": "integer",
       "default": 0

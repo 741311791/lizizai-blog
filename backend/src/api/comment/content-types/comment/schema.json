@@ -19,10 +19,15 @@
     "article": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::article.article"
+      "target": "api::article.article",
+      "inversedBy": "comments"
     },
-    "author": {
+    "authorName": {
       "type": "string",
+      "required": true
+    },
+    "authorEmail": {
+      "type": "email",
       "required": true
     },
     "authorAvatar": {
@@ -32,10 +37,21 @@
       "type": "integer",
       "default": 0
     },
+    "isApproved": {
+      "type": "boolean",
+      "default": false
+    },
     "parentComment": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::comment.comment"
+      "target": "api::comment.comment",
+      "inversedBy": "replies"
+    },
+    "replies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::comment.comment",
+      "mappedBy": "parentComment"
     }
   }
 }
