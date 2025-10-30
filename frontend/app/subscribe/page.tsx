@@ -27,7 +27,7 @@ export default function SubscribePage() {
       setIsLoading(true);
       setError(null);
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/subscribers/subscribe`, {
+      const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
