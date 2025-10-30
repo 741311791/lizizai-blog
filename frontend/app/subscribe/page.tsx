@@ -6,16 +6,50 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Check, Mail, Sparkles, Zap, BookOpen, Users } from 'lucide-react';
+import { Check, Mail, Sparkles, Zap, BookOpen, Users, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function SubscribePage() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement subscription logic
-    console.log('Subscribe:', { email, name });
+    
+    if (!email) {
+      setError('Please enter your email address');
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/subscribers/subscribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, name }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error?.message || 'Subscription failed');
+      }
+      
+      // 显示成功消息
+      setSuccess(true);
+      setEmail('');
+      setName('');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Subscription failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const benefits = [
@@ -48,8 +82,65 @@ export default function SubscribePage() {
     'Join 178,000+ subscribers',
   ];
 
+  if (success) {
+    return (
+      <div className="container mx-auto max-w-2xl px-4 py-16">
+        <div className="text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
+              <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold">You're all set! 🎉</h1>
+            <p className="text-lg text-muted-foreground">
+              Thank you for subscribing to future/proof!
+            </p>
+          </div>
+          
+          <div className="p-6 rounded-lg border border-border bg-muted/50 text-left space-y-3">
+            <p className="flex items-start gap-2">
+              <Mail className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+              <span>
+                We've sent a welcome email to <strong>{email || 'your inbox'}</strong>. 
+                Please check your email (and spam folder) to confirm your subscription.
+              </span>
+            </p>
+            <p className="flex items-start gap-2">
+              <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+              <span>
+                Your first newsletter will arrive soon with exclusive insights and resources.
+              </span>
+            </p>
+          </div>
+          
+          <div className="flex gap-4 justify-center">
+            <Link href="/">
+              <Button>Back to Home</Button>
+            </Link>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setSuccess(false);
+                setEmail('');
+                setName('');
+              }}
+            >
+              Subscribe Another Email
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">
+      <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8">
+        ← Back to Home
+      </Link>
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         {/* Left Column - Benefits */}
         <div className="space-y-8">
@@ -101,93 +192,95 @@ export default function SubscribePage() {
                 <div className="text-muted-foreground">and growing daily</div>
               </div>
             </div>
-            <p className="text-sm italic text-muted-foreground">
+            <p className="text-sm text-muted-foreground italic">
               "This newsletter changed how I think about building my business. The insights are pure gold."
             </p>
           </div>
         </div>
 
-        {/* Right Column - Subscription Form */}
-        <div className="lg:sticky lg:top-24">
+        {/* Right Column - Subscribe Form */}
+        <div className="lg:sticky lg:top-8">
           <div className="p-8 rounded-lg border border-border bg-card shadow-lg">
-            <div className="space-y-6">
+            <h2 className="text-2xl font-bold mb-2">Subscribe now</h2>
+            <p className="text-muted-foreground mb-6">
+              Join thousands of entrepreneurs building their future
+            </p>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold">Subscribe now</h2>
-                <p className="text-muted-foreground">
-                  Join thousands of entrepreneurs building their future
-                </p>
+                <label htmlFor="name" className="text-sm font-medium">
+                  Name
+                </label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={isLoading}
+                />
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium">
-                    Name
-                  </label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium">
+                  Email
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+
+              {error && (
+                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-2">
+                  <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                  <p className="text-sm text-destructive">{error}</p>
                 </div>
+              )}
 
-                <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium">
-                    Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
+              <Button 
+                type="submit" 
+                className="w-full" 
+                size="lg"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Subscribing...' : 'Subscribe for Free'}
+              </Button>
 
-                <Button type="submit" className="w-full" size="lg">
-                  Subscribe for Free
-                </Button>
-              </form>
-
-              <Separator />
-
-              {/* Features List */}
-              <div className="space-y-3">
+              <div className="space-y-2 pt-2">
                 {features.map((feature, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm">
-                    <Check className="h-4 w-4 text-primary shrink-0" />
-                    <span className="text-muted-foreground">{feature}</span>
+                  <div key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span>{feature}</span>
                   </div>
                 ))}
               </div>
+            </form>
 
-              {/* Already subscribed link */}
-              <div className="text-center text-sm">
-                <span className="text-muted-foreground">Already subscribed? </span>
-                <Link href="/login" className="text-primary hover:underline font-medium">
-                  Sign in
-                </Link>
-              </div>
+            <Separator className="my-6" />
 
-              {/* Terms */}
-              <p className="text-xs text-center text-muted-foreground">
-                By subscribing, you agree to our{' '}
-                <Link href="/terms" className="underline hover:text-primary">
-                  Terms
-                </Link>{' '}
-                and{' '}
-                <Link href="/privacy" className="underline hover:text-primary">
-                  Privacy Policy
-                </Link>
-              </p>
-            </div>
+            <p className="text-xs text-center text-muted-foreground">
+              Already subscribed?{' '}
+              <Link href="/login" className="text-primary hover:underline">
+                Sign in
+              </Link>
+            </p>
+
+            <p className="text-xs text-center text-muted-foreground mt-2">
+              By subscribing, you agree to our{' '}
+              <Link href="/terms" className="text-primary hover:underline">
+                Terms
+              </Link>{' '}
+              and{' '}
+              <Link href="/privacy" className="text-primary hover:underline">
+                Privacy Policy
+              </Link>
+            </p>
           </div>
         </div>
       </div>
