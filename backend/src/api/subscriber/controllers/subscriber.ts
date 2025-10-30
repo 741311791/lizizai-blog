@@ -1,8 +1,7 @@
-import { factories } from '@strapi/strapi';
 import { getWelcomeEmailTemplate, isValidEmail } from '../services/email-templates';
 
-export default factories.createCoreController('api::subscriber.subscriber', ({ strapi }) => ({
-  async subscribe(ctx) {
+export default {
+  async subscribe(ctx: any) {
     try {
       const { email, name } = ctx.request.body;
 
@@ -76,7 +75,7 @@ export default factories.createCoreController('api::subscriber.subscriber', ({ s
     }
   },
 
-  async unsubscribe(ctx) {
+  async unsubscribe(ctx: any) {
     try {
       const { email } = ctx.request.body;
 
@@ -111,7 +110,7 @@ export default factories.createCoreController('api::subscriber.subscriber', ({ s
     }
   },
 
-  async count(ctx) {
+  async count(ctx: any) {
     try {
       const count = await strapi.db.query('api::subscriber.subscriber').count({
         where: { status: 'active' },
@@ -123,4 +122,4 @@ export default factories.createCoreController('api::subscriber.subscriber', ({ s
       return ctx.internalServerError('Failed to get subscriber count');
     }
   },
-}));
+};
