@@ -1,0 +1,19 @@
+{
+  "name": "lizizai-blog-strapi",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "deploy": {
+    "env": {
+      "NODE_ENV": "production",
+      "HOST": "0.0.0.0",
+      "PORT": "1337"
+    }
+  },
+  "health_check": {
+    "path": "/_health",
+    "interval": 30,
+    "timeout": 10,
+    "retries": 3
+  }
+}

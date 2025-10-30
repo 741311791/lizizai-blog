@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  strapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lizizai-blog-strapi
+    restart: unless-stopped
+    ports:
+      - '1337:1337'
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 1337
+      
+      # Database (使用您的 Supabase 配置)
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: db.guucwbjysexvochrnhco.supabase.co
+      DATABASE_PORT: 5432
+      DATABASE_NAME: postgres
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: HPSRs7pl5NQ5m3bR
+      DATABASE_SSL: true
+      
+      # Strapi 密钥
+      APP_KEYS: toBeModified1,toBeModified2
+      API_TOKEN_SALT: /IAb30Ao+pxpqi25Dg5+Bw==
+      ADMIN_JWT_SECRET: 88noAMbZV1OAFv6LS6XwVQ==
+      TRANSFER_TOKEN_SALT: H3NxD3s1scIJJRScaiB+Fg==
+      JWT_SECRET: h1kQYx7NhkxUkxxJ5tm6gqOWB9K72EJdMhDlrxGY00wMIUAa/cyz9T1op9nuUIYfgRbZcd3ckr0lRw0UHmAkVQ==
+      
+      # 前端 URL
+      FRONTEND_URL: https://frontend-kdicg9ptg-louies-projects-dbfd71aa.vercel.app
+    
+    volumes:
+      - strapi-uploads:/app/public/uploads
+    
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:1337/_health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  strapi-uploads:
+    driver: local
