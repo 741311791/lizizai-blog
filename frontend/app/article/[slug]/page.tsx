@@ -150,11 +150,15 @@ export default async function ArticlePage({
 
 // Generate static params for all articles
 export async function generateStaticParams() {
-  const { data: articles } = await getArticles({ pageSize: 100 });
-
-  return (articles as any[]).map((article: any) => ({
-    slug: article.slug,
-  }));
+  try {
+    const { data: articles } = await getArticles({ pageSize: 100 });
+    return (articles as any[]).map((article: any) => ({
+      slug: article.slug,
+    }));
+  } catch (error) {
+    console.error('Failed to generate static params:', error);
+    return []; // Return empty array to allow dynamic rendering
+  }
 }
 
 // Enable ISR
