@@ -27,14 +27,14 @@ export default async function ArticlePage({
   const article = transformArticle(strapiArticle);
 
   // Fetch related articles
-  let relatedArticles = [];
+  let relatedArticles: any[] = [];
   if (article.category?.slug) {
     const relatedResponse = await getRelatedArticles(
       article.category.slug,
       article.id,
       3
     );
-    relatedArticles = transformArticles(relatedResponse.data);
+    relatedArticles = transformArticles(relatedResponse.data as any);
   }
 
   // Mock comments (will be replaced with real API later)
@@ -131,7 +131,7 @@ export default async function ArticlePage({
           <ArticleContent content={article.content} />
 
           {/* Comment Section */}
-          <CommentSection comments={mockComments} />
+          <CommentSection comments={mockComments} commentsCount={mockComments.length} />
 
           {/* Related Articles */}
           {relatedArticles.length > 0 && (
@@ -152,7 +152,7 @@ export default async function ArticlePage({
 export async function generateStaticParams() {
   const { data: articles } = await getArticles({ pageSize: 100 });
 
-  return articles.map((article: any) => ({
+  return (articles as any[]).map((article: any) => ({
     slug: article.slug,
   }));
 }
