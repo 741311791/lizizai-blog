@@ -148,18 +148,9 @@ export default async function ArticlePage({
   );
 }
 
-// Generate static params for all articles
-export async function generateStaticParams() {
-  try {
-    const { data: articles } = await getArticles({ pageSize: 100 });
-    return (articles as any[]).map((article: any) => ({
-      slug: article.slug,
-    }));
-  } catch (error) {
-    console.error('Failed to generate static params:', error);
-    return []; // Return empty array to allow dynamic rendering
-  }
-}
+// Enable dynamic rendering for all routes
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
 
-// Enable ISR
-export const revalidate = 3600; // Revalidate every hour
+// Disable static generation
+export const revalidate = 0;
