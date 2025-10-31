@@ -68,59 +68,31 @@ export function getStrapiMedia(url: string | null | undefined): string {
 }
 
 /**
- * 转换 Strapi 响应数据格式
+ * 转换 Strapi v5 响应数据格式
+ * Strapi v5 直接返回扁平化的数据,不再使用 {data: {id, attributes}} 格式
  */
 export function transformStrapiResponse<T>(data: any): T {
   if (!data) return data;
 
-  // 处理单个对象
-  if (data.data && !Array.isArray(data.data)) {
-    return transformStrapiItem(data.data);
+  // Strapi v5: 如果是数组,直接返回(已经是扁平化格式)
+  if (Array.isArray(data)) {
+    return data as T;
   }
 
-  // 处理数组
-  if (data.data && Array.isArray(data.data)) {
-    return data.data.map(transformStrapiItem) as T;
+  // Strapi v5: 如果是单个对象,直接返回(已经是扁平化格式)
+  if (typeof data === 'object' && data.id) {
+    return data as T;
+  }
+
+  // 兼容 Strapi v4 格式: 处理 {data: ...} 包装
+  if (data.data) {
+    if (Array.isArray(data.data)) {
+      return data.data as T;
+    }
+    return data.data as T;
   }
 
   return data;
-}
-
-/**
- * 转换单个 Strapi 数据项
- */
-function transformStrapiItem(item: any): any {
-  if (!item) return item;
-
-  const { id, attributes } = item;
-  
-  if (!attributes) return item;
-
-  // 递归处理嵌套的关联数据
-  const transformed: any = { id };
-
-  Object.keys(attributes).forEach((key) => {
-    const value = attributes[key];
-
-    // 处理关联数据
-    if (value?.data) {
-      if (Array.isArray(value.data)) {
-        transformed[key] = value.data.map(transformStrapiItem);
-      } else {
-        transformed[key] = transformStrapiItem(value.data);
-      }
-    } 
-    // 处理媒体文件
-    else if (key === 'url' && typeof value === 'string') {
-      transformed[key] = getStrapiMedia(value);
-    }
-    // 普通字段
-    else {
-      transformed[key] = value;
-    }
-  });
-
-  return transformed;
 }
 
 // ============= Articles API =============
@@ -150,11 +122,11 @@ export async function getArticles(params: {
       queryParams[`filters[${key}]`] = params.filters![key];
     });
   }
-
+  
   const data = await fetchAPI('/articles', {}, queryParams);
   return {
     data: transformStrapiResponse(data),
-    meta: data.meta,
+    meta: data.meta || { pagination: { page: 1, pageSize: 12, pageCount: 1, total: Array.isArray(data) ? data.length : 0 } },
   };
 }
 
@@ -168,30 +140,36 @@ export async function getArticleBySlug(slug: string) {
     'populate[category]': '*',
     'populate[tags]': '*',
     'populate[featuredImage]': '*',
-    'populate[comments][populate][0]': 'replies',
+    'populate[seo]': '*',
   });
 
   const articles = transformStrapiResponse(data);
-  return Array.isArray(articles) && articles.length > 0 ? articles[0] : null;
+  
+  // Strapi v5 返回数组,取第一个元素
+  if (Array.isArray(articles) && articles.length > 0) {
+    return articles[0];
+  }
+  
+  return null;
 }
 
 /**
- * 获取热门文章
+ * 增加文章点赞数
  */
-export async function getPopularArticles(limit: number = 4) {
-  return getArticles({
-    pageSize: limit,
-    sort: 'likes:desc',
+export async function incrementArticleLikes(id: string, likes: number) {
+  return fetchAPI(`/articles/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ data: { likes } }),
   });
 }
 
 /**
- * 获取最新文章
+ * 增加文章浏览数
  */
-export async function getLatestArticles(limit: number = 9) {
-  return getArticles({
-    pageSize: limit,
-    sort: 'publishedAt:desc',
+export async function incrementArticleViews(id: string, views: number) {
+  return fetchAPI(`/articles/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ data: { views } }),
   });
 }
 
@@ -204,14 +182,15 @@ export async function getRelatedArticles(categorySlug: string, currentArticleId:
     'filters[id][$ne]': currentArticleId,
     'populate[author][populate]': 'avatar',
     'populate[category]': '*',
+    'populate[tags]': '*',
     'populate[featuredImage]': '*',
-    'pagination[pageSize]': limit,
+    'pagination[limit]': limit,
     'sort': 'publishedAt:desc',
   });
 
   return {
     data: transformStrapiResponse(data),
-    meta: data.meta,
+    meta: data.meta || {},
   };
 }
 
@@ -226,7 +205,10 @@ export async function getCategories() {
     'sort': 'name:asc',
   });
 
-  return transformStrapiResponse(data);
+  return {
+    data: transformStrapiResponse(data),
+    meta: data.meta || {},
+  };
 }
 
 /**
@@ -239,20 +221,89 @@ export async function getCategoryBySlug(slug: string) {
   });
 
   const categories = transformStrapiResponse(data);
-  return Array.isArray(categories) && categories.length > 0 ? categories[0] : null;
+  
+  if (Array.isArray(categories) && categories.length > 0) {
+    return categories[0];
+  }
+  
+  return null;
 }
 
 /**
- * 获取分类下的文章
+ * 根据分类获取文章
  */
 export async function getArticlesByCategory(categorySlug: string, page: number = 1, pageSize: number = 12) {
-  return getArticles({
-    page,
-    pageSize,
-    filters: {
-      'category][slug][$eq': categorySlug,
-    },
+  const data = await fetchAPI('/articles', {}, {
+    'filters[category][slug][$eq]': categorySlug,
+    'populate[author][populate]': 'avatar',
+    'populate[category]': '*',
+    'populate[tags]': '*',
+    'populate[featuredImage]': '*',
+    'pagination[page]': page,
+    'pagination[pageSize]': pageSize,
+    'sort': 'publishedAt:desc',
   });
+
+  return {
+    data: transformStrapiResponse(data),
+    meta: data.meta || {},
+  };
+}
+
+// ============= Tags API =============
+
+/**
+ * 获取所有标签
+ */
+export async function getTags() {
+  const data = await fetchAPI('/tags', {}, {
+    'populate': '*',
+    'sort': 'name:asc',
+  });
+
+  return {
+    data: transformStrapiResponse(data),
+    meta: data.meta || {},
+  };
+}
+
+/**
+ * 根据 slug 获取标签
+ */
+export async function getTagBySlug(slug: string) {
+  const data = await fetchAPI('/tags', {}, {
+    'filters[slug][$eq]': slug,
+    'populate': '*',
+  });
+
+  const tags = transformStrapiResponse(data);
+  
+  if (Array.isArray(tags) && tags.length > 0) {
+    return tags[0];
+  }
+  
+  return null;
+}
+
+/**
+ * 根据标签获取文章
+ */
+export async function getArticlesByTag(tagSlug: string, page: number = 1, pageSize: number = 12) {
+  const data = await fetchAPI('/articles', {}, {
+    'filters[tags][slug][$eq]': tagSlug,
+    'populate[author][populate]': 'avatar',
+    'populate[category]': '*',
+    'populate[tags]': '*',
+    'populate[featuredImage]': '*',
+    'pagination[page]': page,
+    'pagination[pageSize]': pageSize,
+    'sort': 'publishedAt:desc',
+  });
+
+  return {
+    data: transformStrapiResponse(data),
+    meta: data.meta || {},
+  };
 }
 
 // ============= Authors API =============
@@ -266,68 +317,43 @@ export async function getAuthors() {
     'sort': 'name:asc',
   });
 
-  return transformStrapiResponse(data);
+  return {
+    data: transformStrapiResponse(data),
+    meta: data.meta || {},
+  };
 }
 
 /**
- * 根据 slug 获取作者
+ * 根据 ID 获取作者
  */
-export async function getAuthorBySlug(slug: string) {
-  const data = await fetchAPI('/authors', {}, {
-    'filters[slug][$eq]': slug,
+export async function getAuthorById(id: string) {
+  const data = await fetchAPI(`/authors/${id}`, {}, {
     'populate[avatar]': '*',
-  });
-
-  const authors = transformStrapiResponse(data);
-  return Array.isArray(authors) && authors.length > 0 ? authors[0] : null;
-}
-
-// ============= Tags API =============
-
-/**
- * 获取所有标签
- */
-export async function getTags() {
-  const data = await fetchAPI('/tags', {}, {
-    'sort': 'name:asc',
-  });
-
-  return transformStrapiResponse(data);
-}
-
-// ============= Comments API =============
-
-/**
- * 获取文章的评论
- */
-export async function getCommentsByArticle(articleId: string) {
-  const data = await fetchAPI('/comments', {}, {
-    'filters[article][id][$eq]': articleId,
-    'filters[parentComment][id][$null]': true, // 只获取顶级评论
-    'populate[replies][populate]': '*',
-    'sort': 'createdAt:desc',
+    'populate[articles][populate]': 'featuredImage,category',
   });
 
   return transformStrapiResponse(data);
 }
 
 /**
- * 创建评论
+ * 根据作者获取文章
  */
-export async function createComment(commentData: {
-  content: string;
-  authorName: string;
-  authorEmail: string;
-  authorAvatar?: string;
-  article: string;
-  parentComment?: string;
-}) {
-  const data = await fetchAPI('/comments', {
-    method: 'POST',
-    body: JSON.stringify({ data: commentData }),
+export async function getArticlesByAuthor(authorId: string, page: number = 1, pageSize: number = 12) {
+  const data = await fetchAPI('/articles', {}, {
+    'filters[author][id][$eq]': authorId,
+    'populate[author][populate]': 'avatar',
+    'populate[category]': '*',
+    'populate[tags]': '*',
+    'populate[featuredImage]': '*',
+    'pagination[page]': page,
+    'pagination[pageSize]': pageSize,
+    'sort': 'publishedAt:desc',
   });
 
-  return transformStrapiResponse(data);
+  return {
+    data: transformStrapiResponse(data),
+    meta: data.meta || {},
+  };
 }
 
 // ============= Search API =============
@@ -340,8 +366,10 @@ export async function searchArticles(query: string, page: number = 1, pageSize: 
     'filters[$or][0][title][$containsi]': query,
     'filters[$or][1][subtitle][$containsi]': query,
     'filters[$or][2][excerpt][$containsi]': query,
+    'filters[$or][3][content][$containsi]': query,
     'populate[author][populate]': 'avatar',
     'populate[category]': '*',
+    'populate[tags]': '*',
     'populate[featuredImage]': '*',
     'pagination[page]': page,
     'pagination[pageSize]': pageSize,
@@ -350,6 +378,35 @@ export async function searchArticles(query: string, page: number = 1, pageSize: 
 
   return {
     data: transformStrapiResponse(data),
-    meta: data.meta,
+    meta: data.meta || {},
   };
+}
+
+// ============= Newsletter API =============
+
+/**
+ * 订阅 Newsletter
+ */
+export async function subscribeNewsletter(email: string) {
+  return fetchAPI('/subscribers/subscribe', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+/**
+ * 取消订阅 Newsletter
+ */
+export async function unsubscribeNewsletter(email: string) {
+  return fetchAPI('/subscribers/unsubscribe', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+/**
+ * 获取 Newsletter 统计
+ */
+export async function getNewsletterStats() {
+  return fetchAPI('/subscribers/count');
 }
