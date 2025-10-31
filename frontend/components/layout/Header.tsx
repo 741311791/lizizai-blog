@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Search, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import UserMenu from '@/components/auth/UserMenu';
+
 
 export default function Header() {
   const pathname = usePathname();
@@ -40,7 +40,7 @@ export default function Header() {
               Subscribe
             </Button>
           </Link>
-          <UserMenu />
+
         </div>
       </div>
 

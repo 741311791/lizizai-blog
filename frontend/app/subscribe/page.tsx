@@ -265,13 +265,6 @@ export default function SubscribePage() {
             <Separator className="my-6" />
 
             <p className="text-xs text-center text-muted-foreground">
-              Already subscribed?{' '}
-              <Link href="/login" className="text-primary hover:underline">
-                Sign in
-              </Link>
-            </p>
-
-            <p className="text-xs text-center text-muted-foreground mt-2">
               By subscribing, you agree to our{' '}
               <Link href="/terms" className="text-primary hover:underline">
                 Terms
