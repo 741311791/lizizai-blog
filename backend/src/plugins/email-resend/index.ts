@@ -1,9 +1,6 @@
 import { Resend } from 'resend';
 
 export default {
-  provider: 'resend',
-  name: 'Resend',
-  
   init: (providerOptions: any, settings: any) => {
     const resend = new Resend(providerOptions.apiKey);
     
