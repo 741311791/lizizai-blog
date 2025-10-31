@@ -15,10 +15,13 @@ import { notFound } from 'next/navigation';
 export default async function ArticlePage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  // Await params (Next.js 15+)
+  const { slug } = await params;
+  
   // Fetch article data
-  const strapiArticle = await getArticleBySlug(params.slug);
+  const strapiArticle = await getArticleBySlug(slug);
 
   if (!strapiArticle) {
     notFound();
