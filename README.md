@@ -1,4 +1,4 @@
-# Letters Clone - Full Stack Blog Platform
+# Zizai Li Blog - Full Stack Blog Platform
 
 A modern blog platform inspired by Substack, built with Next.js 14, Strapi 4, and PostgreSQL.
 
