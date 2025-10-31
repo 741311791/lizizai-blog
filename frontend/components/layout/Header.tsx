@@ -57,15 +57,6 @@ export default function Header() {
             Home
           </Link>
           <Link 
-            href="/chat" 
-            className={cn(
-              "hover:text-primary transition-colors relative pb-1",
-              isActive('/chat') && "text-primary font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary"
-            )}
-          >
-            Chat
-          </Link>
-          <Link 
             href="/category/ai-prompts" 
             className={cn(
               "hover:text-primary transition-colors relative pb-1",
