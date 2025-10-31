@@ -8,7 +8,7 @@
     "description": "Blog articles and posts"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
