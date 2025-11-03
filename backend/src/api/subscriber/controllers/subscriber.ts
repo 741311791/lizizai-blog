@@ -76,6 +76,9 @@ export default {
       try {
         const confirmationUrl = `https://lizizai.xyz/api/subscribe/confirm?token=${subscriber.confirmationToken}`;
         
+        strapi.log.info(`Generated token for ${email}: ${subscriber.confirmationToken}`);
+        strapi.log.info(`Confirmation URL: ${confirmationUrl}`);
+        
         await sendConfirmationEmail(email, name || '', confirmationUrl);
         
         strapi.log.info(`Confirmation email sent to ${email}`);
@@ -161,9 +164,22 @@ export default {
       }
 
       // 查找订阅者
+      strapi.log.info(`Confirming subscription with token: ${token}`);
+      
       const subscriber = await strapi.db.query('api::subscriber.subscriber').findOne({
         where: { confirmationToken: token },
       });
+
+      strapi.log.info(`Subscriber found: ${subscriber ? 'Yes' : 'No'}`);
+      if (subscriber) {
+        strapi.log.info(`Subscriber details: ${JSON.stringify({
+          id: subscriber.id,
+          email: subscriber.email,
+          status: subscriber.status,
+          hasToken: !!subscriber.confirmationToken,
+          tokenMatch: subscriber.confirmationToken === token
+        })}`);
+      }
 
       if (!subscriber) {
         return ctx.notFound('Invalid confirmation token');
