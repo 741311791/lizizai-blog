@@ -34,6 +34,8 @@ export default [
     config: {
       origin: [
         'http://localhost:3000',
+        'https://lizizai.xyz',
+        'https://www.lizizai.xyz',
         'https://frontend-kdicg9ptg-louies-projects-dbfd71aa.vercel.app',
         'https://frontend-8koay792c-louies-projects-dbfd71aa.vercel.app',
         'https://*.vercel.app',
