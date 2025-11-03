@@ -442,6 +442,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    articleLikes: Schema.Attribute.Relation<'oneToMany', 'api::like.like'>;
     author: Schema.Attribute.Relation<'manyToOne', 'api::author.author'>;
     category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
     comments: Schema.Attribute.Relation<'oneToMany', 'api::comment.comment'>;

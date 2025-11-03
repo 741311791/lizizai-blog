@@ -65,6 +65,12 @@
       "type": "integer",
       "default": 0
     },
+    "articleLikes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::like.like",
+      "mappedBy": "article"
+    },
     "views": {
       "type": "integer",
       "default": 0
