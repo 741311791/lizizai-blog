@@ -23,8 +23,8 @@
     },
     "status": {
       "type": "enumeration",
-      "enum": ["active", "unsubscribed"],
-      "default": "active",
+      "enum": ["pending", "active", "unsubscribed"],
+      "default": "pending",
       "required": true
     },
     "subscribedAt": {
@@ -41,6 +41,19 @@
     },
     "metadata": {
       "type": "json",
+      "required": false
+    },
+    "confirmationToken": {
+      "type": "string",
+      "required": false,
+      "unique": true
+    },
+    "confirmedAt": {
+      "type": "datetime",
+      "required": false
+    },
+    "tokenExpiresAt": {
+      "type": "datetime",
       "required": false
     }
   }

@@ -53,6 +53,12 @@ export const api = {
       body: JSON.stringify({ data: { likes } }),
     }),
 
+  likeArticle: (id: string, visitorId: string) =>
+    fetchAPI(`/articles/${id}/like`, {
+      method: 'POST',
+      body: JSON.stringify({ visitorId }),
+    }),
+
   // Categories
   getCategories: () =>
     fetchAPI('/categories', {

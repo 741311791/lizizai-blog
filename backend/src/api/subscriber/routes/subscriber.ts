@@ -30,5 +30,15 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: 'GET',
+      path: '/subscribe/confirm',
+      handler: 'subscriber.confirm',
+      config: {
+        auth: false,
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };

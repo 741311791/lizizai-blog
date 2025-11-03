@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -178,64 +175,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Save to Strapi
-    try {
-      const strapiResponse = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/subscribers`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          data: {
-            email: email.toLowerCase(),
-            name: name || '',
-            status: 'active',
-            subscribedAt: new Date().toISOString(),
-            source: 'website',
-          },
-        }),
-      });
+    // Call backend API to handle subscription
+    const backendUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://lizizai-blog.onrender.com';
+    const response = await fetch(`${backendUrl}/api/subscribers/subscribe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email.toLowerCase(),
+        name: name || '',
+      }),
+    });
 
-      if (!strapiResponse.ok) {
-        console.error('Failed to save to Strapi:', await strapiResponse.text());
-        // Continue anyway - email is more important
-      }
-    } catch (strapiError) {
-      console.error('Strapi error:', strapiError);
-      // Continue anyway
-    }
+    const data = await response.json();
 
-    // Send welcome email
-    try {
-      const { data, error } = await resend.emails.send({
-        from: 'future/proof <noreply@lizizai.xyz>',
-        to: [email],
-        subject: 'Welcome to future/proof! 🎉',
-        html: getWelcomeEmailHTML(name),
-      });
-
-      if (error) {
-        console.error('Resend error:', error);
-        return NextResponse.json(
-          { error: { message: 'Failed to send welcome email' } },
-          { status: 500 }
-        );
-      }
-
-      return NextResponse.json({
-        message: 'Successfully subscribed! Check your email for a welcome message.',
-        subscriber: {
-          email,
-          name,
-        },
-      });
-    } catch (emailError) {
-      console.error('Email sending error:', emailError);
+    if (!response.ok) {
       return NextResponse.json(
-        { error: { message: 'Failed to send welcome email' } },
-        { status: 500 }
+        { error: { message: data.error?.message || 'Subscription failed' } },
+        { status: response.status }
       );
     }
+
+    return NextResponse.json({
+      message: data.message || 'Please check your email to confirm your subscription.',
+      requiresConfirmation: data.requiresConfirmation,
+      subscriber: data.subscriber,
+    });
   } catch (error) {
     console.error('Subscribe error:', error);
     return NextResponse.json(

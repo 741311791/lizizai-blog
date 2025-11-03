@@ -166,3 +166,121 @@ export function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
+
+/**
+ * Generate confirmation email template
+ */
+export function getConfirmationEmailTemplate(name: string, confirmationUrl: string): string {
+  const displayName = name || 'there';
+  
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 48px 32px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 700;
+    }
+    .content {
+      padding: 40px 32px;
+    }
+    .content p {
+      margin: 0 0 16px;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .button {
+      display: inline-block;
+      background: #667eea;
+      color: white !important;
+      padding: 16px 40px;
+      text-decoration: none;
+      border-radius: 8px;
+      margin: 24px 0;
+      font-weight: 600;
+      font-size: 18px;
+      transition: background 0.3s;
+    }
+    .button:hover {
+      background: #5568d3;
+    }
+    .footer {
+      background: #f9fafb;
+      padding: 32px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .link-text {
+      color: #667eea;
+      word-break: break-all;
+      font-size: 14px;
+    }
+    .divider {
+      height: 1px;
+      background: #e5e7eb;
+      margin: 32px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>✉️ Confirm Your Subscription</h1>
+    </div>
+    
+    <div class="content">
+      <p>Hi <strong>${displayName}</strong>,</p>
+      
+      <p>Thank you for subscribing to <strong>future/proof</strong>! To complete your subscription and start receiving our newsletter, please confirm your email address by clicking the button below:</p>
+      
+      <center>
+        <a href="${confirmationUrl}" class="button">Confirm Subscription</a>
+      </center>
+      
+      <div class="divider"></div>
+      
+      <p>If the button doesn't work, copy and paste this link into your browser:</p>
+      <p class="link-text">${confirmationUrl}</p>
+      
+      <p style="margin-top: 32px; color: #6b7280; font-size: 14px;">This link will expire in 24 hours. If you didn't subscribe to our newsletter, you can safely ignore this email.</p>
+    </div>
+    
+    <div class="footer">
+      <p><strong>future/proof</strong></p>
+      <p style="margin-top: 16px; color: #9ca3af; font-size: 12px;">
+        © ${new Date().getFullYear()} All rights reserved.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+  `.trim();
+}

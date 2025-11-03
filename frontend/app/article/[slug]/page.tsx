@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import AuthorCard from '@/components/article/AuthorCard';
 import ArticleActions from '@/components/article/ArticleActions';
 import ArticleContent from '@/components/article/ArticleContent';
-import CommentSection from '@/components/article/CommentSection';
+
 import RelatedArticles from '@/components/article/RelatedArticles';
 import TableOfContents from '@/components/article/TableOfContents';
 import { getArticleBySlug, getRelatedArticles, getArticles } from '@/lib/strapi';
@@ -40,33 +40,7 @@ export default async function ArticlePage({
     relatedArticles = transformArticles(relatedResponse.data as any);
   }
 
-  // Mock comments (will be replaced with real API later)
-  const mockComments = [
-    {
-      id: '1',
-      author: {
-        name: 'John Smith',
-        avatar: 'https://picsum.photos/seed/user1/100/100',
-      },
-      content:
-        'This is such an insightful article! The point about taste being the new intelligence really resonated with me.',
-      createdAt: '2025-07-22',
-      likes: 42,
-      replies: [
-        {
-          id: '2',
-          author: {
-            name: 'Sarah Johnson',
-            avatar: 'https://picsum.photos/seed/user2/100/100',
-          },
-          content:
-            'Totally agree! The distinction between doers and directors is becoming more clear every day.',
-          createdAt: '2025-07-23',
-          likes: 15,
-        },
-      ],
-    },
-  ];
+
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
@@ -111,8 +85,8 @@ export default async function ArticlePage({
             />
 
             <ArticleActions
+              articleId={article.id}
               likes={article.likes}
-              commentsCount={article.commentsCount || 0}
               shares={0}
             />
           </header>
@@ -132,9 +106,6 @@ export default async function ArticlePage({
 
           {/* Article Content */}
           <ArticleContent content={article.content} />
-
-          {/* Comment Section */}
-          <CommentSection comments={mockComments} commentsCount={mockComments.length} />
 
           {/* Related Articles */}
           {relatedArticles.length > 0 && (

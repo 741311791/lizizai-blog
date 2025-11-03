@@ -93,26 +93,51 @@ export default function SubscribePage() {
           </div>
           
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold">You're all set! 🎉</h1>
+            <h1 className="text-3xl font-bold">Almost there! ✉️</h1>
             <p className="text-lg text-muted-foreground">
-              Thank you for subscribing to future/proof!
+              Please check your email to confirm your subscription
             </p>
           </div>
           
-          <div className="p-6 rounded-lg border border-border bg-muted/50 text-left space-y-3">
-            <p className="flex items-start gap-2">
-              <Mail className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-              <span>
-                We've sent a welcome email to <strong>{email || 'your inbox'}</strong>. 
-                Please check your email (and spam folder) to confirm your subscription.
-              </span>
-            </p>
-            <p className="flex items-start gap-2">
-              <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-              <span>
-                Your first newsletter will arrive soon with exclusive insights and resources.
-              </span>
-            </p>
+          <div className="p-6 rounded-lg border border-border bg-muted/50 text-left space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Mail className="h-5 w-5 text-primary" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold">Check your inbox</h3>
+                <p className="text-sm text-muted-foreground">
+                  We've sent a confirmation email to <strong className="text-foreground">{email || 'your email'}</strong>. 
+                  Click the link in the email to complete your subscription.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="shrink-0 w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+                <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold">Can't find the email?</h3>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• Check your spam or junk folder</li>
+                  <li>• Make sure you entered the correct email address</li>
+                  <li>• The confirmation link expires in 24 hours</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold">After confirmation</h3>
+                <p className="text-sm text-muted-foreground">
+                  You'll receive a welcome email and start getting our weekly newsletter with exclusive insights and resources.
+                </p>
+              </div>
+            </div>
           </div>
           
           <div className="flex gap-4 justify-center">
