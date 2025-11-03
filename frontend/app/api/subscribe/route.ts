@@ -177,18 +177,52 @@ export async function POST(request: NextRequest) {
 
     // Call backend API to handle subscription
     const backendUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://lizizai-blog.onrender.com';
-    const response = await fetch(`${backendUrl}/api/subscribers/subscribe`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email.toLowerCase(),
-        name: name || '',
-      }),
-    });
+    
+    // Add timeout control
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 seconds timeout
+    
+    let response;
+    try {
+      response = await fetch(`${backendUrl}/api/subscribers/subscribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email.toLowerCase(),
+          name: name || '',
+        }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+    } catch (fetchError: any) {
+      clearTimeout(timeoutId);
+      console.error('Fetch error:', fetchError);
+      
+      if (fetchError.name === 'AbortError') {
+        return NextResponse.json(
+          { error: { message: 'Request timeout. Please try again.' } },
+          { status: 504 }
+        );
+      }
+      
+      return NextResponse.json(
+        { error: { message: 'Network error. Please check your connection and try again.' } },
+        { status: 503 }
+      );
+    }
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      console.error('JSON parse error:', jsonError);
+      return NextResponse.json(
+        { error: { message: 'Invalid response from server.' } },
+        { status: 500 }
+      );
+    }
 
     if (!response.ok) {
       return NextResponse.json(
