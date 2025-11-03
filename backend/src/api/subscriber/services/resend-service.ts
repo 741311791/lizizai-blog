@@ -11,7 +11,7 @@ export async function sendConfirmationEmail(
   
   try {
     const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'future/proof <newsletter@lizizai.xyz>',
+      from: process.env.EMAIL_FROM || 'Onboarding <onboarding@resend.dev>',
       to: [to],
       subject: 'Confirm your subscription to future/proof',
       html: getConfirmationEmailTemplate(name, confirmationUrl),
@@ -36,7 +36,7 @@ export async function sendWelcomeEmail(
   
   try {
     const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'future/proof <newsletter@lizizai.xyz>',
+      from: process.env.EMAIL_FROM || 'Onboarding <onboarding@resend.dev>',
       to: [to],
       subject: 'Welcome to future/proof! 🎉',
       html: getWelcomeEmailTemplate(name),
