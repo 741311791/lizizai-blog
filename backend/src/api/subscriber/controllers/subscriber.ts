@@ -1,4 +1,5 @@
-import { getWelcomeEmailTemplate, getConfirmationEmailTemplate, isValidEmail } from '../services/email-templates';
+import { isValidEmail } from '../services/email-templates';
+import { sendConfirmationEmail, sendWelcomeEmail } from '../services/resend-service';
 import crypto from 'crypto';
 
 export default {
@@ -75,12 +76,7 @@ export default {
       try {
         const confirmationUrl = `https://lizizai.xyz/api/subscribe/confirm?token=${subscriber.confirmationToken}`;
         
-        await strapi.plugins['email'].services.email.send({
-          to: email,
-          from: 'future/proof <noreply@lizizai.xyz>',
-          subject: 'Confirm your subscription to future/proof',
-          html: getConfirmationEmailTemplate(name, confirmationUrl),
-        });
+        await sendConfirmationEmail(email, name || '', confirmationUrl);
         
         strapi.log.info(`Confirmation email sent to ${email}`);
       } catch (emailError) {
@@ -199,12 +195,7 @@ export default {
 
       // 发送欢迎邮件
       try {
-        await strapi.plugins['email'].services.email.send({
-          to: subscriber.email,
-          from: 'future/proof <noreply@lizizai.xyz>',
-          subject: 'Welcome to future/proof! 🎉',
-          html: getWelcomeEmailTemplate(subscriber.name),
-        });
+        await sendWelcomeEmail(subscriber.email, subscriber.name || '');
         
         strapi.log.info(`Welcome email sent to ${subscriber.email}`);
       } catch (emailError) {

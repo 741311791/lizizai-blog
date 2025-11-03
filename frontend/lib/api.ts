@@ -29,6 +29,13 @@ async function fetchAPI(endpoint: string, options: FetchOptions = {}) {
   return response.json();
 }
 
+// Export individual functions for convenience
+export const likeArticle = (id: number, visitorId: string) =>
+  fetchAPI(`/articles/${id}/like`, {
+    method: 'POST',
+    body: JSON.stringify({ visitorId }),
+  });
+
 export const api = {
   // Articles
   getArticles: (params?: Record<string, string>) => 

@@ -1,10 +1,13 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { likeArticle } from '@/lib/api';
+import { getVisitorId } from '@/lib/visitor';
 
 interface Article {
   id: string;
@@ -38,10 +41,58 @@ export default function ArticleCard({ article }: ArticleCardProps) {
     featuredImage,
     author,
     publishedAt,
-    likes,
+    likes: initialLikes,
     commentsCount = 0,
     category,
   } = article;
+  
+  const [likes, setLikes] = useState(initialLikes);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
+  
+  useEffect(() => {
+    // Check if user has liked this article
+    const likedArticles = JSON.parse(
+      localStorage.getItem('likedArticles') || '{}'
+    );
+    setIsLiked(!!likedArticles[id]);
+  }, [id]);
+  
+  const handleLike = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isLiking) return;
+    
+    const visitorId = getVisitorId();
+    if (!visitorId) {
+      console.error('Failed to get visitor ID');
+      return;
+    }
+    
+    setIsLiking(true);
+    try {
+      const result = await likeArticle(Number(id), visitorId);
+      
+      setLikes(result.likes);
+      setIsLiked(result.liked);
+      
+      // Update localStorage
+      const likedArticles = JSON.parse(
+        localStorage.getItem('likedArticles') || '{}'
+      );
+      if (result.liked) {
+        likedArticles[id] = true;
+      } else {
+        delete likedArticles[id];
+      }
+      localStorage.setItem('likedArticles', JSON.stringify(likedArticles));
+    } catch (error) {
+      console.error('Failed to like article:', error);
+    } finally {
+      setIsLiking(false);
+    }
+  };
   
   return (
     <Card className="group overflow-hidden border-border bg-card hover:border-primary/50 transition-all h-full flex flex-col">
@@ -89,13 +140,11 @@ export default function ArticleCard({ article }: ArticleCardProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 gap-1.5 text-xs"
-                onClick={(e) => {
-                  e.preventDefault();
-                  // TODO: Implement like functionality
-                }}
+                className={`h-8 gap-1.5 text-xs ${isLiked ? 'text-red-500' : ''}`}
+                onClick={handleLike}
+                disabled={isLiking}
               >
-                <Heart className="h-3.5 w-3.5" />
+                <Heart className={`h-3.5 w-3.5 ${isLiked ? 'fill-current' : ''}`} />
                 <span>{likes}</span>
               </Button>
               <Button
