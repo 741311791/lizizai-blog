@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,12 +9,34 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Check, Mail, Sparkles, Zap, BookOpen, Users, CheckCircle2, AlertCircle } from 'lucide-react';
 
-export default function SubscribePage() {
+function SubscribePageContent() {
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    // Check for confirmation success
+    if (searchParams.get('confirmed') === 'true') {
+      setConfirmed(true);
+    }
+    
+    // Check for errors
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      const errorMessages: Record<string, string> = {
+        'missing_token': 'Confirmation link is invalid. Please try subscribing again.',
+        'invalid_token': 'Confirmation link is invalid or has already been used.',
+        'token_expired': 'Confirmation link has expired. Please subscribe again.',
+        'confirmation_failed': 'Confirmation failed. Please try again or contact support.',
+        'server_error': 'Server error. Please try again later.',
+      };
+      setError(errorMessages[errorParam] || 'An error occurred. Please try again.');
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +105,77 @@ export default function SubscribePage() {
     'Join 178,000+ subscribers',
   ];
 
+  // Confirmation success page
+  if (confirmed) {
+    return (
+      <div className="container mx-auto max-w-2xl px-4 py-16">
+        <div className="text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
+              <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold">Welcome to future/proof! 🎉</h1>
+            <p className="text-lg text-muted-foreground">
+              Your subscription has been confirmed successfully
+            </p>
+          </div>
+          
+          <div className="p-6 rounded-lg border border-border bg-muted/50 text-left space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold">You're all set!</h3>
+                <p className="text-sm text-muted-foreground">
+                  You'll start receiving our weekly newsletter with exclusive insights on AI, productivity, and building a one-person business.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Mail className="h-5 w-5 text-primary" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold">Check your inbox</h3>
+                <p className="text-sm text-muted-foreground">
+                  We've sent you a welcome email with more information about what to expect.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="shrink-0 w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold">What's next?</h3>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• Explore our latest articles and resources</li>
+                  <li>• Join the community of 178,000+ entrepreneurs</li>
+                  <li>• Share your feedback and connect with us</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex gap-4 justify-center">
+            <Link href="/">
+              <Button size="lg">Explore Articles</Button>
+            </Link>
+            <Link href="/about">
+              <Button variant="outline" size="lg">Learn More About Us</Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   if (success) {
     return (
       <div className="container mx-auto max-w-2xl px-4 py-16">
@@ -303,5 +397,13 @@ export default function SubscribePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SubscribePage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto max-w-2xl px-4 py-16 text-center">Loading...</div>}>
+      <SubscribePageContent />
+    </Suspense>
   );
 }
