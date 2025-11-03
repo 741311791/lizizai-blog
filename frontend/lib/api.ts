@@ -74,13 +74,6 @@ export const api = {
       }
     }),
 
-  // Newsletter
-  subscribeNewsletter: (email: string) =>
-    fetchAPI('/newsletters', {
-      method: 'POST',
-      body: JSON.stringify({ data: { email, status: 'active' } }),
-    }),
-
   // Comments
   getCommentsByArticle: (articleId: string) =>
     fetchAPI('/comments', {
