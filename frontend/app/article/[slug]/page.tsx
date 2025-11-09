@@ -11,6 +11,38 @@ import TableOfContents from '@/components/article/TableOfContents';
 import { getArticleBySlug, getRelatedArticles, getArticles } from '@/lib/strapi';
 import { transformArticle, transformArticles } from '@/lib/transformers';
 import { notFound } from 'next/navigation';
+import { generateArticleMetadata, generateArticleJsonLd } from '@/lib/seo';
+import type { Metadata } from 'next';
+
+// Generate metadata for SEO
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const strapiArticle = await getArticleBySlug(slug);
+
+  if (!strapiArticle) {
+    return {
+      title: 'Article Not Found',
+    };
+  }
+
+  const article = transformArticle(strapiArticle);
+
+  return generateArticleMetadata({
+    title: article.title,
+    description: article.subtitle || article.excerpt,
+    publishedAt: article.publishedAt,
+    modifiedAt: strapiArticle.updatedAt,
+    author: article.author.name,
+    category: article.category?.name,
+    tags: article.tags?.map((tag) => tag.name),
+    imageUrl: article.featuredImage,
+    slug: article.slug,
+  });
+}
 
 export default async function ArticlePage({
   params,
@@ -19,7 +51,7 @@ export default async function ArticlePage({
 }) {
   // Await params (Next.js 15+)
   const { slug } = await params;
-  
+
   // Fetch article data
   const strapiArticle = await getArticleBySlug(slug);
 
@@ -40,10 +72,24 @@ export default async function ArticlePage({
     relatedArticles = transformArticles(relatedResponse.data as any);
   }
 
-
+  // Generate JSON-LD for article
+  const articleJsonLd = generateArticleJsonLd({
+    title: article.title,
+    description: article.subtitle || article.excerpt,
+    publishedAt: article.publishedAt,
+    modifiedAt: strapiArticle.updatedAt,
+    author: article.author.name,
+    imageUrl: article.featuredImage,
+    slug: article.slug,
+  });
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <div className="container mx-auto max-w-7xl px-4 py-8">
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
         <Link href="/" className="hover:text-foreground">
@@ -119,12 +165,12 @@ export default async function ArticlePage({
         </aside>
       </div>
     </div>
+    </>
   );
 }
 
-// Enable dynamic rendering for all routes
-export const dynamic = 'force-dynamic';
-export const dynamicParams = true;
+// Enable ISR (Incremental Static Regeneration) with 60s revalidation
+export const revalidate = 60;
 
-// Disable static generation
-export const revalidate = 0;
+// Allow dynamic params for new articles
+export const dynamicParams = true;

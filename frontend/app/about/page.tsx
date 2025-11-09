@@ -3,6 +3,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Mail, Twitter, Linkedin, Youtube, Globe } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: '关于我们',
+  description: '在人工智能重塑每个行业的世界里，我们致力于帮助你在这场转型中导航，构建在AI时代蓬勃发展的一人企业。',
+  openGraph: {
+    title: '关于 Zizai Blog',
+    description: '在人工智能重塑每个行业的世界里，我们致力于帮助你在这场转型中导航，构建在AI时代蓬勃发展的一人企业。',
+  },
+};
 
 export default function AboutPage() {
   return (
@@ -14,7 +24,7 @@ export default function AboutPage() {
           <AvatarFallback className="text-2xl">DK</AvatarFallback>
         </Avatar>
         <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
-          About future/proof
+          About Zizai Blog
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           A newsletter helping you stay relevant in a rapidly changing world
@@ -31,7 +41,7 @@ export default function AboutPage() {
             In a world where artificial intelligence is reshaping every industry, where traditional career paths are becoming obsolete, and where the definition of "making it" is being radically transformed, we need a new approach to building our lives and careers.
           </p>
           <p className="text-muted-foreground leading-relaxed">
-            future/proof is dedicated to helping you navigate this transformation. We explore the intersection of technology, creativity, and entrepreneurship to help you build a one-person business that thrives in the age of AI.
+            Zizai Blog is dedicated to helping you navigate this transformation. We explore the intersection of technology, creativity, and entrepreneurship to help you build a one-person business that thrives in the age of AI.
           </p>
           <p className="text-muted-foreground leading-relaxed">
             Our content focuses on three core pillars: learning (how to adapt and acquire new skills), persuasion (how to build an audience and attract opportunities), and execution (how to turn ideas into reality using modern tools and automation).

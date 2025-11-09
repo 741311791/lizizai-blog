@@ -132,30 +132,3 @@ export const GET_CATEGORIES = gql`
     }
   }
 `;
-
-export const SUBSCRIBE_NEWSLETTER = gql`
-  mutation SubscribeNewsletter($email: String!) {
-    createNewsletter(data: { email: $email, status: "active" }) {
-      data {
-        id
-        attributes {
-          email
-          status
-        }
-      }
-    }
-  }
-`;
-
-export const INCREMENT_ARTICLE_LIKES = gql`
-  mutation IncrementArticleLikes($id: ID!, $likes: Int!) {
-    updateArticle(id: $id, data: { likes: $likes }) {
-      data {
-        id
-        attributes {
-          likes
-        }
-      }
-    }
-  }
-`;

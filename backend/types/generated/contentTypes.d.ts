@@ -609,39 +609,6 @@ export interface ApiLikeLike extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiNewsletterNewsletter extends Struct.CollectionTypeSchema {
-  collectionName: 'newsletters';
-  info: {
-    description: 'Newsletter subscriptions';
-    displayName: 'Newsletter';
-    pluralName: 'newsletters';
-    singularName: 'newsletter';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    email: Schema.Attribute.Email &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::newsletter.newsletter'
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    status: Schema.Attribute.Enumeration<['active', 'unsubscribed']> &
-      Schema.Attribute.DefaultTo<'active'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiSubscriberSubscriber extends Struct.CollectionTypeSchema {
   collectionName: 'subscribers';
   info: {
@@ -1245,7 +1212,6 @@ declare module '@strapi/strapi' {
       'api::category.category': ApiCategoryCategory;
       'api::comment.comment': ApiCommentComment;
       'api::like.like': ApiLikeLike;
-      'api::newsletter.newsletter': ApiNewsletterNewsletter;
       'api::subscriber.subscriber': ApiSubscriberSubscriber;
       'api::tag.tag': ApiTagTag;
       'plugin::content-releases.release': PluginContentReleasesRelease;

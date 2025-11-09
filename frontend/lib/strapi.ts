@@ -1,11 +1,13 @@
 /**
  * Strapi API Client
- * 
+ *
  * 用于与 Strapi CMS 后端通信的客户端库
  */
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://lizizai-blog.onrender.com';
-const STRAPI_API_URL = `${STRAPI_URL}/api`;
+import { config } from './env';
+
+const STRAPI_URL = config.strapiUrl;
+const STRAPI_API_URL = config.strapiApiUrl;
 
 /**
  * 通用 API 请求函数
@@ -46,7 +48,14 @@ export async function fetchAPI(
 
     const data = await res.json();
     return data;
-  } catch (error) {
+  } catch (error: any) {
+    // 更友好的错误处理
+    if (error.cause?.code === 'ECONNREFUSED') {
+      console.warn(`⚠️ Cannot connect to Strapi backend at ${url}. Using fallback data or skipping fetch.`);
+      // 返回空数据而不是抛出错误,避免中断页面渲染
+      return { data: [], meta: {} };
+    }
+
     console.error('Strapi API Error:', error);
     throw error;
   }

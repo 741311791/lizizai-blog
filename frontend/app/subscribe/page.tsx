@@ -117,7 +117,7 @@ function SubscribePageContent() {
           </div>
           
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold">Welcome to future/proof! 🎉</h1>
+            <h1 className="text-3xl font-bold">Welcome to Zizai Blog! 🎉</h1>
             <p className="text-lg text-muted-foreground">
               Your subscription has been confirmed successfully
             </p>

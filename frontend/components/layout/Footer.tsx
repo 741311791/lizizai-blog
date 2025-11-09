@@ -63,7 +63,7 @@ export default function Footer() {
       <div className="container mx-auto max-w-7xl px-4 py-12">
         {/* Newsletter subscription */}
         <div className="mb-8 text-center">
-          <h3 className="mb-4 text-lg font-semibold">future/proof</h3>
+          <h3 className="mb-4 text-lg font-semibold">Zizai Blog</h3>
           <p className="mb-4 text-sm text-muted-foreground">stay relevant</p>
           <form onSubmit={handleSubscribe} className="mx-auto max-w-md">
             <div className="flex gap-2">
@@ -120,7 +120,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="mt-8 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Letters Clone. All rights reserved.
+          © {new Date().getFullYear()} Zizai Blog. All rights reserved.
         </div>
       </div>
     </footer>

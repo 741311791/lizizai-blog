@@ -1,40 +1,55 @@
 'use client';
 
-import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Link as LinkIcon } from 'lucide-react';
 
 export default function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div className="container py-16">
-        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
-          {/* Left side - Text content */}
-          <div className="space-y-6">
-            <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
-              Purpose & Profit – A Guide To Discovering Your Life's Work
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              The full book, for free
-            </p>
-            <Button size="lg" className="bg-primary hover:bg-primary/90">
-              READ THE LATEST
-            </Button>
-          </div>
+      <div className="container py-8 lg:py-12">
+        {/* Main Content - Centered */}
+        <div className="max-w-4xl mx-auto text-center space-y-6">
+          {/* Top Label */}
+          <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground">
+            ZIZAI LI
+          </p>
 
-          {/* Right side - Book cover image */}
-          <div className="relative aspect-[3/4] max-w-md mx-auto lg:max-w-none">
-            <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg" />
-            <div className="relative h-full flex items-center justify-center p-8">
-              <div className="w-full aspect-[3/4] bg-muted rounded-lg shadow-2xl flex items-center justify-center">
-                <div className="text-center p-8">
-                  <div className="w-32 h-32 mx-auto mb-4 rounded-full border-2 border-foreground/20 flex items-center justify-center">
-                    <div className="text-sm">Book Cover</div>
-                  </div>
-                  <p className="text-sm text-muted-foreground">purpose & profit</p>
-                </div>
-              </div>
-            </div>
+          {/* Main Headline */}
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+            Create More. Work Smarter. Live Better.
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Join the AI-powered creators shaping the future. Learn how to leverage creativity and technology to build meaningful work in the age of artificial intelligence.
+          </p>
+
+          {/* CTA Button */}
+          <div className="pt-2">
+            <Link href="/subscribe">
+              <Button
+                size="lg"
+                className="gap-2 px-8 py-6 text-base rounded-full"
+              >
+                <LinkIcon className="h-5 w-5" />
+                Receive free insights weekly
+              </Button>
+            </Link>
           </div>
+        </div>
+
+        {/* Bottom Section - Resources */}
+        <div className="mt-12 text-center space-y-4">
+          <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground/60">
+            RESOURCES
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold">
+            Join The AI Creative Movement
+          </h2>
+          <p className="text-base md:text-lg text-muted-foreground">
+            Become future-proof with these tools and insights
+          </p>
         </div>
       </div>
     </section>

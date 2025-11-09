@@ -138,6 +138,10 @@ export default factories.createCoreController('api::article.article', ({ strapi 
         },
       });
 
+      if (!updatedArticle) {
+        return ctx.internalServerError('Failed to update article likes');
+      }
+
       strapi.log.info(`Article ${id} liked by visitor ${visitorId}`);
 
       return ctx.send({

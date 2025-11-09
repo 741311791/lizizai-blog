@@ -1,112 +1,133 @@
 import { isValidEmail } from '../services/email-templates';
-import { sendConfirmationEmail, sendWelcomeEmail } from '../services/resend-service';
-import crypto from 'crypto';
+import subscriberService from '../services/subscriber-service';
+import emailService from '../services/email-service';
+import logger from '../../../utils/logger';
 
+/**
+ * 订阅控制器（重构版）
+ *
+ * 重构原则:
+ * - KISS: 简化逻辑,每个方法职责单一
+ * - DRY: 提取重复逻辑到服务层
+ * - 单一职责: 控制器仅处理 HTTP 请求响应
+ */
 export default {
+  /**
+   * 订阅处理（简化版）
+   */
   async subscribe(ctx: any) {
     try {
       const { email, name } = ctx.request.body;
 
-      // 验证邮箱
+      // 1. 验证输入
       if (!email || !isValidEmail(email)) {
         return ctx.badRequest('Invalid email address');
       }
 
-      // 检查是否已订阅
-      const existing = await strapi.db.query('api::subscriber.subscriber').findOne({
-        where: { email: email.toLowerCase() },
-      });
+      // 2. 检查现有订阅
+      const existing = await subscriberService.findByEmail(email);
 
-      let subscriber;
+      // 3. 处理不同状态
+      const result = await this.handleSubscriberState(existing, email, name);
 
-      if (existing) {
-        if (existing.status === 'active') {
-          return ctx.send({ 
-            message: 'Email already subscribed',
-            alreadySubscribed: true 
-          });
-        } else if (existing.status === 'pending') {
-          // 重新发送确认邮件
-          const confirmationToken = crypto.randomBytes(32).toString('hex');
-          const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-          
-          subscriber = await strapi.db.query('api::subscriber.subscriber').update({
-            where: { id: existing.id },
-            data: { 
-              confirmationToken,
-              tokenExpiresAt,
-              name: name || existing.name,
-            },
-          });
-        } else {
-          // 重新订阅（之前取消订阅的用户）
-          const confirmationToken = crypto.randomBytes(32).toString('hex');
-          const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-          
-          subscriber = await strapi.db.query('api::subscriber.subscriber').update({
-            where: { id: existing.id },
-            data: { 
-              status: 'pending',
-              confirmationToken,
-              tokenExpiresAt,
-              subscribedAt: new Date(),
-              name: name || existing.name,
-            },
-          });
-        }
-      } else {
-        // 创建新订阅者（待确认状态）
-        const confirmationToken = crypto.randomBytes(32).toString('hex');
-        const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-        
-        subscriber = await strapi.db.query('api::subscriber.subscriber').create({
-          data: {
-            email: email.toLowerCase(),
-            name: name || '',
-            status: 'pending',
-            confirmationToken,
-            tokenExpiresAt,
-            subscribedAt: new Date(),
-            source: 'website',
-          },
+      if (result.alreadySubscribed) {
+        return ctx.send({
+          message: 'Email already subscribed',
+          alreadySubscribed: true,
         });
       }
 
-      // 发送确认邮件
+      // 4. 发送确认邮件
       try {
-        const confirmationUrl = `https://lizizai.xyz/api/subscribe/confirm?token=${subscriber.confirmationToken}`;
-        
-        strapi.log.info(`Generated token for ${email}: ${subscriber.confirmationToken}`);
-        strapi.log.info(`Confirmation URL: ${confirmationUrl}`);
-        
-        await sendConfirmationEmail(email, name || '', confirmationUrl);
-        
-        strapi.log.info(`Confirmation email sent to ${email}`);
+        await emailService.sendConfirmation(
+          result.subscriber.email,
+          result.subscriber.name,
+          result.subscriber.confirmationToken
+        );
       } catch (emailError) {
-        strapi.log.error('Failed to send confirmation email:', emailError);
-        // 删除创建的订阅者记录
-        if (!existing) {
-          await strapi.db.query('api::subscriber.subscriber').delete({
-            where: { id: subscriber.id },
-          });
-        }
+        // 回滚数据变更
+        await this.rollbackSubscription(result, existing);
         return ctx.internalServerError('Failed to send confirmation email. Please try again later.');
       }
 
-      return ctx.send({ 
+      // 5. 返回成功响应
+      return ctx.send({
         message: 'Please check your email to confirm your subscription.',
         requiresConfirmation: true,
         subscriber: {
-          email: subscriber.email,
-          name: subscriber.name,
-        }
+          email: result.subscriber.email,
+          name: result.subscriber.name,
+        },
       });
     } catch (error) {
-      strapi.log.error('Subscribe error:', error);
+      logger.error('Subscribe error:', error);
       return ctx.internalServerError('Subscription failed. Please try again later.');
     }
   },
 
+  /**
+   * 处理订阅者状态（状态机模式）
+   */
+  async handleSubscriberState(existing: any, email: string, name: string) {
+    if (!existing) {
+      // 新订阅者
+      const subscriber = await subscriberService.createPendingSubscriber(email, name);
+      return { subscriber, isNew: true };
+    }
+
+    if (existing.status === 'active') {
+      // 已激活
+      return { alreadySubscribed: true };
+    }
+
+    if (existing.status === 'pending') {
+      // 重新发送确认
+      const subscriber = await subscriberService.updateSubscriberToken(
+        existing.id,
+        name || existing.name
+      );
+      return {
+        subscriber,
+        isNew: false,
+        originalState: {
+          confirmationToken: existing.confirmationToken,
+          tokenExpiresAt: existing.tokenExpiresAt,
+          name: existing.name,
+        },
+      };
+    }
+
+    // 重新激活（之前取消订阅）
+    const subscriber = await subscriberService.reactivateSubscriber(existing.id, name);
+    return {
+      subscriber,
+      isNew: false,
+      originalState: {
+        status: existing.status,
+        confirmationToken: existing.confirmationToken,
+        tokenExpiresAt: existing.tokenExpiresAt,
+        subscribedAt: existing.subscribedAt,
+        name: existing.name,
+      },
+    };
+  },
+
+  /**
+   * 回滚订阅操作
+   */
+  async rollbackSubscription(result: any, existing: any) {
+    if (result.isNew) {
+      await subscriberService.deleteSubscriber(result.subscriber.id);
+      logger.info(`Rolled back: deleted new subscriber ${result.subscriber.email}`);
+    } else if (result.originalState) {
+      await subscriberService.rollbackSubscriber(result.subscriber.id, result.originalState);
+      logger.info(`Rolled back: restored previous data for ${result.subscriber.email}`);
+    }
+  },
+
+  /**
+   * 取消订阅
+   */
   async unsubscribe(ctx: any) {
     try {
       const { email } = ctx.request.body;
@@ -115,9 +136,7 @@ export default {
         return ctx.badRequest('Invalid email address');
       }
 
-      const subscriber = await strapi.db.query('api::subscriber.subscriber').findOne({
-        where: { email: email.toLowerCase() },
-      });
+      const subscriber = await subscriberService.findByEmail(email);
 
       if (!subscriber) {
         return ctx.notFound('Email not found in subscriber list');
@@ -127,34 +146,31 @@ export default {
         return ctx.send({ message: 'Email already unsubscribed' });
       }
 
-      await strapi.db.query('api::subscriber.subscriber').update({
-        where: { id: subscriber.id },
-        data: {
-          status: 'unsubscribed',
-          unsubscribedAt: new Date(),
-        },
-      });
+      await subscriberService.unsubscribe(subscriber.id);
 
       return ctx.send({ message: 'Successfully unsubscribed' });
     } catch (error) {
-      strapi.log.error('Unsubscribe error:', error);
+      logger.error('Unsubscribe error:', error);
       return ctx.internalServerError('Unsubscribe failed. Please try again later.');
     }
   },
 
+  /**
+   * 获取订阅者数量
+   */
   async count(ctx: any) {
     try {
-      const count = await strapi.db.query('api::subscriber.subscriber').count({
-        where: { status: 'active' },
-      });
-
+      const count = await subscriberService.getActiveCount();
       return ctx.send({ count });
     } catch (error) {
-      strapi.log.error('Count error:', error);
+      logger.error('Count error:', error);
       return ctx.internalServerError('Failed to get subscriber count');
     }
   },
 
+  /**
+   * 确认订阅
+   */
   async confirm(ctx: any) {
     try {
       const { token } = ctx.query;
@@ -164,67 +180,42 @@ export default {
       }
 
       // 查找订阅者
-      strapi.log.info(`Confirming subscription with token: ${token}`);
-      
-      const subscriber = await strapi.db.query('api::subscriber.subscriber').findOne({
-        where: { confirmationToken: token },
-      });
+      logger.dev(`Processing confirmation request`);
 
-      strapi.log.info(`Subscriber found: ${subscriber ? 'Yes' : 'No'}`);
-      if (subscriber) {
-        strapi.log.info(`Subscriber details: ${JSON.stringify({
-          id: subscriber.id,
-          email: subscriber.email,
-          status: subscriber.status,
-          hasToken: !!subscriber.confirmationToken,
-          tokenMatch: subscriber.confirmationToken === token
-        })}`);
-      }
+      const subscriber = await subscriberService.findByToken(token);
 
       if (!subscriber) {
+        logger.warn(`Invalid confirmation token attempt from IP: ${ctx.ip}`);
         return ctx.notFound('Invalid confirmation token');
       }
 
       // 检查 token 是否过期
-      if (subscriber.tokenExpiresAt && new Date(subscriber.tokenExpiresAt) < new Date()) {
+      if (subscriberService.isTokenExpired(subscriber.tokenExpiresAt)) {
         return ctx.badRequest('Confirmation token has expired. Please subscribe again.');
       }
 
       // 检查是否已经确认
       if (subscriber.status === 'active' && subscriber.confirmedAt) {
-        return ctx.send({ 
+        return ctx.send({
           message: 'Email already confirmed',
-          alreadyConfirmed: true 
+          alreadyConfirmed: true,
         });
       }
 
-      // 更新订阅者状态
-      await strapi.db.query('api::subscriber.subscriber').update({
-        where: { id: subscriber.id },
-        data: {
-          status: 'active',
-          confirmedAt: new Date(),
-          confirmationToken: null,
-          tokenExpiresAt: null,
-        },
-      });
+      // 确认订阅
+      await subscriberService.confirmSubscription(subscriber.id);
 
-      // 发送欢迎邮件
-      try {
-        await sendWelcomeEmail(subscriber.email, subscriber.name || '');
-        
-        strapi.log.info(`Welcome email sent to ${subscriber.email}`);
-      } catch (emailError) {
-        strapi.log.error('Failed to send welcome email:', emailError);
-        // 不阻止确认成功，只记录错误
-      }
+      // 发送欢迎邮件（不阻塞响应）
+      emailService.sendWelcome(subscriber.email, subscriber.name || '');
 
-      return ctx.send({ 
-        message: 'Subscription confirmed successfully! Welcome to future/proof.',
-        success: true 
+      logger.info(`Subscription confirmed for ${subscriber.email}`);
+
+      return ctx.send({
+        message: 'Subscription confirmed successfully! Welcome to Zizai Blog.',
+        success: true,
       });
     } catch (error) {
-      strapi.log.error('Confirm subscription error:', error);
+      logger.error('Confirm subscription error:', error);
       return ctx.internalServerError('Confirmation failed. Please try again later.');
     }
   },

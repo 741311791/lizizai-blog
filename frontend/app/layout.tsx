@@ -1,37 +1,31 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
+import { Toaster } from "sonner";
+import { generateDefaultMetadata, generateWebsiteJsonLd } from "@/lib/seo";
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "future/proof - Letters Clone",
-  description: "A modern blog platform built with Next.js and Strapi",
-};
+export const metadata: Metadata = generateDefaultMetadata();
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const websiteJsonLd = generateWebsiteJsonLd();
+
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="zh-CN" className="dark">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+      </head>
+      <body className="antialiased">
         <ConditionalLayout>
           {children}
         </ConditionalLayout>
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   );

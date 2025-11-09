@@ -7,7 +7,7 @@ export default () => ({
   //       apiKey: process.env.RESEND_API_KEY,
   //     },
   //     settings: {
-  //       defaultFrom: 'future/proof <noreply@lizizai.xyz>',
+  //       defaultFrom: 'Zizai Blog <noreply@lizizai.xyz>',
   //       defaultReplyTo: 'support@lizizai.xyz',
   //     },
   //   },

@@ -3,11 +3,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, MessageCircle, Share2 } from 'lucide-react';
+import { Heart, Share2, ImageOff } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { likeArticle } from '@/lib/api';
 import { getVisitorId } from '@/lib/visitor';
+import { config } from '@/lib/env';
+import { getArticleImageUrl } from '@/lib/utils/image';
+import ShareMenu from '@/components/share/ShareMenu';
 
 interface Article {
   id: string;
@@ -21,7 +24,7 @@ interface Article {
   };
   publishedAt: string;
   likes: number;
-  commentsCount?: number;
+  sharesCount?: number;
   category?: {
     name: string;
     slug: string;
@@ -42,13 +45,18 @@ export default function ArticleCard({ article }: ArticleCardProps) {
     author,
     publishedAt,
     likes: initialLikes,
-    commentsCount = 0,
+    sharesCount = 0,
     category,
   } = article;
-  
+
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
+  const [shares, setShares] = useState(sharesCount);
+  const [imageError, setImageError] = useState(false);
+
+  // 获取图片 URL（如果没有封面图，使用占位图）
+  const imageUrl = getArticleImageUrl(featuredImage, id);
   
   useEffect(() => {
     // Check if user has liked this article
@@ -97,16 +105,26 @@ export default function ArticleCard({ article }: ArticleCardProps) {
   return (
     <Card className="group overflow-hidden border-border bg-card hover:border-primary/50 transition-all h-full flex flex-col">
       <Link href={`/article/${slug}`} className="flex flex-col h-full">
-        {featuredImage && (
-          <div className="relative aspect-video overflow-hidden">
+        {/* 文章封面图片区域 - 始终显示 */}
+        <div className="relative aspect-video overflow-hidden bg-muted">
+          {!imageError ? (
             <Image
-              src={featuredImage}
+              src={imageUrl}
               alt={title}
               fill
               className="object-cover transition-transform group-hover:scale-105"
+              onError={() => setImageError(true)}
+              unoptimized={imageUrl.includes('picsum.photos')}
             />
-          </div>
-        )}
+          ) : (
+            // 图片加载失败时的占位 UI
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted text-muted-foreground">
+              <ImageOff className="h-12 w-12 mb-2 opacity-50" />
+              <p className="text-sm font-medium">图片无法加载</p>
+              <p className="text-xs opacity-70 mt-1">Image failed to load</p>
+            </div>
+          )}
+        </div>
         <CardContent className="p-5 flex flex-col flex-1">
           {category && (
             <div className="mb-2 text-xs text-muted-foreground uppercase tracking-wide font-medium">
@@ -147,29 +165,28 @@ export default function ArticleCard({ article }: ArticleCardProps) {
                 <Heart className={`h-3.5 w-3.5 ${isLiked ? 'fill-current' : ''}`} />
                 <span>{likes}</span>
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 gap-1.5 text-xs"
-                onClick={(e) => {
-                  e.preventDefault();
-                  // TODO: Implement comment functionality
+              <ShareMenu
+                title={title}
+                description={subtitle}
+                url={`${config.siteUrl}/article/${slug}`}
+                onShare={() => {
+                  // 增加分享计数
+                  setShares(prev => prev + 1);
                 }}
               >
-                <MessageCircle className="h-3.5 w-3.5" />
-                <span>{commentsCount}</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 gap-1.5 text-xs"
-                onClick={(e) => {
-                  e.preventDefault();
-                  // TODO: Implement share functionality
-                }}
-              >
-                <Share2 className="h-3.5 w-3.5" />
-              </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 gap-1.5 text-xs"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                  <span>{shares}</span>
+                </Button>
+              </ShareMenu>
             </div>
           </div>
         </CardContent>

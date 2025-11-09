@@ -111,14 +111,14 @@ function getWelcomeEmailHTML(name: string): string {
 <body>
   <div class="container">
     <div class="header">
-      <h1>🎉 Welcome to future/proof!</h1>
+      <h1>🎉 Welcome to Zizai Blog!</h1>
       <p>You're now part of something special</p>
     </div>
     
     <div class="content">
       <p>Hi <strong>${displayName}</strong>,</p>
-      
-      <p>Thank you for subscribing to <strong>future/proof</strong>! You've just joined <strong>178,000+ entrepreneurs</strong> who are building their future, one insight at a time.</p>
+
+      <p>Thank you for subscribing to <strong>Zizai Blog</strong>! You've just joined <strong>178,000+ entrepreneurs</strong> who are building their future, one insight at a time.</p>
       
       <p>We're thrilled to have you in our community! 🚀</p>
       
@@ -142,7 +142,7 @@ function getWelcomeEmailHTML(name: string): string {
       </center>
       
       <p>Stay curious and keep building,<br>
-      <strong>The future/proof Team</strong></p>
+      <strong>The Zizai Blog Team</strong></p>
     </div>
     
     <div class="footer">
@@ -153,7 +153,7 @@ function getWelcomeEmailHTML(name: string): string {
         <a href="https://lizizai.xyz/unsubscribe">Unsubscribe</a>
       </p>
       <p style="margin-top: 16px; color: #9ca3af; font-size: 12px;">
-        © 2025 future/proof. All rights reserved.
+        © 2025 Zizai Blog. All rights reserved.
       </p>
     </div>
   </div>

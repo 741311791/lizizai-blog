@@ -1,9 +1,9 @@
 import path from 'path';
 
-export default ({ env }) => {
+export default ({ env }: { env: any }) => {
   const client = env('DATABASE_CLIENT', 'sqlite');
 
-  const connections = {
+  const connections: Record<string, any> = {
     mysql: {
       connection: {
         host: env('DATABASE_HOST', 'localhost'),
@@ -30,9 +30,17 @@ export default ({ env }) => {
         database: env('DATABASE_NAME', 'strapi'),
         user: env('DATABASE_USERNAME', 'strapi'),
         password: env('DATABASE_PASSWORD', 'strapi'),
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        ssl: env.bool('DATABASE_SSL', false)
+          ? {
+              rejectUnauthorized: env.bool(
+                'DATABASE_SSL_REJECT_UNAUTHORIZED',
+                true  // 默认启用证书验证
+              ),
+              ca: env('DATABASE_SSL_CA', undefined),
+              cert: env('DATABASE_SSL_CERT', undefined),
+              key: env('DATABASE_SSL_KEY', undefined),
+            }
+          : false,
         schema: env('DATABASE_SCHEMA', 'public'),
       },
       pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },

@@ -32,6 +32,14 @@ export default {
           auth: false,
         },
       },
+      {
+        method: 'GET',
+        path: '/api/subscribe/confirm',
+        handler: 'api::subscriber.subscriber.confirm',
+        config: {
+          auth: false,
+        },
+      },
     ]);
   },
 

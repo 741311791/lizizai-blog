@@ -2,7 +2,7 @@
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
+import rehypeHighlightCustom from '@/lib/rehype-highlight-custom';
 import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github-dark.css';
 
@@ -15,7 +15,7 @@ export default function ArticleContent({ content }: ArticleContentProps) {
     <article className="prose prose-invert prose-lg max-w-none">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeHighlight, rehypeRaw]}
+        rehypePlugins={[rehypeHighlightCustom, rehypeRaw]}
         components={{
           h1: ({ node, children, ...props }) => {
             const text = String(children);
