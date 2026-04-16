@@ -1,0 +1,24 @@
+name = "feishu-blog-sync"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "lizizai-blog"
+
+[triggers]
+crons = ["0 3 * * *"]
+
+[vars]
+FEISHU_APP_ID = "cli_a951d50564f89bb5"
+FEISHU_FOLDER_TOKEN = "RnSDfNdqZlcEtud4JjpcjtpKncg"
+R2_BASE_PATH = "blog-data"
+
+# Custom Domains（Cloudflare 自动管理 DNS，生成 AAAA 记录）
+routes = [
+  { pattern = "feishu-blog-sync.lihehua.xyz", custom_domain = true }
+]
+
+# Secrets (通过 wrangler secret put 设置):
+# FEISHU_APP_SECRET
+# SYNC_TOKEN

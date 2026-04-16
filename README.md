@@ -1,88 +1,205 @@
-# lizizai-blog - 全栈博客平台
+# 李自在博客 (Zizai Blog)
 
-这是一个使用 Next.js 和 Strapi 构建的现代化、高性能的全栈博客平台。项目采用前后端分离的 Monorepo 架构，集成了内容管理、用户认证、邮件订阅和社区讨论等丰富功能。
+基于 Next.js 16 的中文博客平台，使用飞书文档作为 CMS，部署在 Vercel + Cloudflare 边缘网络。
 
-## 技术栈 (Tech Stack)
+## 架构概览
 
-| 分类 | 技术 | 描述 |
-| --- | --- | --- |
-| **前端** | Next.js (v16+) | 基于 React 的全栈框架，使用 App Router。 |
-| | React (v19+) | 用于构建用户界面的核心库。 |
-| | TypeScript | 提供静态类型检查，增强代码健壮性。 |
-| | Tailwind CSS | 功能类优先的 CSS 框架，用于快速构建自定义界面。 |
-| | shadcn/ui | 基于 Radix UI 和 Tailwind CSS 的可复用组件库。 |
-| | Zustand & React Context | 用于前端状态管理。 |
-| **后端** | Strapi (v5) | 领先的开源 Headless CMS，用于内容管理和 API 服务。 |
-| | Koa.js | Strapi 底层使用的 Node.js 框架。 |
-| | TypeScript | 后端同样采用 TypeScript 开发。 |
-| **数据库** | PostgreSQL, SQLite | 生产环境使用 PostgreSQL，本地开发使用 SQLite。 |
-| **部署** | Vercel, Docker, Render | 前端优化于 Vercel 部署，后端支持 Docker 和 Render。 |
+```
+飞书文档 ──→ 同步 Worker (Cloudflare Workers) ──→ R2 存储 (CDN)
+                                                      │
+                                                      ↓
+用户 ──→ Next.js (Vercel, ISR) ──→ R2 读取内容
+         │
+         ├── emaction (点赞)      ── Cloudflare D1
+         ├── Webviso (浏览计数)    ── Cloudflare Workers + D1
+         ├── cf-comment (评论系统) ── Cloudflare Workers + D1
+         ├── Counterscale (分析)   ── Cloudflare Workers + D1
+         └── Resend (邮件订阅)     ── 第三方 API
+```
 
-## 项目亮点
+**核心理念**：无服务器架构，内容在飞书编写，通过 Worker 同步到 R2，前端纯静态渲染 + ISR。
 
-- **现代化架构:** 采用 Next.js App Router 和 Strapi v5，充分利用最新框架特性，如 ISR (增量静态再生)。
-- **全功能实现:** 包含文章、分类、评论、订阅、用户认证等完整的博客生态功能。
-- **高质量代码:** 全面使用 TypeScript，代码结构清晰，模块化程度高，遵循最佳实践。
-- **灵活部署:** 为前后端提供多种部署方案 (Vercel, Render, Docker)，适应不同环境需求。
-- **邮件系统集成:** 集成 Resend 服务，实现用户订阅后的自动化邮件发送。
+## 技术栈
+
+| 层级 | 技术 |
+|------|------|
+| 前端框架 | Next.js 16 (App Router), React 19 |
+| 样式 | Tailwind CSS v4 (OKLCH), shadcn/ui |
+| 语言 | TypeScript 5 |
+| 内容管理 | 飞书文档 API |
+| 存储 | Cloudflare R2 |
+| 同步服务 | Cloudflare Workers |
+| 评论/点赞/计数 | Cloudflare Workers + D1 |
+| 邮件 | Resend |
+| 搜索 | Pagefind (构建时索引) |
+| 部署 | Vercel (ISR, 每小时重新验证) |
 
 ## 项目结构
 
-项目采用 Monorepo 结构，将前后端代码分别管理在独立的目录中。
+```
+app/                              # Next.js App Router 页面
+├── admin/                        # 后台管理（密码保护）
+├── article/[slug]/               # 文章详情页
+├── category/[slug]/              # 分类页
+├── archive/                      # 归档页
+├── subscribe/                    # 邮件订阅
+├── api/admin/                    # 管理员 API（认证、同步）
+└── api/subscribe/                # 邮件订阅 API
+
+components/
+├── article/                      # 文章相关组件（卡片、内容、评论、TOC）
+├── home/                         # 首页组件（Hero、热门文章、关于我）
+├── layout/                       # 布局组件（Header、Footer）
+├── share/                        # 社交分享菜单
+└── ui/                           # shadcn/ui 基础组件
+
+lib/
+├── blog-data.ts                  # 核心数据层（从 R2 读取）
+├── services.ts                   # Cloudflare 服务 API 客户端
+├── seo.ts                        # SEO 元数据生成
+└── env.ts                        # 环境变量配置
+
+workers/feishu-blog-sync/         # 飞书同步 Worker
+├── src/index.ts                  # HTTP 入口 + 定时触发
+├── src/feishu.ts                 # 飞书 API 客户端
+├── src/converter.ts              # 飞书文档 → Markdown 转换
+└── src/sync.ts                   # 同步逻辑
+```
+
+## 功能特色
+
+### 内容管理
+- **飞书即 CMS**：在飞书中编写文档，自动同步为博客文章
+- **自动同步**：每日凌晨 3 点自动同步，或通过后台手动触发
+- **图片处理**：飞书文档中的图片自动下载到 R2 CDN
+- **Markdown 转换**：飞书块级文档自动转为标准 Markdown
+
+### 文章阅读
+- **ISR 静态生成**：页面预渲染，1 小时缓存刷新
+- **目录导航**：自动生成文章目录（TOC）
+- **代码高亮**：支持多种编程语言语法高亮
+- **阅读时间**：自动计算文章阅读时长
+- **相关推荐**：基于分类的相关文章推荐
+
+### 社交互动
+- **评论系统**：每篇文章独立评论区，支持嵌套回复、点赞
+- **点赞功能**：每篇文章独立点赞计数
+- **浏览计数**：实时页面浏览统计
+- **社交分享**：支持分享到 Facebook、LinkedIn、Bluesky、X 等平台
+
+### 后台管理
+- **密码保护**：`/admin` 路由，密码验证后进入管理面板
+- **一键同步**：手动触发飞书文档同步
+- **自动创建评论区**：新文章同步后自动创建对应评论区
+
+### SEO 与性能
+- **完整 SEO**：元数据、JSON-LD 结构化数据、Sitemap、Robots.txt
+- **Pagefind 搜索**：构建时生成搜索索引，无需后端
+- **深色模式**：默认深色主题，OKLCH 色彩空间
+- **响应式设计**：适配桌面和移动端
+
+## 内容流转流程
 
 ```
-lizizai-blog/
-├── backend/      # Strapi 后端应用
-│   ├── config/     # Strapi 配置
-│   ├── src/api/    # 内容类型 API
-│   └── README.md   # 后端详细部署指南
-│
-├── frontend/     # Next.js 前端应用
-│   ├── app/        # App Router 页面和路由
-│   ├── components/ # React 组件
-│   ├── lib/        # 工具函数和 API 客户端
-│   └── README.md   # 前端详细部署指南
-│
-└── README.md     # 项目主 README
+1. 作者在飞书中编写/编辑文档
+2. 同步 Worker 读取飞书 API：
+   - 获取文件夹中的所有文档
+   - 提取文档内容（标题、正文、图片）
+   - 转换飞书块为 Markdown
+   - 下载图片到 R2
+3. 生成结构化数据存入 R2：
+   - blog-data/articles.json      # 文章列表
+   - blog-data/categories.json    # 分类列表
+   - blog-data/articles/{category}/{slug}/content.md  # 文章内容
+4. Next.js 通过 ISR 渲染页面：
+   - lib/blog-data.ts 从 R2 读取数据
+   - 生成静态 HTML
+   - 每小时自动重新验证
 ```
 
-## 本地开发入门
+## 快速开始
 
-**环境要求:**
-- Node.js >= 18.0.0
-- pnpm (推荐)
+### 环境要求
 
-1.  **克隆仓库**
+- Node.js 18+
+- pnpm
 
-    ```bash
-    git clone https://github.com/741311791/lizizai-blog.git
-    cd lizizai-blog
-    ```
+### 安装
 
-2.  **安装后端依赖并启动**
+```bash
+git clone https://github.com/your-repo/lizizai-blog.git
+cd lizizai-blog
+pnpm install
+```
 
-    ```bash
-    cd backend
-    pnpm install
-    pnpm develop
-    ```
+### 环境变量
 
-    后端服务将运行在 `http://localhost:1337`。首次启动请访问 `http://localhost:1337/admin` 创建管理员账户。
+复制 `.env.example` 为 `.env.local` 并填写：
 
-3.  **安装前端依赖并启动**
+```bash
+# 网站
+NEXT_PUBLIC_SITE_URL=https://lizizai.xyz
 
-    ```bash
-    cd ../frontend
-    pnpm install
-    pnpm dev
-    ```
+# R2 存储（飞书 CMS 数据源）
+R2_PUBLIC_URL=https://your-r2-public-url
 
-    前端开发服务将运行在 `http://localhost:3000`。
+# 飞书同步服务
+NEXT_PUBLIC_SYNC_URL=https://your-sync-worker/sync
+NEXT_PUBLIC_SYNC_TOKEN=your-sync-token
 
-## 部署流程
+# Cloudflare 服务
+NEXT_PUBLIC_EMACTION_URL=https://like.your-domain.xyz
+NEXT_PUBLIC_WEBVISO_URL=https://view.your-domain.xyz
+NEXT_PUBLIC_CF_COMMENT_URL=https://comment.your-domain.xyz
+NEXT_PUBLIC_COUNTERSCALE_URL=https://analytics.your-domain.xyz
 
-本项目的前后端可独立部署。
+# 邮件（Resend）
+RESEND_API_KEY=re_xxxxx
+RESEND_FROM_EMAIL=noreply@your-domain.com
 
-- **前端部署:** 推荐使用 **Vercel** 进行一键部署，以获得最佳性能和体验。详细步骤请参考 [./frontend/README.md](./frontend/README.md)。
+# 后台管理
+ADMIN_PASSWORD=your-admin-password
+CF_COMMENT_PASSWORD=your-cf-comment-admin-password
+```
 
-- **后端部署:** 推荐使用 **Render** 或 **Docker** 进行部署。详细步骤请参考 [./backend/README.md](./backend/README.md)。
+### 开发
+
+```bash
+pnpm dev        # 启动开发服务器 (http://localhost:3000)
+pnpm build      # 生产构建
+pnpm lint       # 代码检查
+```
+
+## 部署
+
+### 前端 (Vercel)
+
+1. 将仓库连接到 Vercel
+2. 配置上述环境变量
+3. 推送到 `main` 分支自动部署
+
+### 同步 Worker (Cloudflare Workers)
+
+```bash
+cd workers/feishu-blog-sync
+pnpm install
+npx wrangler secret put FEISHU_APP_ID
+npx wrangler secret put FEISHU_APP_SECRET
+npx wrangler secret put FEISHU_FOLDER_TOKEN
+npx wrangler secret put SYNC_TOKEN
+npx wrangler deploy
+```
+
+Worker 配置详情见 `workers/feishu-blog-sync/wrangler.toml`。
+
+## 写作流程
+
+1. 在飞书中创建或编辑文档
+2. 文档会按以下方式自动同步：
+   - **自动**：每日凌晨 3 点定时同步
+   - **手动**：访问 `/admin` → 输入密码 → 点击"同步飞书文档"
+3. 同步完成后，ISR 缓存将在 1 小时内更新页面
+
+## 许可
+
+MIT

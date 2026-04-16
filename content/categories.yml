@@ -1,0 +1,28 @@
+categories:
+  - name: "AI & Prompts"
+    slug: "ai-prompts"
+    description: "Explore the intersection of artificial intelligence and creative prompts. Learn how to leverage AI tools to enhance your productivity and creativity."
+
+  - name: "Writing Strategies"
+    slug: "writing-strategies"
+    description: "Master the art of writing with proven strategies and techniques. From content creation to storytelling, discover how to craft compelling narratives."
+
+  - name: "Premium Course"
+    slug: "premium-course"
+    description: "Unlock your full potential with our carefully curated premium courses. Deep dive into advanced topics and gain mastery over essential skills."
+
+  - name: "Portfolio"
+    slug: "portfolio"
+    description: "Showcase of projects, case studies, and creative works. Explore real-world applications and learn from practical examples."
+
+  - name: "HUMAN 3.0"
+    slug: "human-3-0"
+    description: "The evolution of human potential in the age of AI. Discover how to thrive in a rapidly changing world by embracing your unique human capabilities."
+
+  - name: "Featured"
+    slug: "featured"
+    description: "Our most popular and impactful articles, handpicked for you."
+
+  - name: "Lifestyle"
+    slug: "lifestyle"
+    description: "Design your ideal lifestyle with practical advice on productivity, health, and personal development."
