@@ -28,7 +28,7 @@
     "highlight.js": "^11.11.1",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.548.0",
-    "next": "16.0.1",
+    "next": "16.0.10",
     "random_chinese_fantasy_names": "^0.1.18",
     "react": "19.2.0",
     "react-dom": "19.2.0",
