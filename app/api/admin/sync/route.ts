@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 
 const CF_COMMENT_URL = process.env.NEXT_PUBLIC_CF_COMMENT_URL || '';
 const CF_COMMENT_PASSWORD = process.env.CF_COMMENT_PASSWORD || '';
@@ -100,6 +101,9 @@ export async function POST(request: NextRequest) {
         // 获取文章列表失败不影响同步结果
       }
     }
+
+    // 同步成功后主动清除所有页面缓存，让 ISR 立即重新生成
+    revalidatePath('/', 'layout');
 
     return NextResponse.json(data);
   } catch (err) {
