@@ -54,9 +54,13 @@ async function ensureCommentAreas(slugs: string[]): Promise<void> {
 }
 
 export async function POST(request: NextRequest) {
-  // 验证管理员会话
+  // 两种认证方式：管理员 cookie 或 Vercel Cron Secret
   const session = request.cookies.get('admin_session')?.value;
-  if (session !== 'true') {
+  const cronSecret = request.headers.get('x-vercel-cron-secret');
+  const isCron = cronSecret === process.env.CRON_SECRET;
+  const isAdmin = session === 'true';
+
+  if (!isAdmin && !isCron) {
     return NextResponse.json({ error: '未授权' }, { status: 401 });
   }
 
