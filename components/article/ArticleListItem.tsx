@@ -39,7 +39,7 @@ export default function ArticleListItem({ article }: ArticleListItemProps) {
 
   return (
     <Link href={`/article/${slug}`}>
-      <article className="group flex gap-6 py-6 border-b border-border transition-colors -mx-4 px-4">
+      <article className="group flex gap-4 sm:gap-6 py-4 sm:py-6 border-b border-border transition-colors -mx-4 px-4">
         {/* 左侧内容 */}
         <div className="flex-1 min-w-0">
           <h2 className="text-xl font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
@@ -110,7 +110,7 @@ export default function ArticleListItem({ article }: ArticleListItemProps) {
         </div>
 
         {/* 右侧图片 */}
-        <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
+        <div className="relative w-24 h-24 sm:w-40 sm:h-40 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
           <Image
             src={imageUrl}
             alt={title}

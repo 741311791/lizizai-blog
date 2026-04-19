@@ -8,9 +8,10 @@ import type { Article } from '@/types/index';
 
 interface PopularArticlesProps {
   articles: Article[];
+  locale?: string;
 }
 
-export default async function PopularArticles({ articles }: PopularArticlesProps) {
+export default async function PopularArticles({ articles, locale = 'en' }: PopularArticlesProps) {
   const t = await getTranslations('home');
   const tArticle = await getTranslations('article');
   const popularArticles = articles.slice(0, 4);
@@ -34,7 +35,7 @@ export default async function PopularArticles({ articles }: PopularArticlesProps
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {popularArticles.map((article) => {
             const date = article.publishedAt
-              ? new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }).toUpperCase()
+              ? new Date(article.publishedAt).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { month: 'short', day: '2-digit' }).toUpperCase()
               : '';
             const isPremium = article.tags?.some(t => t.name === '课程');
             const imageUrl = getArticleImageUrl(article.featuredImage, article.id);

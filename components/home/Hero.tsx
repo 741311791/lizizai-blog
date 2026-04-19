@@ -43,7 +43,7 @@ export default function Hero() {
         </div>
 
         {/* Bottom Section - Resources */}
-        <div className="mt-12 text-center space-y-4">
+        <div className="border-t border-border mt-12 pt-12 text-center space-y-4">
           <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground/60">
             {t('resourcesLabel')}
           </p>

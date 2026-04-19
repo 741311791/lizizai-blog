@@ -6,7 +6,12 @@ import { getAllArticles } from '@/lib/blog-data';
 
 export const revalidate = 3600; // ISR: 每小时重新验证
 
-export default async function Home() {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const allArticles = await getAllArticles();
 
   // 最新文章（已按日期降序排列）
@@ -21,7 +26,25 @@ export default async function Home() {
       <Hero />
 
       {/* Most Popular Section */}
-      <PopularArticles articles={allArticles} />
+      <PopularArticles articles={allArticles} locale={locale} />
+
+      {/* Stats Bar - 签名时刻 */}
+      <section className="border-y border-border bg-card/50 py-8 -mx-4 px-4">
+        <div className="max-w-4xl mx-auto grid grid-cols-3 gap-8 text-center">
+          <div>
+            <div className="text-3xl md:text-4xl font-bold text-primary">{allArticles.length}+</div>
+            <div className="text-sm text-muted-foreground mt-1">{locale === 'zh' ? '原创文章' : 'Articles'}</div>
+          </div>
+          <div>
+            <div className="text-3xl md:text-4xl font-bold text-accent">AI</div>
+            <div className="text-sm text-muted-foreground mt-1">{locale === 'zh' ? '前沿洞察' : 'Edge Insights'}</div>
+          </div>
+          <div>
+            <div className="text-3xl md:text-4xl font-bold text-secondary">Free</div>
+            <div className="text-sm text-muted-foreground mt-1">{locale === 'zh' ? '永久免费' : 'Forever'}</div>
+          </div>
+        </div>
+      </section>
 
       {/* Articles Section with Layout Toggle */}
       <ArticlesSection

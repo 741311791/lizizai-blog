@@ -57,7 +57,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           {category && (
             <Badge
               variant="secondary"
-              className="absolute top-3 left-3 text-xs bg-background/80 backdrop-blur-sm hover:bg-background/80"
+              className="absolute top-3 left-3 text-xs bg-accent/80 text-accent-foreground backdrop-blur-sm hover:bg-accent/80"
             >
               {category.name}
             </Badge>

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Heart, Share2, Eye } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 import { postReaction, postVisit, isEmactionEnabled, isWebvisoEnabled } from '@/lib/services';
 
 interface ArticleActionsProps {
@@ -84,11 +85,11 @@ export default function ArticleActions({ articleId, likes, shares, views }: Arti
         }
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        alert(t('linkCopied'));
+        toast.success(t('linkCopied'));
       }
     } catch {
       navigator.clipboard.writeText(window.location.href);
-      alert(t('linkCopied'));
+      toast.success(t('linkCopied'));
     }
   };
 

@@ -28,7 +28,6 @@ export default function ArticlesSection({
           <TabsList>
             <TabsTrigger value="latest">{t('latest')}</TabsTrigger>
             <TabsTrigger value="top">{t('top')}</TabsTrigger>
-            <TabsTrigger value="discussions">{t('discussions')}</TabsTrigger>
           </TabsList>
           <div className="hidden sm:block">
             <LayoutToggle viewMode={viewMode} onViewModeChange={setViewMode} />
@@ -57,12 +56,6 @@ export default function ArticlesSection({
               ))}
             </div>
           )}
-        </TabsContent>
-
-        <TabsContent value="discussions" className="space-y-6">
-          <p className="text-center text-muted-foreground py-12">
-            {t('noDiscussions')}
-          </p>
         </TabsContent>
       </Tabs>
     </section>

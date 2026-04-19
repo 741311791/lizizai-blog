@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Twitter, Youtube, Linkedin } from 'lucide-react';
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -65,7 +66,36 @@ export default function Footer() {
       <div className="container mx-auto max-w-7xl px-4 py-12">
         {/* Newsletter subscription */}
         <div className="mb-8 text-center">
-          <h3 className="mb-4 text-lg font-semibold">Zizai Blog</h3>
+          <h3 className="mb-3 text-lg font-semibold">Zizai Blog</h3>
+          <div className="flex justify-center gap-4 mb-4">
+            <a
+              href="https://twitter.com/zizaiblog"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-primary transition-colors"
+              aria-label="Twitter"
+            >
+              <Twitter size={18} />
+            </a>
+            <a
+              href="https://youtube.com/@zizaili"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-primary transition-colors"
+              aria-label="YouTube"
+            >
+              <Youtube size={18} />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/zizai-li"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-primary transition-colors"
+              aria-label="LinkedIn"
+            >
+              <Linkedin size={18} />
+            </a>
+          </div>
           <p className="mb-4 text-sm text-muted-foreground">{t('stayRelevant')}</p>
           <form onSubmit={handleSubscribe} className="mx-auto max-w-md">
             <div className="flex gap-2">

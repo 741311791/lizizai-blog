@@ -105,7 +105,7 @@ export default async function ArticlePage({
                 <p className="text-lg text-muted-foreground leading-relaxed">{article.subtitle}</p>
               )}
 
-              <div className="flex items-center gap-6 pt-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 pt-2">
                 <AuthorCard
                   author={article.author}
                   publishedAt={article.publishedAt}

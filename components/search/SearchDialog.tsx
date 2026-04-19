@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Search, FileText } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { usePagefind } from './usePagefind';
 import { Badge } from '@/components/ui/badge';
 
@@ -19,6 +20,7 @@ interface SearchDialogProps {
 
 export default function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   const router = useRouter();
+  const t = useTranslations('nav');
   const [query, setQuery] = useState('');
   const { results, loading, search } = usePagefind();
 
@@ -30,17 +32,10 @@ export default function SearchDialog({ open, onOpenChange }: SearchDialogProps) 
     return () => clearTimeout(timer);
   }, [query, search]);
 
-  // Cmd/Ctrl+K 全局快捷键
+  // ESC 关闭时清空
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        onOpenChange(true);
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onOpenChange]);
+    if (!open) setQuery('');
+  }, [open]);
 
   const handleSelect = useCallback(
     (url: string) => {
@@ -51,21 +46,16 @@ export default function SearchDialog({ open, onOpenChange }: SearchDialogProps) 
     [onOpenChange, router]
   );
 
-  // ESC 关闭时清空
-  useEffect(() => {
-    if (!open) setQuery('');
-  }, [open]);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden">
-        <DialogTitle className="sr-only">搜索文章</DialogTitle>
+        <DialogTitle className="sr-only">{t('search')}</DialogTitle>
         <div className="flex items-center border-b border-border px-4">
           <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="搜索文章..."
+            placeholder={t('searchPlaceholder')}
             className="border-0 focus-visible:ring-0 h-11 text-sm"
             autoFocus
           />
@@ -78,7 +68,7 @@ export default function SearchDialog({ open, onOpenChange }: SearchDialogProps) 
         <div className="max-h-72 overflow-y-auto">
           {query && !loading && results.length === 0 && (
             <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-              未找到相关文章
+              {t('noResults')}
             </div>
           )}
 
@@ -113,7 +103,7 @@ export default function SearchDialog({ open, onOpenChange }: SearchDialogProps) 
 
         {!query && (
           <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-            输入关键词搜索文章
+            {t('searchPlaceholder')}
           </div>
         )}
       </DialogContent>
