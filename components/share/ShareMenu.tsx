@@ -8,6 +8,7 @@ import {
   Linkedin,
   Send,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,14 +58,16 @@ export default function ShareMenu({
   url,
   onShare,
 }: ShareMenuProps) {
+  const t = useTranslations('share');
+
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url);
-      toast.success('链接已复制到剪贴板');
+      toast.success(t('linkCopied'));
       onShare?.();
     } catch (error) {
       console.error('Failed to copy link:', error);
-      toast.error('复制失败，请重试');
+      toast.error(t('copyFailed'));
     }
   };
 
@@ -92,11 +95,11 @@ export default function ShareMenu({
     const embedCode = `<iframe src="${url}" width="100%" height="400" frameborder="0"></iframe>`;
     try {
       await navigator.clipboard.writeText(embedCode);
-      toast.success('嵌入代码已复制');
+      toast.success(t('embedCopied'));
       onShare?.();
     } catch (error) {
       console.error('Failed to copy embed code:', error);
-      toast.error('复制失败，请重试');
+      toast.error(t('copyFailed'));
     }
   };
 
@@ -140,35 +143,35 @@ export default function ShareMenu({
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem onClick={handleCopyLink}>
           <LinkIcon className="mr-2 h-4 w-4" />
-          <span>Copy link</span>
+          <span>{t('copyLink')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSendAsMessage}>
           <Send className="mr-2 h-4 w-4" />
-          <span>Send as message</span>
+          <span>{t('sendAsMessage')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleCopyEmbed}>
           <Code className="mr-2 h-4 w-4" />
-          <span>Embed</span>
+          <span>{t('embed')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={shareToNotes}>
           <BookmarkIcon className="mr-2 h-4 w-4" />
-          <span>Share to Notes</span>
+          <span>{t('shareToNotes')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={shareToFacebook}>
           <Facebook className="mr-2 h-4 w-4" />
-          <span>Share to Facebook</span>
+          <span>{t('shareToFacebook')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={shareToLinkedIn}>
           <Linkedin className="mr-2 h-4 w-4" />
-          <span>Share to Linkedin</span>
+          <span>{t('shareToLinkedin')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={shareToBluesky}>
           <BlueskyIcon className="mr-2 h-4 w-4" />
-          <span>Share to Bluesky</span>
+          <span>{t('shareToBluesky')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={shareToX}>
           <XIcon className="mr-2 h-4 w-4" />
-          <span>Share to X</span>
+          <span>{t('shareToX')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -53,6 +53,20 @@ const HEADING_PREFIX: Record<number, string> = {
   11: '######### ',
 };
 
+/**
+ * 文本对齐包装器
+ * 飞书 align: 1=左对齐(默认), 2=居中, 3=右对齐
+ */
+function wrapAlignment(text: string, align?: number): string {
+  if (align === 2) {
+    return `<div style="text-align:center">\n\n${text}\n\n</div>`;
+  }
+  if (align === 3) {
+    return `<div style="text-align:right">\n\n${text}\n\n</div>`;
+  }
+  return text;
+}
+
 interface TextElement {
   text: string;
   style?: {
@@ -67,10 +81,17 @@ interface TextElement {
 
 /**
  * 解析文本元素为 Markdown
- * 飞书 API 返回的元素格式: { text_run: { content: string, text_element_style: {...} } }
+ * 飞书 API 返回的元素格式:
+ *   - text_run: { text_run: { content: string, text_element_style: {...} } }
+ *   - equation: { equation: { content: string } }  (KaTeX 语法)
  */
 function parseTextElements(elements: any[]): string {
   return elements.map(el => {
+    // 处理公式元素（飞书 inline equation，KaTeX 语法）
+    if (el.equation) {
+      return `$${el.equation.content}$`;
+    }
+
     // 兼容两种格式：text_run.content 和 el.text
     let text = el.text_run?.content || el.text || '';
     const style = el.text_run?.text_element_style || el.style || {};
@@ -80,6 +101,7 @@ function parseTextElements(elements: any[]): string {
     if (style.bold) text = `**${text}**`;
     if (style.italic) text = `*${text}*`;
     if (style.strikethrough) text = `~~${text}~~`;
+    if (style.underline) text = `<u>${text}</u>`;
 
     return text;
   }).join('');
@@ -176,7 +198,18 @@ export function convertBlocksToMarkdown(
     switch (block.block_type) {
       case 2: {
         content = extractTextContent(block);
-        if (content) lines.push(content + '\n');
+        if (content) {
+          // 处理独立公式块（仅含 equation 元素）
+          const textData = block.text;
+          const elements = textData?.elements || [];
+          const isEquationOnly = elements.length === 1 && elements[0].equation;
+          if (isEquationOnly) {
+            lines.push(`$$\n${elements[0].equation.content}\n$$\n`);
+          } else {
+            const wrapped = wrapAlignment(content, textData?.style?.align);
+            lines.push(wrapped + '\n');
+          }
+        }
         break;
       }
 
@@ -191,7 +224,12 @@ export function convertBlocksToMarkdown(
       case 11: {
         const prefix = HEADING_PREFIX[block.block_type] || '# ';
         content = extractTextContent(block);
-        if (content) lines.push(prefix + content + '\n');
+        if (content) {
+          const textData = block.text || block.heading1 || block.heading2 || block.heading3 ||
+                           block.heading4 || block.heading5 || block.heading6;
+          const wrapped = wrapAlignment(prefix + content, textData?.style?.align);
+          lines.push(wrapped + '\n');
+        }
         break;
       }
 
@@ -245,6 +283,18 @@ export function convertBlocksToMarkdown(
           langStr = String(lang);
         }
 
+        // Mermaid 图表检测：飞书无专用枚举，通过内容首行关键字判断
+        const codeLines = codeContent.split('\n');
+        const firstLine = codeLines[0]?.trim() || '';
+        const mermaidKeywords = [
+          'graph ', 'graph\t', 'sequenceDiagram', 'flowchart ',
+          'classDiagram', 'gantt', 'pie ', 'erDiagram', 'journey',
+          'stateDiagram', 'gitGraph', 'mindmap', 'timeline',
+        ];
+        if (mermaidKeywords.some(k => firstLine.startsWith(k) || firstLine === k.trim())) {
+          langStr = 'mermaid';
+        }
+
         lines.push('```' + langStr);
         lines.push(codeContent);
         lines.push('```\n');
@@ -269,8 +319,10 @@ export function convertBlocksToMarkdown(
       }
 
       case 19: {
+        const calloutData = block.callout;
+        const emoji = calloutData?.emoji_id || '💡';
         content = extractTextContent(block);
-        if (content) lines.push(`> 💡 ${content}\n`);
+        if (content) lines.push(`> ${emoji} ${content}\n`);
         break;
       }
 
@@ -296,12 +348,82 @@ export function convertBlocksToMarkdown(
       }
 
       case 31: {
-        lines.push('<!-- table content -->\n');
+        const tableData = block.table;
+        const property = tableData?.property;
+        if (!tableData || !property) {
+          lines.push('<!-- table: missing data -->\n');
+          break;
+        }
+
+        const rowSize = property.row_size || 0;
+        const colSize = property.column_size || 0;
+        const hasHeader = property.header_row !== false;
+
+        // table.cells 是 table_cell 块的 block_id 数组
+        // 需要查找每个 table_cell 块并提取其子文本块内容
+        const cellIds = tableData.cells || [];
+        const cellContents: string[][] = [];
+
+        for (let r = 0; r < rowSize; r++) {
+          const row: string[] = [];
+          for (let c = 0; c < colSize; c++) {
+            const cellIndex = r * colSize + c;
+            const cellId = cellIds[cellIndex];
+            let cellText = '';
+
+            if (cellId) {
+              const cellBlock = blockMap.get(cellId);
+              if (cellBlock) {
+                // table_cell 的子块是 Text 块
+                const childIds = cellBlock.children || [];
+                const texts: string[] = [];
+                for (const childId of childIds) {
+                  const child = blockMap.get(childId);
+                  if (child) {
+                    const t = extractTextContent(child);
+                    if (t) texts.push(t);
+                  }
+                }
+                cellText = texts.join(' ');
+              }
+            }
+            row.push(cellText.replace(/\|/g, '\\|'));
+          }
+          cellContents.push(row);
+        }
+
+        if (cellContents.length > 0 && colSize > 0) {
+          const tableLines: string[] = [];
+
+          // 表头行
+          tableLines.push('| ' + cellContents[0].join(' | ') + ' |');
+
+          // 分隔行
+          if (hasHeader) {
+            tableLines.push('| ' + cellContents[0].map(() => '---').join(' | ') + ' |');
+          }
+
+          // 数据行
+          const startRow = hasHeader ? 1 : 0;
+          for (let r = startRow; r < cellContents.length; r++) {
+            tableLines.push('| ' + cellContents[r].join(' | ') + ' |');
+          }
+
+          // 如果没有 header 但需要补齐分隔行
+          if (!hasHeader && cellContents.length > 0) {
+            // 无表头时，在首行前插入分隔行
+            const sepLine = '| ' + cellContents[0].map(() => '---').join(' | ') + ' |';
+            tableLines.splice(1, 0, sepLine);
+          }
+
+          lines.push(tableLines.join('\n') + '\n');
+        }
         break;
       }
     }
 
-    if (block.block_type !== 12 && block.block_type !== 13) {
+    // 表格块 (31) 和表格单元格 (32) 已在内部处理，跳过递归
+    if (block.block_type !== 12 && block.block_type !== 13 && block.block_type !== 31 && block.block_type !== 32) {
       const children = block.children || [];
       for (const childId of children) {
         const child = blockMap.get(childId);
@@ -312,8 +434,15 @@ export function convertBlocksToMarkdown(
 
   processBlock(rootBlock);
 
+  // 合并连续空行为单个空行，同时修复表格行间的多余空行
+  const rawMarkdown = lines.join('\n');
+  const markdown = rawMarkdown
+    .replace(/\n{3,}/g, '\n\n')  // 最多保留一个空行
+    .replace(/(\|[^\n]+)\n\n(\|)/g, '$1\n$2')  // 表格行之间不能有空行
+    .trim();
+
   return {
-    markdown: lines.join('\n').trim(),
+    markdown,
     images,
     frontmatter,
   };

@@ -1,7 +1,7 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { format } from 'date-fns';
+import { useLocale } from 'next-intl';
 
 interface AuthorCardProps {
   author: {
@@ -13,6 +13,7 @@ interface AuthorCardProps {
 }
 
 export default function AuthorCard({ author, publishedAt }: AuthorCardProps) {
+  const locale = useLocale();
   const initials = author.name
     .split(' ')
     .map((n) => n[0])
@@ -20,18 +21,22 @@ export default function AuthorCard({ author, publishedAt }: AuthorCardProps) {
     .toUpperCase();
 
   return (
-    <div className="flex items-center gap-4 py-6 border-y border-border">
-      <Avatar className="h-12 w-12">
+    <div className="flex items-center gap-3">
+      <Avatar className="h-10 w-10">
         <AvatarImage src={author.avatar} alt={author.name} />
-        <AvatarFallback className="bg-primary text-primary-foreground">
+        <AvatarFallback className="bg-primary text-primary-foreground text-sm">
           {initials}
         </AvatarFallback>
       </Avatar>
-      <div className="flex-1">
-        <div className="font-semibold">{author.name}</div>
-        <div className="text-sm text-muted-foreground">
-          {format(new Date(publishedAt), 'MMM dd, yyyy')}
-        </div>
+      <div className="flex flex-col">
+        <span className="font-medium text-sm">{author.name}</span>
+        <span className="text-xs text-muted-foreground">
+          {new Date(publishedAt).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })}
+        </span>
       </div>
     </div>
   );

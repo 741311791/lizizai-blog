@@ -76,22 +76,81 @@ async function syncDocument(
   // 确定 slug
   const slug = frontmatter?.slug || slugify(docInfo.title);
 
-  // 下载并上传图片
+  // 下载并上传图片（带重试）
   const imageDir = `${r2BasePath}/articles/${category.slug}/${slug}/images`;
+  const uploadedImages: ImageInfo[] = [];
+
   for (const img of images) {
-    try {
-      const imageData = await client.downloadImage(img.token);
-      await r2.put(`${imageDir}/${img.filename}`, imageData, {
-        httpMetadata: { contentType: img.filename.endsWith('.png') ? 'image/png' : 'image/jpeg' },
-      });
-      console.log(`  Uploaded image: ${img.filename}`);
-    } catch (err) {
-      console.error(`  Failed to download image ${img.filename}:`, err);
+    let uploaded = false;
+    for (let attempt = 1; attempt <= 3 && !uploaded; attempt++) {
+      try {
+        const imageData = await client.downloadImage(img.token);
+        if (imageData.byteLength === 0) {
+          throw new Error('Downloaded image is empty (0 bytes)');
+        }
+
+        // 根据实际数据 magic bytes 检测图片格式，修正文件名和 Content-Type
+        const bytes = new Uint8Array(imageData);
+        let actualExt = 'jpg';
+        let contentType = 'image/jpeg';
+        if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+          actualExt = 'png';
+          contentType = 'image/png';
+        } else if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
+          actualExt = 'webp';
+          contentType = 'image/webp';
+        } else if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+          actualExt = 'gif';
+          contentType = 'image/gif';
+        }
+
+        // 如果扩展名与实际格式不匹配，修正文件名
+        const correctedFilename = img.filename.replace(/\.\w+$/, `.${actualExt}`);
+
+        await r2.put(`${imageDir}/${correctedFilename}`, imageData, {
+          httpMetadata: { contentType },
+        });
+        console.log(`  Uploaded image: ${correctedFilename} (${imageData.byteLength} bytes, ${contentType})`);
+
+        // 用修正后的文件名记录
+        uploadedImages.push({ ...img, filename: correctedFilename });
+        uploaded = true;
+      } catch (err) {
+        console.error(`  Failed to download image ${img.filename} (attempt ${attempt}/3):`, err);
+        if (attempt < 3) {
+          await new Promise(r => setTimeout(r, 1000 * attempt));
+        }
+      }
+    }
+
+    if (!uploaded) {
+      console.error(`  [FATAL] Image ${img.filename} (${img.token}) failed all 3 attempts`);
     }
   }
 
   // 替换图片 URL 中的 {slug} 占位符
-  const finalMarkdown = markdown.replace(/\{slug\}/g, slug);
+  let finalMarkdown = markdown.replace(/\{slug\}/g, slug);
+
+  // 修正 markdown 中因格式检测而改名的图片引用
+  const uploadedMap = new Map(uploadedImages.map(img => [img.token, img]));
+  for (const img of images) {
+    const uploaded = uploadedMap.get(img.token);
+    if (uploaded && uploaded.filename !== img.filename) {
+      // 文件名被修正了，更新 markdown 中的引用
+      finalMarkdown = finalMarkdown.replaceAll(img.filename, uploaded.filename);
+    }
+  }
+
+  // 移除上传失败的图片引用，替换为占位文本
+  const uploadedTokens = new Set(uploadedImages.map(img => img.token));
+  for (const img of images) {
+    if (!uploadedTokens.has(img.token)) {
+      finalMarkdown = finalMarkdown.replace(
+        new RegExp(`!\\[${img.filename.replace('.', '\\.')}\\]\\([^)]+\\)`, 'g'),
+        `*[图片加载失败: ${img.filename}]*`
+      );
+    }
+  }
 
   // 上传 Markdown 内容
   await r2.put(`${r2BasePath}/articles/${category.slug}/${slug}/content.md`, finalMarkdown, {
@@ -108,7 +167,7 @@ async function syncDocument(
     publishedAt: frontmatter?.date || new Date(parseInt(file.created_time) * 1000).toISOString(),
     updatedAt: new Date(parseInt(file.modified_time) * 1000).toISOString(),
     readingTime: calculateReadingTime(finalMarkdown),
-    coverImage: images.length > 0 ? `${r2PublicUrl}/${imageDir}/${images[0].filename}` : undefined,
+    coverImage: undefined, // 封面图统一使用 picsum.photos，不从文章内容提取
     feishuDocToken: file.token,
   };
 

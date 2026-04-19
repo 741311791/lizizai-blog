@@ -1,18 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Search, Calendar, Heart, MessageCircle } from 'lucide-react';
-import { format } from 'date-fns';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface ArchiveContentProps {
   archiveData: Record<string, Record<string, any[]>>;
 }
 
 export default function ArchiveContent({ archiveData }: ArchiveContentProps) {
+  const t = useTranslations('archive');
+  const locale = useLocale();
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter articles based on search query
@@ -31,7 +33,7 @@ export default function ArchiveContent({ archiveData }: ArchiveContentProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search articles..."
+            placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 bg-muted/50"
@@ -73,10 +75,10 @@ export default function ArchiveContent({ archiveData }: ArchiveContentProps) {
                                   </h4>
                                   <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
                                     <span className="flex items-center gap-1">
-                                      {format(
-                                        new Date(article.publishedAt),
-                                        'MMM dd'
-                                      )}
+                                      {new Date(article.publishedAt).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', {
+                                        month: 'short',
+                                        day: 'numeric',
+                                      })}
                                     </span>
                                     <span className="flex items-center gap-1">
                                       <Heart className="h-3 w-3" />
@@ -121,7 +123,7 @@ export default function ArchiveContent({ archiveData }: ArchiveContentProps) {
         ) && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
-              No articles found matching "{searchQuery}"
+              {t('noResults', { query: searchQuery })}
             </p>
           </div>
         )}

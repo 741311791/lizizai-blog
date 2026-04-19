@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { useTranslations } from 'next-intl';
 import ArticleGrid from '@/components/article/ArticleGrid';
 import ArticleListItem from '@/components/article/ArticleListItem';
 import LayoutToggle from '@/components/article/LayoutToggle';
@@ -17,6 +18,7 @@ export default function ArticlesSection({
   latestArticles,
   topArticles,
 }: ArticlesSectionProps) {
+  const t = useTranslations('article');
   const [viewMode, setViewMode] = useViewMode('list');
 
   return (
@@ -24,9 +26,9 @@ export default function ArticlesSection({
       <Tabs defaultValue="latest" className="w-full">
         <div className="flex items-center justify-between mb-6">
           <TabsList>
-            <TabsTrigger value="latest">Latest</TabsTrigger>
-            <TabsTrigger value="top">Top</TabsTrigger>
-            <TabsTrigger value="discussions">Discussions</TabsTrigger>
+            <TabsTrigger value="latest">{t('latest')}</TabsTrigger>
+            <TabsTrigger value="top">{t('top')}</TabsTrigger>
+            <TabsTrigger value="discussions">{t('discussions')}</TabsTrigger>
           </TabsList>
           <div className="hidden sm:block">
             <LayoutToggle viewMode={viewMode} onViewModeChange={setViewMode} />
@@ -59,7 +61,7 @@ export default function ArticlesSection({
 
         <TabsContent value="discussions" className="space-y-6">
           <p className="text-center text-muted-foreground py-12">
-            No discussions yet. Be the first to start one!
+            {t('noDiscussions')}
           </p>
         </TabsContent>
       </Tabs>

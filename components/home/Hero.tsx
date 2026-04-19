@@ -1,10 +1,13 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Link as LinkIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function Hero() {
+  const t = useTranslations('home');
+
   return (
     <section className="relative overflow-hidden">
       <div className="container py-8 lg:py-12">
@@ -17,12 +20,12 @@ export default function Hero() {
 
           {/* Main Headline */}
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-            Create More. Work Smarter. Live Better.
+            {t('headline')}
           </h1>
 
           {/* Subtitle */}
           <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Join the AI-powered creators shaping the future. Learn how to leverage creativity and technology to build meaningful work in the age of artificial intelligence.
+            {t('subtitle')}
           </p>
 
           {/* CTA Button */}
@@ -33,7 +36,7 @@ export default function Hero() {
                 className="gap-2 px-8 py-6 text-base rounded-full"
               >
                 <LinkIcon className="h-5 w-5" />
-                Receive free insights weekly
+                {t('ctaButton')}
               </Button>
             </Link>
           </div>
@@ -42,13 +45,13 @@ export default function Hero() {
         {/* Bottom Section - Resources */}
         <div className="mt-12 text-center space-y-4">
           <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground/60">
-            RESOURCES
+            {t('resourcesLabel')}
           </p>
           <h2 className="text-3xl md:text-4xl font-bold">
-            Join The AI Creative Movement
+            {t('movementTitle')}
           </h2>
           <p className="text-base md:text-lg text-muted-foreground">
-            Become future-proof with these tools and insights
+            {t('movementSubtitle')}
           </p>
         </div>
       </div>

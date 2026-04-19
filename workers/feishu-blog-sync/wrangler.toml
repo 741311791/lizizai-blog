@@ -13,6 +13,7 @@ crons = ["0 3 * * *"]
 FEISHU_APP_ID = "cli_a951d50564f89bb5"
 FEISHU_FOLDER_TOKEN = "RnSDfNdqZlcEtud4JjpcjtpKncg"
 R2_BASE_PATH = "blog-data"
+R2_PUBLIC_URL = "https://pub-7fc5ed7acc9844ab99297fa6b47f55e6.r2.dev"
 
 # Custom Domains（Cloudflare 自动管理 DNS，生成 AAAA 记录）
 routes = [

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import { Heart, Share2, MessageCircle, Clock } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getArticleImageUrl } from '@/lib/utils/image';
@@ -16,6 +17,8 @@ interface ArticleCardProps {
 }
 
 export default function ArticleCard({ article }: ArticleCardProps) {
+  const t = useTranslations('article');
+  const locale = useLocale();
   const {
     id,
     title,
@@ -126,7 +129,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
               <span className="font-medium">{author.name}</span>
               <span>·</span>
               <span>
-                {new Date(publishedAt).toLocaleDateString('zh-CN', {
+                {new Date(publishedAt).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', {
                   month: 'short',
                   day: 'numeric',
                 })}
@@ -143,7 +146,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
               {readingTime && (
                 <div className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  <span>{readingTime} 分钟</span>
+                  <span>{t('readingTime', { count: readingTime })}</span>
                 </div>
               )}
             </div>

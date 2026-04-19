@@ -20,6 +20,7 @@ export interface Env {
   FEISHU_APP_SECRET: string;
   FEISHU_FOLDER_TOKEN: string;
   R2_BASE_PATH: string;
+  R2_PUBLIC_URL: string;
   SYNC_TOKEN: string;
 }
 
@@ -50,13 +51,16 @@ export default {
         });
       }
 
+      const r2PublicUrl = env.R2_PUBLIC_URL || `https://${url.host}`;
+      console.log(`Using R2_PUBLIC_URL: ${r2PublicUrl}`);
+
       const result = await performSync({
         R2: env.R2,
         FEISHU_APP_ID: env.FEISHU_APP_ID,
         FEISHU_APP_SECRET: env.FEISHU_APP_SECRET,
         FEISHU_FOLDER_TOKEN: env.FEISHU_FOLDER_TOKEN,
         R2_BASE_PATH: env.R2_BASE_PATH || 'blog-data',
-        R2_PUBLIC_URL: `https://${url.host}`,
+        R2_PUBLIC_URL: r2PublicUrl,
       });
 
       return new Response(JSON.stringify(result), {
@@ -108,7 +112,7 @@ export default {
       FEISHU_APP_SECRET: env.FEISHU_APP_SECRET,
       FEISHU_FOLDER_TOKEN: env.FEISHU_FOLDER_TOKEN,
       R2_BASE_PATH: env.R2_BASE_PATH || 'blog-data',
-      R2_PUBLIC_URL: 'https://cdn.lizizai.xyz',
+      R2_PUBLIC_URL: env.R2_PUBLIC_URL || 'https://cdn.lizizai.xyz',
     });
 
     console.log('Scheduled sync result:', result);

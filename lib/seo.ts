@@ -32,9 +32,9 @@ export const siteConfig = {
 };
 
 /**
- * 生成默认 metadata
+ * 生成默认 metadata（多语言支持）
  */
-export function generateDefaultMetadata(): Metadata {
+export function generateDefaultMetadata(locale: string = 'en'): Metadata {
   return {
     metadataBase: new URL(siteConfig.url),
     title: {
@@ -50,7 +50,7 @@ export function generateDefaultMetadata(): Metadata {
     // Open Graph
     openGraph: {
       type: 'website',
-      locale: 'zh_CN',
+      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
       url: siteConfig.url,
       title: siteConfig.title,
       description: siteConfig.description,
@@ -97,17 +97,21 @@ export function generateDefaultMetadata(): Metadata {
     // Manifest
     manifest: '/site.webmanifest',
 
-    // RSS Feed
+    // RSS Feed + hreflang
     alternates: {
       types: {
         'application/rss+xml': `${siteConfig.url}/feed.xml`,
+      },
+      languages: {
+        en: siteConfig.url,
+        zh: `${siteConfig.url}/zh`,
       },
     },
   };
 }
 
 /**
- * 生成文章 metadata
+ * 生成文章 metadata（支持多语言 hreflang）
  */
 export function generateArticleMetadata({
   title,
@@ -119,6 +123,7 @@ export function generateArticleMetadata({
   tags,
   imageUrl,
   slug,
+  locale = 'en',
 }: {
   title: string;
   description?: string;
@@ -129,8 +134,10 @@ export function generateArticleMetadata({
   tags?: string[];
   imageUrl?: string;
   slug: string;
+  locale?: string;
 }): Metadata {
   const url = `${siteConfig.url}/article/${slug}`;
+  const zhUrl = `${siteConfig.url}/zh/article/${slug}`;
   const ogImage = imageUrl || siteConfig.ogImage;
 
   return {
@@ -142,8 +149,8 @@ export function generateArticleMetadata({
     // Open Graph
     openGraph: {
       type: 'article',
-      locale: 'zh_CN',
-      url,
+      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
+      url: locale === 'zh' ? zhUrl : url,
       title,
       description: description || siteConfig.description,
       siteName: siteConfig.name,
@@ -170,9 +177,13 @@ export function generateArticleMetadata({
       images: [ogImage],
     },
 
-    // Alternate
+    // hreflang alternate links
     alternates: {
-      canonical: url,
+      canonical: locale === 'zh' ? zhUrl : url,
+      languages: {
+        en: url,
+        zh: zhUrl,
+      },
     },
   };
 }

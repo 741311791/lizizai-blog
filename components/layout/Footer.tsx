@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 export default function Footer() {
+  const t = useTranslations('footer');
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -15,7 +17,7 @@ export default function Footer() {
     
     if (!email) {
       setStatus('error');
-      setMessage('Please enter your email address');
+      setMessage(t('enterEmail'));
       return;
     }
 
@@ -38,7 +40,7 @@ export default function Footer() {
       }
 
       setStatus('success');
-      setMessage('Successfully subscribed! Check your email for confirmation.');
+      setMessage(t('subscribeSuccess'));
       setEmail('');
       
       // Reset status after 5 seconds
@@ -48,7 +50,7 @@ export default function Footer() {
       }, 5000);
     } catch (error) {
       setStatus('error');
-      setMessage(error instanceof Error ? error.message : 'Failed to subscribe. Please try again.');
+      setMessage(error instanceof Error ? error.message : t('subscribeFailed'));
       
       // Reset status after 5 seconds
       setTimeout(() => {
@@ -64,12 +66,12 @@ export default function Footer() {
         {/* Newsletter subscription */}
         <div className="mb-8 text-center">
           <h3 className="mb-4 text-lg font-semibold">Zizai Blog</h3>
-          <p className="mb-4 text-sm text-muted-foreground">stay relevant</p>
+          <p className="mb-4 text-sm text-muted-foreground">{t('stayRelevant')}</p>
           <form onSubmit={handleSubscribe} className="mx-auto max-w-md">
             <div className="flex gap-2">
               <Input
                 type="email"
-                placeholder="Type your email..."
+                placeholder={t('emailPlaceholder')}
                 className="bg-background"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -80,7 +82,7 @@ export default function Footer() {
                 className="bg-primary hover:bg-primary/90"
                 disabled={status === 'loading'}
               >
-                {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
+                {status === 'loading' ? t('subscribing') : t('subscribe')}
               </Button>
             </div>
             {message && (
@@ -96,31 +98,31 @@ export default function Footer() {
         {/* Footer links */}
         <div className="flex flex-wrap justify-center gap-6 text-sm">
           <Link href="/about" className="hover:text-primary transition-colors">
-            About
+            {t('about')}
           </Link>
           <Link href="/archive" className="hover:text-primary transition-colors">
-            Archive
+            {t('archive')}
           </Link>
           <Link href="/recommendations" className="hover:text-primary transition-colors">
-            Recommendations
+            {t('recommendations')}
           </Link>
           <Link href="/sitemap" className="hover:text-primary transition-colors">
-            Sitemap
+            {t('sitemap')}
           </Link>
           <Link href="/privacy" className="hover:text-primary transition-colors">
-            Privacy
+            {t('privacy')}
           </Link>
           <Link href="/terms" className="hover:text-primary transition-colors">
-            Terms
+            {t('terms')}
           </Link>
           <Link href="/collection-notice" className="hover:text-primary transition-colors">
-            Collection notice
+            {t('collectionNotice')}
           </Link>
         </div>
 
         {/* Copyright */}
         <div className="mt-8 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Zizai Blog. All rights reserved.
+          {t('copyright', { year: new Date().getFullYear() })}
         </div>
       </div>
     </footer>

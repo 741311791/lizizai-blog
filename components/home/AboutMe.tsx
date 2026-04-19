@@ -2,17 +2,20 @@
 
 import Image from 'next/image';
 import { Instagram, Twitter, Youtube, Linkedin } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function AboutMe() {
+  const t = useTranslations('home');
+
   return (
     <section className="relative py-20">
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="text-center mb-16 space-y-4">
-          <p className="text-sm tracking-[0.3em] text-muted-foreground uppercase">About Me</p>
-          <h1 className="text-5xl md:text-6xl font-bold">Who Is Zizai Li?</h1>
+          <p className="text-sm tracking-[0.3em] text-muted-foreground uppercase">{t('aboutLabel')}</p>
+          <h1 className="text-5xl md:text-6xl font-bold">{t('aboutTitle')}</h1>
           <p className="text-xl text-muted-foreground">
-            Just a human exploring the intersection of technology and creativity.
+            {t('aboutSubtitle')}
           </p>
         </div>
 
@@ -73,18 +76,18 @@ export default function AboutMe() {
 
           {/* Bio Text */}
           <div className="space-y-6 text-lg leading-relaxed">
-            <h2 className="text-4xl font-bold mb-6">Hey, I'm Zizai.</h2>
+            <h2 className="text-4xl font-bold mb-6">{t('greeting')}</h2>
 
             <p className="text-foreground/80">
-              I'm a creator, developer, and writer obsessed with the mind, technology, and the art of building meaningful digital experiences.
+              {t('bioParagraph1')}
             </p>
 
             <p className="text-foreground/80">
-              Previously, I worked as a software engineer and product designer, helping teams build products that people love. Now I write about creativity, productivity, and the future of work in the AI era.
+              {t('bioParagraph2')}
             </p>
 
             <p className="text-foreground font-semibold">
-              For those wondering, I am not accepting consulting clients or "quick chats to pick my brain" at the moment. If you'd like to learn from me, explore my articles and courses above.
+              {t('bioParagraph3')}
             </p>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { getArticlesByTag, getAllTagSlugs, getAllTags } from '@/lib/blog-data';
 import ArticleGrid from '@/components/article/ArticleGrid';
 import { Badge } from '@/components/ui/badge';

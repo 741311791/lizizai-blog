@@ -1,24 +1,26 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link, usePathname } from '@/i18n/navigation';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
 
 const NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/category/ai', label: 'AI' },
-  { href: '/category/human-3-0', label: 'HUMAN 3.0' },
-  { href: '/category/premium-course', label: 'Premium Course' },
-  { href: '/category/portfolio', label: 'Portfolio' },
-  { href: '/archive', label: 'Archive' },
+  { href: '/', labelKey: 'home' as const },
+  { href: '/category/ai', labelKey: 'ai' as const },
+  { href: '/category/human-3-0', labelKey: 'human3' as const },
+  { href: '/category/premium-course', labelKey: 'premiumCourse' as const },
+  { href: '/category/portfolio', labelKey: 'portfolio' as const },
+  { href: '/archive', labelKey: 'archive' as const },
 ];
 
 export default function MobileNav() {
   const pathname = usePathname();
+  const t = useTranslations('nav');
   const [open, setOpen] = useState(false);
 
   const isActive = (path: string) => {
@@ -29,7 +31,7 @@ export default function MobileNav() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden" aria-label="菜单">
+        <Button variant="ghost" size="icon" className="md:hidden" aria-label={t('menu')}>
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
@@ -50,16 +52,19 @@ export default function MobileNav() {
                   : 'text-muted-foreground hover:text-foreground hover:bg-muted'
               )}
             >
-              {link.label}
+              {t(link.labelKey)}
             </Link>
           ))}
         </nav>
         <div className="mt-6 pt-6 border-t border-border">
           <Link href="/subscribe" onClick={() => setOpen(false)}>
             <Button className="w-full bg-primary hover:bg-primary/90">
-              Subscribe
+              {t('subscribe')}
             </Button>
           </Link>
+          <div className="mt-4">
+            <LanguageSwitcher variant="text" />
+          </div>
         </div>
       </SheetContent>
     </Sheet>

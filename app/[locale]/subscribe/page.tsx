@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -17,14 +17,14 @@ function SubscribePageContent() {
   const [success, setSuccess] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   useEffect(() => {
-    // Check for confirmation success
+    // 检查确认成功
     if (searchParams.get('confirmed') === 'true') {
       setConfirmed(true);
     }
-    
-    // Check for errors
+
+    // 检查错误
     const errorParam = searchParams.get('error');
     if (errorParam) {
       const errorMessages: Record<string, string> = {
@@ -40,16 +40,16 @@ function SubscribePageContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) {
       setError('Please enter your email address');
       return;
     }
-    
+
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: {
@@ -57,14 +57,13 @@ function SubscribePageContent() {
         },
         body: JSON.stringify({ email, name }),
       });
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.error?.message || 'Subscription failed');
       }
-      
-      // 显示成功消息
+
       setSuccess(true);
       setEmail('');
       setName('');
@@ -105,7 +104,7 @@ function SubscribePageContent() {
     'Join 178,000+ subscribers',
   ];
 
-  // Confirmation success page
+  // 确认成功页面
   if (confirmed) {
     return (
       <div className="container mx-auto max-w-2xl px-4 py-16">
@@ -115,14 +114,14 @@ function SubscribePageContent() {
               <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <h1 className="text-3xl font-bold">Welcome to Zizai Blog! 🎉</h1>
             <p className="text-lg text-muted-foreground">
               Your subscription has been confirmed successfully
             </p>
           </div>
-          
+
           <div className="p-6 rounded-lg border border-border bg-muted/50 text-left space-y-4">
             <div className="flex items-start gap-3">
               <div className="shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -135,7 +134,7 @@ function SubscribePageContent() {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <Mail className="h-5 w-5 text-primary" />
@@ -147,7 +146,7 @@ function SubscribePageContent() {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="shrink-0 w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
                 <Sparkles className="h-5 w-5 text-amber-600 dark:text-amber-400" />
@@ -162,7 +161,7 @@ function SubscribePageContent() {
               </div>
             </div>
           </div>
-          
+
           <div className="flex gap-4 justify-center">
             <Link href="/">
               <Button size="lg">Explore Articles</Button>
@@ -175,7 +174,7 @@ function SubscribePageContent() {
       </div>
     );
   }
-  
+
   if (success) {
     return (
       <div className="container mx-auto max-w-2xl px-4 py-16">
@@ -185,14 +184,14 @@ function SubscribePageContent() {
               <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <h1 className="text-3xl font-bold">Almost there! ✉️</h1>
             <p className="text-lg text-muted-foreground">
               Please check your email to confirm your subscription
             </p>
           </div>
-          
+
           <div className="p-6 rounded-lg border border-border bg-muted/50 text-left space-y-4">
             <div className="flex items-start gap-3">
               <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -201,12 +200,12 @@ function SubscribePageContent() {
               <div className="space-y-1">
                 <h3 className="font-semibold">Check your inbox</h3>
                 <p className="text-sm text-muted-foreground">
-                  We've sent a confirmation email to <strong className="text-foreground">{email || 'your email'}</strong>. 
+                  We've sent a confirmation email to <strong className="text-foreground">{email || 'your email'}</strong>.
                   Click the link in the email to complete your subscription.
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="shrink-0 w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
                 <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
@@ -220,7 +219,7 @@ function SubscribePageContent() {
                 </ul>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
                 <Sparkles className="h-5 w-5 text-green-600 dark:text-green-400" />
@@ -233,13 +232,13 @@ function SubscribePageContent() {
               </div>
             </div>
           </div>
-          
+
           <div className="flex gap-4 justify-center">
             <Link href="/">
               <Button>Back to Home</Button>
             </Link>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => {
                 setSuccess(false);
                 setEmail('');
@@ -259,7 +258,7 @@ function SubscribePageContent() {
       <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8">
         ← Back to Home
       </Link>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         {/* Left Column - Benefits */}
         <div className="space-y-8">
@@ -362,9 +361,9 @@ function SubscribePageContent() {
                 </div>
               )}
 
-              <Button 
-                type="submit" 
-                className="w-full" 
+              <Button
+                type="submit"
+                className="w-full"
                 size="lg"
                 disabled={isLoading}
               >

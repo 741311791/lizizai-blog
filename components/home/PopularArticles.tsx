@@ -1,7 +1,8 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Lock } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import { getArticleImageUrl } from '@/lib/utils/image';
 import type { Article } from '@/types/index';
 
@@ -9,7 +10,9 @@ interface PopularArticlesProps {
   articles: Article[];
 }
 
-export default function PopularArticles({ articles }: PopularArticlesProps) {
+export default async function PopularArticles({ articles }: PopularArticlesProps) {
+  const t = await getTranslations('home');
+  const tArticle = await getTranslations('article');
   const popularArticles = articles.slice(0, 4);
 
   if (popularArticles.length === 0) return null;
@@ -19,10 +22,10 @@ export default function PopularArticles({ articles }: PopularArticlesProps) {
       <div className="container">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold">Most Popular</h2>
+          <h2 className="text-2xl md:text-3xl font-bold">{t('mostPopular')}</h2>
           <Link href="/archive">
             <Button variant="link" className="text-primary hover:text-primary/80">
-              VIEW ALL
+              {t('viewAll')}
             </Button>
           </Link>
         </div>
@@ -63,7 +66,7 @@ export default function PopularArticles({ articles }: PopularArticlesProps) {
                       {article.readingTime && (
                         <>
                           <span>·</span>
-                          <span>{article.readingTime} min</span>
+                          <span>{tArticle('readingTime', { count: article.readingTime })}</span>
                         </>
                       )}
                     </div>

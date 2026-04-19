@@ -53,7 +53,7 @@ export async function getAllArticles(): Promise<Article[]> {
     slug: item.slug,
     content: '',
     excerpt: item.excerpt,
-    featuredImage: item.coverImage,
+    featuredImage: undefined, // 封面图统一使用 picsum.photos，不从文章内容提取
     publishedAt: item.publishedAt,
     likes: 0,
     views: undefined,

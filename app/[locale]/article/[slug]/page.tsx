@@ -1,6 +1,3 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import AuthorCard from '@/components/article/AuthorCard';
 import ArticleActions from '@/components/article/ArticleActions';
@@ -93,66 +90,35 @@ export default async function ArticlePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
       <div className="container mx-auto max-w-7xl px-4 py-8">
-        {/* Breadcrumb */}
-        <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-foreground">
-            Home
-          </Link>
-          <ChevronRight className="h-4 w-4" />
-          {article.category && (
-            <>
-              <Link
-                href={`/category/${article.category.slug}`}
-                className="hover:text-foreground"
-              >
-                {article.category.name}
-              </Link>
-              <ChevronRight className="h-4 w-4" />
-            </>
-          )}
-          <span className="truncate text-foreground">{article.title}</span>
-        </nav>
-
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_250px]">
           {/* Main Content */}
           <article className="max-w-3xl">
             {/* Article Header */}
-            <header className="mb-8 space-y-6">
+            <header className="mb-8 space-y-4">
               {article.category && (
                 <Badge variant="secondary">{article.category.name}</Badge>
               )}
-              <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
+              <h1 className="text-3xl font-bold tracking-tight lg:text-4xl">
                 {article.title}
               </h1>
               {article.subtitle && (
-                <p className="text-xl text-muted-foreground">{article.subtitle}</p>
+                <p className="text-lg text-muted-foreground leading-relaxed">{article.subtitle}</p>
               )}
 
-              <AuthorCard
-                author={article.author}
-                publishedAt={article.publishedAt}
-              />
+              <div className="flex items-center gap-6 pt-2">
+                <AuthorCard
+                  author={article.author}
+                  publishedAt={article.publishedAt}
+                />
 
-              <ArticleActions
-                articleId={article.id}
-                likes={likes || article.likes}
-                shares={0}
-                views={views || article.views}
-              />
-            </header>
-
-            {/* Featured Image */}
-            {article.featuredImage && (
-              <div className="relative mb-8 aspect-video overflow-hidden rounded-lg">
-                <Image
-                  src={article.featuredImage}
-                  alt={article.title}
-                  fill
-                  className="object-cover"
-                  priority
+                <ArticleActions
+                  articleId={article.id}
+                  likes={likes || article.likes}
+                  shares={0}
+                  views={views || article.views}
                 />
               </div>
-            )}
+            </header>
 
             {/* Article Content */}
             <ArticleContent content={article.content} />

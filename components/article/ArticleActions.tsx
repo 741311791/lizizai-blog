@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart, Share2, Eye } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { postReaction, postVisit, isEmactionEnabled, isWebvisoEnabled } from '@/lib/services';
 
@@ -16,6 +17,7 @@ interface ArticleActionsProps {
 const LIKED_ARTICLES_KEY = 'liked_articles';
 
 export default function ArticleActions({ articleId, likes, shares, views }: ArticleActionsProps) {
+  const t = useTranslations('article');
   const [isLiked, setIsLiked] = useState(false);
   const [currentLikes, setCurrentLikes] = useState(likes);
   const [currentViews, setCurrentViews] = useState(views ?? 0);
@@ -82,38 +84,38 @@ export default function ArticleActions({ articleId, likes, shares, views }: Arti
         }
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        alert('链接已复制到剪贴板！');
+        alert(t('linkCopied'));
       }
     } catch {
       navigator.clipboard.writeText(window.location.href);
-      alert('链接已复制到剪贴板！');
+      alert(t('linkCopied'));
     }
   };
 
   return (
-    <div className="flex items-center gap-2 py-6 border-y border-border">
+    <div className="flex items-center gap-3">
       <Button
         variant="ghost"
         size="sm"
         onClick={handleLike}
         disabled={isLoading || isLiked}
         className={cn(
-          'gap-2',
+          'gap-1.5 h-8 px-3',
           isLiked && 'text-red-500 hover:text-red-600'
         )}
       >
-        <Heart className={cn('h-5 w-5', isLiked && 'fill-current')} />
-        <span>{currentLikes}</span>
+        <Heart className={cn('h-4 w-4', isLiked && 'fill-current')} />
+        <span className="text-sm">{currentLikes}</span>
       </Button>
 
       {isWebvisoEnabled() && (
         <Button
           variant="ghost"
           size="sm"
-          className="gap-2 cursor-default"
+          className="gap-1.5 h-8 px-3 cursor-default"
         >
-          <Eye className="h-5 w-5" />
-          <span>{currentViews}</span>
+          <Eye className="h-4 w-4" />
+          <span className="text-sm">{currentViews}</span>
         </Button>
       )}
 
@@ -121,10 +123,10 @@ export default function ArticleActions({ articleId, likes, shares, views }: Arti
         variant="ghost"
         size="sm"
         onClick={handleShare}
-        className="gap-2"
+        className="gap-1.5 h-8 px-3"
       >
-        <Share2 className="h-5 w-5" />
-        <span>{shares}</span>
+        <Share2 className="h-4 w-4" />
+        <span className="text-sm">{shares}</span>
       </Button>
     </div>
   );

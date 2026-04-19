@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown, ChevronRight, List } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { extractHeadings, type Heading } from '@/lib/utils/heading';
 import { cn } from '@/lib/utils';
 
@@ -10,6 +11,7 @@ interface MobileTocProps {
 }
 
 export default function MobileToc({ content }: MobileTocProps) {
+  const t = useTranslations('article');
   const [open, setOpen] = useState(false);
   const headings = extractHeadings(content);
 
@@ -32,7 +34,7 @@ export default function MobileToc({ content }: MobileTocProps) {
       >
         <span className="flex items-center gap-2">
           <List className="h-4 w-4" />
-          目录（{headings.length}）
+          {t('tocWithCount', { count: headings.length })}
         </span>
         {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
       </button>

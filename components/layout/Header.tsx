@@ -1,30 +1,32 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Share2, Search, X, FileText } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Logo from '@/components/ui/logo';
 import ShareMenu from '@/components/share/ShareMenu';
 import MobileNav from '@/components/layout/MobileNav';
+import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
 import { usePagefind } from '@/components/search/usePagefind';
 import { config } from '@/lib/env';
 
 const NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/category/ai', label: 'AI' },
-  { href: '/category/human-3-0', label: 'HUMAN 3.0' },
-  { href: '/category/premium-course', label: 'Premium Course' },
-  { href: '/category/portfolio', label: 'Portfolio' },
-  { href: '/archive', label: 'Archive' },
+  { href: '/', labelKey: 'home' as const },
+  { href: '/category/ai', labelKey: 'ai' as const },
+  { href: '/category/human-3-0', labelKey: 'human3' as const },
+  { href: '/category/premium-course', labelKey: 'premiumCourse' as const },
+  { href: '/category/portfolio', labelKey: 'portfolio' as const },
+  { href: '/archive', labelKey: 'archive' as const },
 ];
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations('nav');
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const { results, search } = usePagefind();
@@ -102,7 +104,7 @@ export default function Header() {
             {/* 滑出式搜索输入框 */}
             <div
               className={cn(
-                'overflow-hidden transition-all duration-300 ease-out',
+                'overflow-hidden rounded-md transition-all duration-300 ease-out',
                 searchOpen ? 'w-48 md:w-64 opacity-100 mr-2' : 'w-0 opacity-0'
               )}
             >
@@ -111,7 +113,7 @@ export default function Header() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="搜索文章..."
+                placeholder={t('searchPlaceholder')}
                 className="w-full h-9 rounded-md border border-border bg-background px-3 text-sm outline-none focus:ring-1 focus:ring-primary transition-all"
               />
             </div>
@@ -120,7 +122,7 @@ export default function Header() {
             <Button
               variant="ghost"
               size="icon"
-              aria-label={searchOpen ? '关闭搜索' : '搜索'}
+              aria-label={searchOpen ? t('closeSearch') : t('search')}
               onClick={() => setSearchOpen(prev => !prev)}
               className="shrink-0"
             >
@@ -162,24 +164,25 @@ export default function Header() {
             {searchOpen && query && results.length === 0 && (
               <div className="absolute top-full right-0 mt-2 w-72 md:w-80 rounded-lg border border-border bg-background shadow-lg overflow-hidden z-50 animate-in slide-in-from-top-2 duration-200">
                 <div className="px-4 py-6 text-center text-sm text-muted-foreground">
-                  未找到相关文章
+                  {t('noResults')}
                 </div>
               </div>
             )}
           </div>
 
           <ShareMenu
-            title="Zizai Blog"
-            description="欢迎来到 Zizai Blog，分享技术与生活"
+            title={t('shareTitle')}
+            description={t('shareDescription')}
             url={`${config.siteUrl}${pathname}`}
           >
-            <Button variant="ghost" size="icon" aria-label="Share">
+            <Button variant="ghost" size="icon" aria-label={t('share')}>
               <Share2 className="h-5 w-5" />
             </Button>
           </ShareMenu>
+          <LanguageSwitcher />
           <Link href="/subscribe" className="hidden md:inline-flex">
             <Button variant="default" className="bg-primary hover:bg-primary/90">
-              Subscribe
+              {t('subscribe')}
             </Button>
           </Link>
           {/* 移动端汉堡菜单 */}
@@ -199,7 +202,7 @@ export default function Header() {
                 isActive(link.href) && 'text-primary font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary'
               )}
             >
-              {link.label}
+              {t(link.labelKey)}
             </Link>
           ))}
         </div>

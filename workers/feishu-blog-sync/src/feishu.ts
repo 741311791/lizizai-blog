@@ -139,10 +139,42 @@ export class FeishuClient {
 
   /**
    * 下载图片
+   * 飞书 docx 文档内嵌图片的 token 使用 drive/v1/medias/{file_token}/download 端点
+   * 如果失败，回退到 batch_get_download_url
    */
   async downloadImage(imageToken: string): Promise<ArrayBuffer> {
     const token = await this.getToken();
 
+    // 方法1：直接下载（适用于 docx 文档内嵌图片）
+    try {
+      const directRes = await fetch(
+        `${FEISHU_BASE_URL}/drive/v1/medias/${imageToken}/download`,
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+
+      if (directRes.ok) {
+        const contentType = directRes.headers.get('content-type') || '';
+        // 确认返回的是图片数据而非错误 JSON
+        if (contentType.startsWith('image/') || contentType.startsWith('application/octet-stream')) {
+          return await directRes.arrayBuffer();
+        }
+        // 可能返回了 JSON 错误，解析后尝试方法2
+        const text = await directRes.text();
+        try {
+          const errData = JSON.parse(text);
+          console.warn(`Direct download returned JSON (code=${errData.code}): ${errData.msg}`);
+        } catch {
+          // 不是 JSON，当作二进制数据返回
+          return new TextEncoder().encode(text).buffer;
+        }
+      } else {
+        console.warn(`Direct download failed with status ${directRes.status}`);
+      }
+    } catch (err) {
+      console.warn('Direct download error:', err);
+    }
+
+    // 方法2：通过 batch_get_download_url 获取临时下载链接
     const res = await fetch(`${FEISHU_BASE_URL}/drive/v1/medias/batch_get_download_url`, {
       method: 'POST',
       headers: {
@@ -156,11 +188,14 @@ export class FeishuClient {
 
     const data = await res.json() as any;
     if (data.code !== 0 || !data.data?.download_urls?.[0]?.download_url) {
-      throw new Error(`Failed to get image URL: ${data.msg}`);
+      throw new Error(`Failed to get image download URL (token=${imageToken}): code=${data.code}, msg=${data.msg}`);
     }
 
     const downloadUrl = data.data.download_urls[0].download_url;
     const imageRes = await fetch(downloadUrl);
+    if (!imageRes.ok) {
+      throw new Error(`Failed to download image from temp URL: status=${imageRes.status}`);
+    }
     return await imageRes.arrayBuffer();
   }
 }

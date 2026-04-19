@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { MessageCircle, Reply, Heart, Send } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { getOrCreateGuestIdentity, type GuestIdentity } from '@/lib/guest-identity';
@@ -53,15 +54,15 @@ function buildCommentTree(comments: Comment[]): CommentNode[] {
 }
 
 /** 格式化时间为相对时间 */
-function formatTime(dateStr: string): string {
+function formatTime(dateStr: string, t: ReturnType<typeof useTranslations<'comment'>>): string {
   const date = new Date(dateStr + (dateStr.includes('Z') || dateStr.includes('+') ? '' : 'Z'));
   const now = new Date();
   const diff = (now.getTime() - date.getTime()) / 1000;
 
-  if (diff < 60) return '刚刚';
-  if (diff < 3600) return `${Math.floor(diff / 60)} 分钟前`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)} 小时前`;
-  if (diff < 2592000) return `${Math.floor(diff / 86400)} 天前`;
+  if (diff < 60) return t('justNow');
+  if (diff < 3600) return t('minutesAgo', { count: Math.floor(diff / 60) });
+  if (diff < 86400) return t('hoursAgo', { count: Math.floor(diff / 3600) });
+  if (diff < 2592000) return t('daysAgo', { count: Math.floor(diff / 86400) });
   return date.toLocaleDateString('zh-CN');
 }
 
@@ -81,6 +82,7 @@ function CommentItem({
   submitting,
   guestIdentity,
   slug,
+  t,
 }: {
   comment: CommentNode;
   depth?: number;
@@ -93,12 +95,13 @@ function CommentItem({
   submitting: boolean;
   guestIdentity: GuestIdentity;
   slug: string;
+  t: ReturnType<typeof useTranslations<'comment'>>;
 }) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(comment.likes);
   const isReplying = replyingTo === comment.id;
   const maxDepth = 4;
-  const displayName = comment.nickname || '匿名侠客';
+  const displayName = comment.nickname || t('anonymous');
   const avatarUrl = comment.avatar_url || `https://api.dicebear.com/9.x/adventurer/svg?seed=${comment.id}`;
 
   const handleLike = async () => {
@@ -129,9 +132,9 @@ function CommentItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 text-sm">
             <span className="font-medium text-primary">{displayName}</span>
-            <span className="text-muted-foreground text-xs">{formatTime(comment.created_at)}</span>
+            <span className="text-muted-foreground text-xs">{formatTime(comment.created_at, t)}</span>
             {comment.pinned === 1 && (
-              <span className="text-xs text-amber-500">置顶</span>
+              <span className="text-xs text-amber-500">{t('pinned')}</span>
             )}
           </div>
 
@@ -151,7 +154,7 @@ function CommentItem({
               className="flex items-center gap-1 hover:text-primary transition-colors"
             >
               <Reply className="w-3.5 h-3.5" />
-              回复
+              {t('reply')}
             </button>
             <button
               onClick={handleLike}
@@ -168,7 +171,7 @@ function CommentItem({
               <Textarea
                 value={replyContent}
                 onChange={(e) => onReplyContentChange(e.target.value)}
-                placeholder={`回复 ${displayName}...`}
+                placeholder={t('replyTo', { name: displayName })}
                 className="min-h-[80px] text-sm bg-muted/20"
                 autoFocus
               />
@@ -179,14 +182,14 @@ function CommentItem({
                   disabled={submitting || !replyContent.trim()}
                 >
                   <Send className="w-3.5 h-3.5 mr-1" />
-                  {submitting ? '发送中...' : '发送'}
+                  {submitting ? t('sending') : t('send')}
                 </Button>
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={onCancelReply}
                 >
-                  取消
+                  {t('cancel')}
                 </Button>
               </div>
             </div>
@@ -211,6 +214,7 @@ function CommentItem({
               submitting={submitting}
               guestIdentity={guestIdentity}
               slug={slug}
+              t={t}
             />
           ))}
         </div>
@@ -227,6 +231,7 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({ slug }: CommentSectionProps) {
+  const t = useTranslations('comment');
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState('');
@@ -348,16 +353,16 @@ export default function CommentSection({ slug }: CommentSectionProps) {
       {/* 标题 */}
       <h2 className="text-2xl font-bold flex items-center gap-2">
         <MessageCircle className="h-6 w-6" />
-        评论 {commentCount > 0 && `(${commentCount})`}
+        {commentCount > 0 ? t('titleWithCount', { count: commentCount }) : t('title')}
       </h2>
 
       {/* 评论列表 */}
       <div className="space-y-1">
         {loading ? (
-          <div className="py-8 text-center text-muted-foreground text-sm">加载评论中...</div>
+          <div className="py-8 text-center text-muted-foreground text-sm">{t('loading')}</div>
         ) : commentTree.length === 0 ? (
           <div className="py-8 text-center text-muted-foreground text-sm">
-            还没有评论，来说两句吧~
+            {t('empty')}
           </div>
         ) : (
           <>
@@ -374,6 +379,7 @@ export default function CommentSection({ slug }: CommentSectionProps) {
                 submitting={submitting}
                 guestIdentity={guestIdentity!}
                 slug={slug}
+                t={t}
               />
             ))}
             {hasMore && !showAll && (
@@ -381,7 +387,7 @@ export default function CommentSection({ slug }: CommentSectionProps) {
                 onClick={() => setShowAll(true)}
                 className="w-full py-3 text-sm text-muted-foreground hover:text-primary transition-colors"
               >
-                查看全部 {sortedRoots.length} 条评论
+                {t('viewAll', { count: sortedRoots.length })}
               </button>
             )}
             {showAll && hasMore && (
@@ -389,7 +395,7 @@ export default function CommentSection({ slug }: CommentSectionProps) {
                 onClick={() => setShowAll(false)}
                 className="w-full py-3 text-sm text-muted-foreground hover:text-primary transition-colors"
               >
-                收起评论
+                {t('collapse')}
               </button>
             )}
           </>
@@ -405,12 +411,12 @@ export default function CommentSection({ slug }: CommentSectionProps) {
               alt={guestIdentity.nickname}
               className="w-6 h-6 rounded-full bg-muted"
             />
-            <span>你将以 <strong className="text-primary">{guestIdentity.nickname}</strong> 的身份发表评论</span>
+            <span>{t('identity')}<strong className="text-primary">{guestIdentity.nickname}</strong></span>
           </div>
           <Textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="输入评论内容..."
+            placeholder={t('placeholder')}
             className="min-h-[100px] text-sm"
           />
           <div className="flex justify-end">
@@ -419,7 +425,7 @@ export default function CommentSection({ slug }: CommentSectionProps) {
               disabled={submitting || !content.trim()}
             >
               <Send className="w-4 h-4 mr-1.5" />
-              {submitting ? '发表中...' : '发表评论'}
+              {submitting ? t('submitting') : t('submit')}
             </Button>
           </div>
         </div>
