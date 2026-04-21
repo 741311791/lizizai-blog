@@ -102,7 +102,10 @@
     "greeting": "Hey, I'm Zizai.",
     "bioParagraph1": "I'm a creator, developer, and writer obsessed with the mind, technology, and the art of building meaningful digital experiences.",
     "bioParagraph2": "Previously, I worked as a software engineer and product designer, helping teams build products that people love. Now I write about creativity, productivity, and the future of work in the AI era.",
-    "bioParagraph3": "For those wondering, I am not accepting consulting clients or \"quick chats to pick my brain\" at the moment. If you'd like to learn from me, explore my articles and courses above."
+    "bioParagraph3": "For those wondering, I am not accepting consulting clients or \"quick chats to pick my brain\" at the moment. If you'd like to learn from me, explore my articles and courses above.",
+    "statsArticles": "Articles",
+    "statsInsights": "Edge Insights",
+    "statsFree": "Forever"
   },
   "archive": {
     "title": "Archive",

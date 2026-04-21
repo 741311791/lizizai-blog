@@ -41,19 +41,6 @@ export default function Hero() {
             </Link>
           </div>
         </div>
-
-        {/* Bottom Section - Resources */}
-        <div className="border-t border-border mt-12 pt-12 text-center space-y-4">
-          <p className="text-sm tracking-[0.3em] uppercase text-muted-foreground/60">
-            {t('resourcesLabel')}
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold">
-            {t('movementTitle')}
-          </h2>
-          <p className="text-base md:text-lg text-muted-foreground">
-            {t('movementSubtitle')}
-          </p>
-        </div>
       </div>
     </section>
   );

@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { Twitter, Youtube, Linkedin } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import SocialLinks from '@/components/ui/social-links';
 
 export default function AboutMe() {
   const t = useTranslations('home');
@@ -34,35 +34,7 @@ export default function AboutMe() {
             </div>
 
             {/* Social Icons */}
-            <div className="flex gap-6 justify-center">
-              <a
-                href="https://twitter.com/zizaiblog"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-muted-foreground transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter size={28} />
-              </a>
-              <a
-                href="https://youtube.com/@zizaili"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-muted-foreground transition-colors"
-                aria-label="YouTube"
-              >
-                <Youtube size={28} />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/zizai-li"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-muted-foreground transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin size={28} />
-              </a>
-            </div>
+            <SocialLinks iconSize={28} className="gap-6" />
           </div>
 
           {/* Bio Text */}
