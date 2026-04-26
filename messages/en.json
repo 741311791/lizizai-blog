@@ -191,11 +191,7 @@
     "browseArchive": "Browse Archive"
   },
   "aiNews": {
-    "dailyTitle": "AI Daily",
-    "viewAll": "View All",
-    "archiveTitle": "AI News Archive",
-    "noData": "No news available yet",
-    "loadMore": "Load More",
-    "filteredBy": "Filter"
+    "dailyTitle": "Daily News",
+    "viewAll": "View All"
   }
 }

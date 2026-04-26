@@ -1,72 +1,78 @@
 /**
- * AI 资讯归档页面
+ * Daily News 分类页面
  *
  * 路由：/[locale]/daily-news
- * 支持按日期浏览历史资讯，通过 URL 参数 ?tag=xxx 按标签筛选。
+ * 复用分类页布局，与 /category/ai 等页面保持一致。
+ * 数据源：R2 articles.json，通过 getArticlesByCategory('daily-news') 获取。
  */
 
-import { getDailyNews, getAvailableDates } from '@/lib/ai-news';
-import { getTranslations } from 'next-intl/server';
-import { Sun } from 'lucide-react';
-import AiNewsArchiveClient from './AiNewsArchiveClient';
+import { Badge } from '@/components/ui/badge';
+import CategoryArticlesSection from '@/components/article/CategoryArticlesSection';
+import { getCategories, getArticlesByCategory } from '@/lib/blog-data';
+import { generateCategoryMetadata } from '@/lib/seo';
+import type { Metadata } from 'next';
 
-export const revalidate = 3600; // ISR: 每小时重新验证
+export const revalidate = 3600;
 
-export async function generateMetadata() {
-  return {
-    title: 'AI 资讯归档 - Zizai Blog',
-    description: '浏览每日 AI 行业资讯，包括大模型、开源项目、产品发布等。',
-  };
+const CATEGORY_SLUG = 'daily-news';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const categories = await getCategories();
+  const category = categories.find(c => c.slug === CATEGORY_SLUG);
+
+  if (!category) {
+    return {
+      title: 'Daily News',
+      description: '每日 AI 行业资讯精选',
+    };
+  }
+
+  return generateCategoryMetadata({
+    name: category.name,
+    description: category.description || '',
+    slug: CATEGORY_SLUG,
+  });
 }
 
-interface AiNewsPageProps {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<{ date?: string; tag?: string }>;
-}
+export default async function DailyNewsPage() {
+  const categories = await getCategories();
+  const category = categories.find(c => c.slug === CATEGORY_SLUG);
+  const articles = await getArticlesByCategory(CATEGORY_SLUG);
 
-export default async function AiNewsPage({ params, searchParams }: AiNewsPageProps) {
-  const { locale } = await params;
-  const { date, tag } = await searchParams;
-  const t = await getTranslations('aiNews');
-
-  // 并行获取：资讯数据 + 可用日期列表
-  const [newsResult, availableDates] = await Promise.all([
-    getDailyNews(date, tag),
-    getAvailableDates(30),
-  ]);
-
-  // 分离头条和普通资讯
-  const featured = newsResult.items.filter(item => item.importance >= 2);
-  const regular = newsResult.items.filter(item => item.importance < 2);
-  const currentDate = newsResult.date || date || null;
+  const categoryName = category?.name || 'Daily News';
+  const categoryDesc = category?.description || '';
+  const articleCount = articles.length;
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8 space-y-8">
-      {/* 页面标题 */}
-      <div className="flex items-center gap-3">
-        <Sun className="h-6 w-6 text-accent" />
-        <h1 className="text-2xl md:text-3xl font-bold">{t('archiveTitle')}</h1>
-        {tag && (
-          <span className="text-sm text-muted-foreground bg-accent/10 px-2 py-0.5 rounded-full">
-            {t('filteredBy')}: {tag}
-          </span>
+    <div className="container mx-auto max-w-7xl px-4 py-12">
+      {/* 分类头部 */}
+      <header className="mb-12 text-center space-y-4">
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <Badge variant="secondary">{articleCount} Articles</Badge>
+        </div>
+        <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
+          {categoryName}
+        </h1>
+        {categoryDesc && (
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            {categoryDesc}
+          </p>
         )}
-      </div>
+      </header>
 
-      {/* 日期选择器 + 资讯列表（Client 交互部分） */}
-      <AiNewsArchiveClient
-        dates={availableDates}
-        initialDate={currentDate}
-        tag={tag || null}
-        locale={locale}
-        featured={featured}
-        regular={regular}
-        isEmpty={newsResult.isEmpty || newsResult.items.length === 0}
-        translations={{
-          noData: t('noData'),
-          loadMore: t('loadMore'),
-        }}
-      />
+      {/* 文章列表 */}
+      {articles.length > 0 ? (
+        <CategoryArticlesSection articles={articles} />
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground text-lg">
+            No articles found yet.
+          </p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Check back soon for new content!
+          </p>
+        </div>
+      )}
     </div>
   );
 }

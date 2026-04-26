@@ -191,11 +191,7 @@
     "browseArchive": "浏览归档"
   },
   "aiNews": {
-    "dailyTitle": "AI 日报",
-    "viewAll": "查看全部",
-    "archiveTitle": "AI 资讯归档",
-    "noData": "暂无资讯数据",
-    "loadMore": "加载更多",
-    "filteredBy": "筛选"
+    "dailyTitle": "每日资讯",
+    "viewAll": "查看全部"
   }
 }

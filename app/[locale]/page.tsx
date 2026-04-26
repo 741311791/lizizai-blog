@@ -49,8 +49,8 @@ export default async function Home({
         </div>
       </section>
 
-      {/* 每日 AI 资讯 */}
-      <DailyNews locale={locale} />
+      {/* Daily News */}
+      <DailyNews />
 
       {/* Articles Section with Layout Toggle */}
       <ArticlesSection
