@@ -6,6 +6,7 @@
     "premiumCourse": "精品课程",
     "portfolio": "作品集",
     "archive": "归档",
+    "aiNews": "每日资讯",
     "subscribe": "订阅",
     "search": "搜索",
     "closeSearch": "关闭搜索",
@@ -188,5 +189,13 @@
     "pageNotFoundDesc": "你访问的页面不存在或已被移动。试试从首页或归档页找到你想要的内容。",
     "backToHome": "返回首页",
     "browseArchive": "浏览归档"
+  },
+  "aiNews": {
+    "dailyTitle": "AI 日报",
+    "viewAll": "查看全部",
+    "archiveTitle": "AI 资讯归档",
+    "noData": "暂无资讯数据",
+    "loadMore": "加载更多",
+    "filteredBy": "筛选"
   }
 }

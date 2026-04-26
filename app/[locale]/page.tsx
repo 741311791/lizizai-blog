@@ -2,6 +2,7 @@ import Hero from '@/components/home/Hero';
 import PopularArticles from '@/components/home/PopularArticles';
 import AboutMe from '@/components/home/AboutMe';
 import ArticlesSection from '@/components/article/ArticlesSection';
+import DailyNews from '@/components/home/DailyNews';
 import { getAllArticles } from '@/lib/blog-data';
 import { getTranslations } from 'next-intl/server';
 
@@ -47,6 +48,9 @@ export default async function Home({
           </div>
         </div>
       </section>
+
+      {/* 每日 AI 资讯 */}
+      <DailyNews locale={locale} />
 
       {/* Articles Section with Layout Toggle */}
       <ArticlesSection

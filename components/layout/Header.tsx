@@ -13,6 +13,7 @@ import SearchDialog from '@/components/search/SearchDialog';
 const NAV_LINKS = [
   { href: '/', labelKey: 'home' as const },
   { href: '/category/ai', labelKey: 'ai' as const },
+  { href: '/daily-news', labelKey: 'aiNews' as const },
   { href: '/category/human-3-0', labelKey: 'human3' as const },
   { href: '/category/premium-course', labelKey: 'premiumCourse' as const },
   { href: '/category/portfolio', labelKey: 'portfolio' as const },

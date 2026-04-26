@@ -6,6 +6,7 @@
     "premiumCourse": "Premium Course",
     "portfolio": "Portfolio",
     "archive": "Archive",
+    "aiNews": "Daily News",
     "subscribe": "Subscribe",
     "search": "Search",
     "closeSearch": "Close search",
@@ -188,5 +189,13 @@
     "pageNotFoundDesc": "The page you visited does not exist or has been moved. Try finding what you need from the homepage or archive.",
     "backToHome": "Back to Home",
     "browseArchive": "Browse Archive"
+  },
+  "aiNews": {
+    "dailyTitle": "AI Daily",
+    "viewAll": "View All",
+    "archiveTitle": "AI News Archive",
+    "noData": "No news available yet",
+    "loadMore": "Load More",
+    "filteredBy": "Filter"
   }
 }
