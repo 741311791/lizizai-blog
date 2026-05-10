@@ -183,6 +183,8 @@ export function convertBlocksToMarkdown(
     return { markdown: '', images: [] };
   }
 
+  let lastBlockType = -1;
+
   function processBlock(block: FeishuBlock, depth: number = 0): void {
     if (block.block_type === 1) {
       const children = block.children || [];
@@ -191,6 +193,15 @@ export function convertBlocksToMarkdown(
         if (child) processBlock(child, depth);
       }
       return;
+    }
+
+    // 列表/引用结束后接不同类型块，插入空行确保 Markdown 正确分段
+    const isListBlock = block.block_type === 12 || block.block_type === 13;
+    const lastIsList = lastBlockType === 12 || lastBlockType === 13;
+    const isQuoteBlock = block.block_type === 15;
+    const lastIsQuote = lastBlockType === 15;
+    if ((lastIsList && !isListBlock) || (lastIsQuote && !isQuoteBlock)) {
+      if (depth === 0) lines.push('');
     }
 
     let content = '';
@@ -235,7 +246,8 @@ export function convertBlocksToMarkdown(
 
       case 12: {
         content = extractTextContent(block);
-        if (content) lines.push('- ' + content);
+        const indent12 = '  '.repeat(depth);
+        if (content) lines.push(indent12 + '- ' + content);
         const children = block.children || [];
         for (const childId of children) {
           const child = blockMap.get(childId);
@@ -246,7 +258,14 @@ export function convertBlocksToMarkdown(
 
       case 13: {
         content = extractTextContent(block);
-        if (content) lines.push('1. ' + content);
+        const indent13 = '  '.repeat(depth);
+        if (content) lines.push(indent13 + '1. ' + content);
+        // 处理有序列表的子级（嵌套列表项）
+        const children13 = block.children || [];
+        for (const childId of children13) {
+          const child = blockMap.get(childId);
+          if (child) processBlock(child, depth + 1);
+        }
         break;
       }
 
@@ -302,11 +321,35 @@ export function convertBlocksToMarkdown(
       }
 
       case 15: {
-        content = extractTextContent(block);
-        if (content) {
-          const quoted = content.split('\n').map(l => '> ' + l).join('\n');
-          lines.push(quoted + '\n');
-        }
+        // 引用块：递归处理自身及所有子块，统一加 > 前缀
+        const processQuotedBlock = (b: FeishuBlock): void => {
+          const c = extractTextContent(b);
+          if (c) {
+            const quoted = c.split('\n').map((l: string) => '> ' + l).join('\n');
+            lines.push(quoted);
+          }
+          // 处理引用块内的图片
+          if (b.block_type === 27) {
+            const img = b.image;
+            if (img?.token) {
+              imageCounter++;
+              const ext = img.mime_type?.includes('png') ? 'png' : 'jpg';
+              const filename = `img-${String(imageCounter).padStart(3, '0')}.${ext}`;
+              images.push({
+                token: img.token,
+                filename,
+                alt: img.caption?.elements?.map((e: any) => e.text).join('') || '',
+              });
+              lines.push('> ' + `![${filename}](${imageBaseUrl}/${filename})`);
+            }
+          }
+          const children = b.children || [];
+          for (const childId of children) {
+            const child = blockMap.get(childId);
+            if (child) processQuotedBlock(child);
+          }
+        };
+        processQuotedBlock(block);
         break;
       }
 
@@ -422,8 +465,10 @@ export function convertBlocksToMarkdown(
       }
     }
 
-    // 表格块 (31) 和表格单元格 (32) 已在内部处理，跳过递归
-    if (block.block_type !== 12 && block.block_type !== 13 && block.block_type !== 31 && block.block_type !== 32) {
+    lastBlockType = block.block_type;
+
+    // 表格块 (31)、表格单元格 (32)、引用块 (15) 已在内部处理子块，跳过通用递归
+    if (block.block_type !== 12 && block.block_type !== 13 && block.block_type !== 15 && block.block_type !== 31 && block.block_type !== 32) {
       const children = block.children || [];
       for (const childId of children) {
         const child = blockMap.get(childId);

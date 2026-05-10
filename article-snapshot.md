@@ -1,0 +1,1239 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Zizai Blog" [ref=e4] [cursor=pointer]:
+        - /url: /zh
+        - img [ref=e5]:
+          - generic [ref=e7]: LZ
+        - generic [ref=e8]: Zizai Blog
+      - navigation [ref=e9]:
+        - link "首页" [ref=e10] [cursor=pointer]:
+          - /url: /zh
+        - link "AI" [ref=e11] [cursor=pointer]:
+          - /url: /zh/category/ai
+        - link "每日资讯" [ref=e12] [cursor=pointer]:
+          - /url: /zh/daily-news
+        - link "HUMAN 3.0" [ref=e13] [cursor=pointer]:
+          - /url: /zh/category/human-3-0
+        - link "精品课程" [ref=e14] [cursor=pointer]:
+          - /url: /zh/category/premium-course
+        - link "作品集" [ref=e15] [cursor=pointer]:
+          - /url: /zh/category/portfolio
+        - link "归档" [ref=e16] [cursor=pointer]:
+          - /url: /zh/archive
+      - generic [ref=e17]:
+        - button "Switch to English" [ref=e18]: EN
+        - link "订阅" [ref=e19] [cursor=pointer]:
+          - /url: /zh/subscribe
+          - generic [ref=e20]: 订阅
+  - main [ref=e21]:
+    - generic [ref=e24]:
+      - article [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]: Daily News
+          - heading "李自在AI 日报 | 2026-05-04" [level=1] [ref=e28]
+          - paragraph [ref=e29]: Meta收购ARI加速人形机器人，Google400亿投资Anthropic，OpenAI结束微软云独占，Sam Altman称GPT-5.5 xhigh比想象更强
+          - generic [ref=e30]:
+            - generic [ref=e31]:
+              - img "李自在" [ref=e899]
+              - generic [ref=e34]:
+                - generic [ref=e35]: 李自在
+                - generic [ref=e36]: 2026年5月4日
+            - generic [ref=e37]:
+              - button "0" [ref=e38]:
+                - img
+                - generic [ref=e39]: "0"
+              - button "3" [ref=e40]:
+                - img
+                - generic [ref=e41]: "3"
+              - button "0" [ref=e42]:
+                - img
+                - generic [ref=e43]: "0"
+        - article [ref=e44]:
+          - blockquote [ref=e45]:
+            - paragraph [ref=e46]:
+              - emphasis [ref=e47]: 每日精选 AI 行业热点，一文速览前沿动态
+          - separator [ref=e48]
+          - heading "今日概览" [level=2] [ref=e49]
+          - paragraph [ref=e50]:
+            - strong [ref=e51]: 热点话题：
+          - list [ref=e52]:
+            - listitem [ref=e53]: Meta 完成收购机器人 AI 初创公司 Assured Robot Intelligence，加速布局人形机器人赛道，ARI 团队将并入 Meta Superintelligence Labs
+            - listitem [ref=e54]: Google 拟向 Anthropic 投入最高 400 亿美元（100 亿即时到账 + 300 亿算力承诺），Claude 年化收入一年暴涨 30 倍至 300 亿
+            - listitem [ref=e55]: Microsoft 与 OpenAI 结束云服务独家合作，Azure 仍为主要云伙伴但不再排他，AGI 关联条款同步移除
+          - paragraph [ref=e56]:
+            - strong [ref=e57]: AI+教育 赛道信号：
+          - list [ref=e58]:
+            - listitem [ref=e59]: OECD 发布《Digital Education Outlook 2026》，探索生成式 AI 在教育中的应用前景与创新工具
+            - listitem [ref=e60]: ICAIE 2026 国际人工智能教育会议将于 5 月 13-15 日在太仓召开，主题为"协同教育"
+            - listitem [ref=e61]: Claude Connectors 拓展至 Adobe/Blender/Autodesk Fusion，为设计类教育场景提供 AI 工作流集成
+          - paragraph [ref=e62]:
+            - strong [ref=e63]: 对独立开发者而言，当前最值得关注：
+          - list [ref=e64]:
+            - listitem [ref=e65]: OpenAI 结束微软云独占意味着更多云平台将接入 OpenAI 模型，API 部署选择更灵活
+            - listitem [ref=e66]: RoundPipe 论文提出消费级 GPU 上高效微调 LLM 的方案，降低独立开发者模型训练门槛
+            - listitem [ref=e67]: Crabbox 0.3.0 发布远程 Linux 运行环境，适合独立开发者构建 AI Agent 远程执行场景
+          - paragraph [ref=e68]:
+            - text: 关键词：
+            - code [ref=e69]: Meta机器人
+            - code [ref=e70]: Anthropic融资
+            - code [ref=e71]: OpenAI云独占
+            - code [ref=e72]: GPT-5.5
+            - code [ref=e73]: RoundPipe
+            - code [ref=e74]: Crabbox
+          - separator [ref=e75]
+          - heading "头条聚焦" [level=2] [ref=e76]
+          - paragraph [ref=e77]: 今日 AI 领域的核心动态集中在巨头资本博弈与 AI 安全两个方向。Google 重金押注 Anthropic 进一步重塑了 AI 基础设施格局，OpenAI 与微软的合作模式转变意味着 API 生态将更加开放。同时，Musk 诉 Altman 庭审进入实质阶段，AI 公司治理问题被推上风口。
+          - paragraph [ref=e78]:
+            - strong [ref=e79]: 信息源
+            - text: ：TechCrunch / The Verge / 36kr / 新浪财经 / The AI Track
+          - heading "Meta 完成收购机器人 AI 公司 ARI，加速人形机器人布局" [level=3] [ref=e80]
+          - list [ref=e81]:
+            - listitem [ref=e82]:
+              - strong [ref=e83]: 来源
+              - text: ：
+              - link "新浪财经" [ref=e84] [cursor=pointer]:
+                - /url: https://finance.sina.com.cn/stock/usstock/c/2026-05-02/doc-inhwmvnq5013743.shtml
+              - text: /
+              - link "Humanoids Daily" [ref=e85] [cursor=pointer]:
+                - /url: https://www.humanoidsdaily.com/news/meta-acquires-assured-robot-intelligence-to-bolster-humanoid-ambitions
+            - listitem [ref=e86]:
+              - strong [ref=e87]: 要点
+              - text: ：Meta 于 5 月 1 日完成对 Assured Robot Intelligence 的收购，该公司专注于为机器人开发 AI 模型，使机器人能够在复杂动态环境中理解、预测并适应人类行为。ARI 团队将并入 Meta Superintelligence Labs，标志着 Meta 的 AI 战略正式从社交媒体延伸到实体世界
+            - listitem [ref=e88]:
+              - strong [ref=e89]: 解读
+              - text: ：对独立开发者而言，人形机器人 AI 赛道正在从学术走向产业，Meta 的入局意味着机器人智能的软件生态将加速开放。关注机器人场景的 AI 应用（导航、交互、规划）可能成为下一个创业窗口
+          - heading "Google 拟向 Anthropic 投入最高 400 亿美元" [level=3] [ref=e90]
+          - list [ref=e91]:
+            - listitem [ref=e92]:
+              - strong [ref=e93]: 来源
+              - text: ：
+              - link "36kr" [ref=e94] [cursor=pointer]:
+                - /url: https://www.36kr.com/p/3784243425565953
+              - text: /
+              - link "新浪财经" [ref=e95] [cursor=pointer]:
+                - /url: https://finance.sina.com.cn/roll/2026-04-25/doc-inhvtmtc4043254.shtml
+            - listitem [ref=e96]:
+              - strong [ref=e97]: 要点
+              - text: ：Google 将向 Anthropic 投入最高 400 亿美元，其中 100 亿即时到账（按 3800 亿估值入股），剩余 300 亿为算力承诺。Anthropic 四天内连收亚马逊和 Google 两单百亿级输血，锁定 11 吉瓦以上算力。Claude 年化收入一年暴涨 30 倍至 300 亿
+            - listitem [ref=e98]:
+              - strong [ref=e99]: 解读
+              - text: ：算力成为 AI 下半场唯一硬通货。对独立开发者而言，Claude API 的稳定性和可用性有望持续改善，同时 TPU 生态的开放可能带来更具性价比的推理选择
+          - heading "Microsoft 与 OpenAI 结束云服务独家合作" [level=3] [ref=e100]
+          - list [ref=e101]:
+            - listitem [ref=e102]:
+              - strong [ref=e103]: 来源
+              - text: ：
+              - link "The AI Track" [ref=e104] [cursor=pointer]:
+                - /url: https://theaitrack.com/microsoft-and-openai-end-exclusive-deal/
+            - listitem [ref=e105]:
+              - strong [ref=e106]: 要点
+              - text: ：Microsoft 与 OpenAI 重组合作关系，结束云服务独占条款。Azure 仍为 OpenAI 主要云伙伴，但不再排他。AGI 关联条款同步移除。这意味着 OpenAI 可在 AWS 等其他云平台部署服务
+            - listitem [ref=e107]:
+              - strong [ref=e108]: 解读
+              - text: ：API 部署灵活性大增，独立开发者可在更多云平台上直接使用 OpenAI 模型，降低迁移成本和供应商锁定风险
+          - heading "Musk 诉 Altman 庭审进入实质阶段" [level=3] [ref=e109]
+          - list [ref=e110]:
+            - listitem [ref=e111]:
+              - strong [ref=e112]: 来源
+              - text: ：
+              - link "The AI Track" [ref=e113] [cursor=pointer]:
+                - /url: https://theaitrack.com/elon-musk-takes-stand-as-openai-trial-begins/
+            - listitem [ref=e114]:
+              - strong [ref=e115]: 要点
+              - text: ：Elon Musk 在奥克兰出庭作证，OpenAI 诉案仅剩两项指控：违反慈善信托和不当得利。庭审焦点包括 xAI 是否蒸馏了 OpenAI 模型
+            - listitem [ref=e116]:
+              - strong [ref=e117]: 解读
+              - text: ：AI 公司治理结构正面临法律审视，对独立开发者和初创团队而言，选择 API 供应商时需关注其法律风险和治理稳定性
+          - heading "中国阻止 Meta 收购 AI 初创公司 Manus" [level=3] [ref=e118]
+          - list [ref=e119]:
+            - listitem [ref=e120]:
+              - strong [ref=e121]: 来源
+              - text: ：
+              - link "The AI Track" [ref=e122] [cursor=pointer]:
+                - /url: https://theaitrack.com/china-blocks-meta-ai-startup-manus-deal/
+            - listitem [ref=e123]:
+              - strong [ref=e124]: 要点
+              - text: ：中国阻止了 Meta 对 AI 初创公司 Manus 的超 20 亿美元收购案，加大了对美国投资涉及中国关联技术公司的审查力度
+            - listitem [ref=e125]:
+              - strong [ref=e126]: 解读
+              - text: ：跨境 AI 投资审查趋严，对独立开发者的启示是：涉及跨境数据和技术合作的 AI 产品需提前考虑合规风险
+          - heading "亚马逊 AWS 上架 OpenAI 全新产品线" [level=3] [ref=e127]
+          - list [ref=e128]:
+            - listitem [ref=e129]:
+              - strong [ref=e130]: 来源
+              - text: ：
+              - link "新浪财经" [ref=e131] [cursor=pointer]:
+                - /url: https://finance.sina.com.cn/world/2026-04-29/doc-inhwceiq7967460.shtml
+            - listitem [ref=e132]:
+              - strong [ref=e133]: 要点
+              - text: ：亚马逊宣布 Bedrock 平台接入 OpenAI 最新大模型、代码生成工具 Codex 及基于 OpenAI 技术打造的 AI 代理开发新产品
+            - listitem [ref=e134]:
+              - strong [ref=e135]: 解读
+              - text: ：AWS + OpenAI 的组合意味着 Bedrock 成为真正的一站式 AI 平台，对使用 AWS 生态的独立开发者来说，模型选择更丰富、集成成本更低
+          - separator [ref=e136]
+          - heading "开源速递" [level=2] [ref=e137]
+          - paragraph [ref=e138]:
+            - strong [ref=e139]: 信息源
+            - text: ：GitHub Explore + GitHub Trending
+          - paragraph [ref=e140]:
+            - strong [ref=e141]: 趋势总结
+            - text: ：本日 GitHub Trending AI 项目呈现两大趋势：一是 AI Agent 基础设施持续升温，远程执行环境（Crabbox）和本地研究工具（local-deep-research）受关注；二是多模态和语音生成领域有新项目冒头，视频生成（Pixelle-Video）和语音克隆（OpenVoice）热度不减。独立开发者可重点关注本地化 AI 工具，降低对外部 API 的依赖。
+          - paragraph [ref=e142]:
+            - strong [ref=e143]: 重点关注
+            - text: ：Crabbox 0.3.0 是值得独立开发者深入关注的工具。它提供远程 Linux 运行环境，支持 GitHub 浏览器登录、Blacksmith Testbox 封装、实时运行回放等，非常适合构建 AI Agent 的远程代码执行场景。对于需要安全沙箱执行代码的 AI 应用，这是一个高性价比的开源方案。
+          - heading "DeepSeek-TUI" [level=3] [ref=e144]
+          - list [ref=e145]:
+            - listitem [ref=e146]:
+              - strong [ref=e147]: 仓库
+              - text: ：
+              - link "https://github.com/Hmbown/DeepSeek-TUI" [ref=e148] [cursor=pointer]:
+                - /url: https://github.com/Hmbown/DeepSeek-TUI
+            - listitem [ref=e149]:
+              - strong [ref=e150]: Stars
+              - text: ：2.1k（新增 380+）
+            - listitem [ref=e151]:
+              - strong [ref=e152]: 简介
+              - text: ：DeepSeek 模型的终端用户界面，支持对话、代码补全等交互方式
+            - listitem [ref=e153]:
+              - strong [ref=e154]: 标签
+              - text: ：开发工具
+            - listitem [ref=e155]:
+              - strong [ref=e156]: 独立开发者价值
+              - text: ：为习惯终端操作的开发者提供轻量级 AI 助手入口，无需切换 IDE 即可使用 DeepSeek 模型
+            - listitem [ref=e157]:
+              - strong [ref=e158]: 来源
+              - text: ：GitHub Trending
+          - heading "Pixelle-Video" [level=3] [ref=e159]
+          - list [ref=e160]:
+            - listitem [ref=e161]:
+              - strong [ref=e162]: 仓库
+              - text: ：
+              - link "https://github.com/AIDC-AI/Pixelle-Video" [ref=e163] [cursor=pointer]:
+                - /url: https://github.com/AIDC-AI/Pixelle-Video
+            - listitem [ref=e164]:
+              - strong [ref=e165]: Stars
+              - text: ：3.8k（新增 520+）
+            - listitem [ref=e166]:
+              - strong [ref=e167]: 简介
+              - text: ：由 AIDC-AI 推出的视频生成工具，支持文本到视频的多模态生成
+            - listitem [ref=e168]:
+              - strong [ref=e169]: 标签
+              - text: ：图像生成
+            - listitem [ref=e170]:
+              - strong [ref=e171]: 独立开发者价值
+              - text: ：开源视频生成方案，可集成到内容创作类产品中，降低视频制作成本
+            - listitem [ref=e172]:
+              - strong [ref=e173]: 来源
+              - text: ：GitHub Trending
+          - heading "local-deep-research" [level=3] [ref=e174]
+          - list [ref=e175]:
+            - listitem [ref=e176]:
+              - strong [ref=e177]: 仓库
+              - text: ：
+              - link "https://github.com/LearningCircuit/local-deep-research" [ref=e178] [cursor=pointer]:
+                - /url: https://github.com/LearningCircuit/local-deep-research
+            - listitem [ref=e179]:
+              - strong [ref=e180]: Stars
+              - text: ：5.2k（新增 680+）
+            - listitem [ref=e181]:
+              - strong [ref=e182]: 简介
+              - text: ：本地运行的深度研究工具，支持自动搜索、信息整合和报告生成
+            - listitem [ref=e183]:
+              - strong [ref=e184]: 标签
+              - text: ：RAG 框架
+            - listitem [ref=e185]:
+              - strong [ref=e186]: 独立开发者价值
+              - text: ：完全本地化运行，无需 API 费用，适合构建隐私敏感的智能研究助手
+            - listitem [ref=e187]:
+              - strong [ref=e188]: 来源
+              - text: ：GitHub Trending (Python)
+          - heading "OpenVoice" [level=3] [ref=e189]
+          - list [ref=e190]:
+            - listitem [ref=e191]:
+              - strong [ref=e192]: 仓库
+              - text: ：
+              - link "https://github.com/myshell-ai/OpenVoice" [ref=e193] [cursor=pointer]:
+                - /url: https://github.com/myshell-ai/OpenVoice
+            - listitem [ref=e194]:
+              - strong [ref=e195]: Stars
+              - text: ：32k（新增 290+）
+            - listitem [ref=e196]:
+              - strong [ref=e197]: 简介
+              - text: ：MyShell AI 推出的即时语音克隆工具，支持参考语音的零样本克隆
+            - listitem [ref=e198]:
+              - strong [ref=e199]: 标签
+              - text: ：语音处理
+            - listitem [ref=e200]:
+              - strong [ref=e201]: 独立开发者价值
+              - text: ：开源语音克隆方案，可应用于播客生成、有声读物、AI 语音助手等场景
+            - listitem [ref=e202]:
+              - strong [ref=e203]: 来源
+              - text: ：GitHub Trending (Python)
+          - heading "Crabbox" [level=3] [ref=e204]
+          - list [ref=e205]:
+            - listitem [ref=e206]:
+              - strong [ref=e207]: 仓库
+              - text: ：
+              - link "https://github.com/openclaw/crabbox" [ref=e208] [cursor=pointer]:
+                - /url: https://github.com/openclaw/crabbox
+            - listitem [ref=e209]:
+              - strong [ref=e210]: Stars
+              - text: ：4.6k（新增 1.2k）
+            - listitem [ref=e211]:
+              - strong [ref=e212]: 简介
+              - text: ：远程 Linux 运行环境，支持 GitHub 浏览器登录、Blacksmith Testbox 封装、实时运行回放、AWS 镜像创建、Cloudflare Access
+            - listitem [ref=e213]:
+              - strong [ref=e214]: 标签
+              - text: ：开发工具
+            - listitem [ref=e215]:
+              - strong [ref=e216]: 独立开发者价值
+              - text: ：为 AI Agent 提供安全的远程代码执行沙箱，适合构建代码生成和自动执行类产品
+            - listitem [ref=e217]:
+              - strong [ref=e218]: 来源
+              - text: ：GitHub Trending
+          - heading "AlphaClaw" [level=3] [ref=e219]
+          - list [ref=e220]:
+            - listitem [ref=e221]:
+              - strong [ref=e222]: 仓库
+              - text: ：
+              - link "https://github.com/openclaw/alphaclaw" [ref=e223] [cursor=pointer]:
+                - /url: https://github.com/openclaw/alphaclaw
+            - listitem [ref=e224]:
+              - strong [ref=e225]: Stars
+              - text: ：2.8k（新增 450+）
+            - listitem [ref=e226]:
+              - strong [ref=e227]: 简介
+              - text: ：OpenClaw 生态的 AI Agent 框架，支持多 Agent 协作和工具调用
+            - listitem [ref=e228]:
+              - strong [ref=e229]: 标签
+              - text: ：AI Agent
+            - listitem [ref=e230]:
+              - strong [ref=e231]: 独立开发者价值
+              - text: ：基于 OpenClaw 生态的 Agent 开发框架，适合构建复杂的多步骤自动化工作流
+            - listitem [ref=e232]:
+              - strong [ref=e233]: 来源
+              - text: ：GitHub Trending
+          - heading "OpenWrt" [level=3] [ref=e234]
+          - list [ref=e235]:
+            - listitem [ref=e236]:
+              - strong [ref=e237]: 仓库
+              - text: ：
+              - link "https://github.com/openwrt/openwrt" [ref=e238] [cursor=pointer]:
+                - /url: https://github.com/openwrt/openwrt
+            - listitem [ref=e239]:
+              - strong [ref=e240]: Stars
+              - text: ：22k（新增 35+）
+            - listitem [ref=e241]:
+              - strong [ref=e242]: 简介
+              - text: ：嵌入式设备的 Linux 操作系统，虽非纯 AI 项目但 Trending 中因 AI 路由器场景受关注
+            - listitem [ref=e243]:
+              - strong [ref=e244]: 标签
+              - text: ：其他
+            - listitem [ref=e245]:
+              - strong [ref=e246]: 独立开发者价值
+              - text: ：AI 边缘计算部署场景的基础设施，适合构建本地化 AI 网关设备
+            - listitem [ref=e247]:
+              - strong [ref=e248]: 来源
+              - text: ：GitHub Trending
+          - heading "Cursor Changelog 5 月更新" [level=3] [ref=e249]
+          - list [ref=e250]:
+            - listitem [ref=e251]:
+              - strong [ref=e252]: 仓库
+              - text: ：
+              - link "https://github.com/getcursor/cursor" [ref=e253] [cursor=pointer]:
+                - /url: https://github.com/getcursor/cursor
+            - listitem [ref=e254]:
+              - strong [ref=e255]: Stars
+              - text: ：38k（新增 200+）
+            - listitem [ref=e256]:
+              - strong [ref=e257]: 简介
+              - text: ：AI 编程 IDE 持续更新，5 月新增多任务并行 Agent、代码审查自动化等功能
+            - listitem [ref=e258]:
+              - strong [ref=e259]: 标签
+              - text: ：代码生成
+            - listitem [ref=e260]:
+              - strong [ref=e261]: 独立开发者价值
+              - text: ：Cursor 的 Agent 能力持续增强，多任务并行执行适合处理复杂代码库的维护和重构
+            - listitem [ref=e262]:
+              - strong [ref=e263]: 来源
+              - text: ：GitHub Blog (AI)
+          - 'heading "GitHub Blog AI: AI 驱动的开发者体验升级" [level=3] [ref=e264]'
+          - list [ref=e265]:
+            - listitem [ref=e266]:
+              - strong [ref=e267]: 仓库
+              - text: ：
+              - link "https://github.blog/category/ai/" [ref=e268] [cursor=pointer]:
+                - /url: https://github.blog/category/ai/
+            - listitem [ref=e269]:
+              - strong [ref=e270]: Stars
+              - text: ：N/A
+            - listitem [ref=e271]:
+              - strong [ref=e272]: 简介
+              - text: ：GitHub 发布 AI 驱动的开发者体验升级路线图，涵盖 Copilot 多模态扩展和 Actions 智能化
+            - listitem [ref=e273]:
+              - strong [ref=e274]: 标签
+              - text: ：开发工具
+            - listitem [ref=e275]:
+              - strong [ref=e276]: 独立开发者价值
+              - text: ：GitHub 生态 AI 化趋势明显，独立开发者应关注 Copilot API 的新能力以提升开发效率
+            - listitem [ref=e277]:
+              - strong [ref=e278]: 来源
+              - text: ：GitHub Blog (AI)
+          - heading "Sapiens2" [level=3] [ref=e279]
+          - list [ref=e280]:
+            - listitem [ref=e281]:
+              - strong [ref=e282]: 仓库
+              - text: ：
+              - link "https://github.com/facebookresearch/sapiens2" [ref=e283] [cursor=pointer]:
+                - /url: https://github.com/facebookresearch/sapiens2
+            - listitem [ref=e284]:
+              - strong [ref=e285]: Stars
+              - text: ：1.5k（新增 180+）
+            - listitem [ref=e286]:
+              - strong [ref=e287]: 简介
+              - text: ：Meta Research 推出的高分辨率 Transformer 人体视觉模型，在多人姿态估计、分割等任务上达到 SOTA
+            - listitem [ref=e288]:
+              - strong [ref=e289]: 标签
+              - text: ：多模态
+            - listitem [ref=e290]:
+              - strong [ref=e291]: 独立开发者价值
+              - text: ：高精度人体视觉模型，适合健身、运动分析、虚拟试衣等应用场景
+            - listitem [ref=e292]:
+              - strong [ref=e293]: 来源
+              - text: ：GitHub Trending
+          - separator [ref=e294]
+          - heading "模型与产品" [level=2] [ref=e295]
+          - paragraph [ref=e296]: 大模型赛道本周持续升温。国外方面，OpenAI 结束微软云独占后加速多平台布局，Anthropic 发布 Claude Connectors 深入创意工具生态；国内方面，百度升级搜索 AI 引擎，4 月大模型"日更"节奏仍在延续。
+          - paragraph [ref=e297]:
+            - strong [ref=e298]: 信息源
+            - text: ：OpenAI Changelog / Anthropic Changelog / Gemini Changelog / Cursor Changelog / ProductHunt / 36kr / 量子位 / 机器之心
+          - heading "国外" [level=3] [ref=e299]
+          - table [ref=e301]:
+            - rowgroup [ref=e302]:
+              - row "项目 动态 亮点 来源" [ref=e303]:
+                - columnheader "项目" [ref=e304]
+                - columnheader "动态" [ref=e305]
+                - columnheader "亮点" [ref=e306]
+                - columnheader "来源" [ref=e307]
+            - rowgroup [ref=e308]:
+              - row "GPT-5.5 xhigh OpenAI 发布 GPT-5.5 xhigh 模式，Sam Altman 称 fast 模式下表现超预期 Terminal-Bench 82.7%、SWE-Bench Pro 58.6% OpenAI Changelog" [ref=e309]:
+                - cell "GPT-5.5 xhigh" [ref=e310]
+                - cell "OpenAI 发布 GPT-5.5 xhigh 模式，Sam Altman 称 fast 模式下表现超预期" [ref=e311]
+                - cell "Terminal-Bench 82.7%、SWE-Bench Pro 58.6%" [ref=e312]
+                - cell "OpenAI Changelog" [ref=e313]:
+                  - link "OpenAI Changelog" [ref=e314] [cursor=pointer]:
+                    - /url: https://openai.com/index/changelog/
+              - row "Claude Connectors Anthropic 发布 Claude Connectors，支持 Adobe、Blender、Autodesk Fusion AI 助手进入设计/3D 建模/创意教育工作流 Anthropic Changelog" [ref=e315]:
+                - cell "Claude Connectors" [ref=e316]
+                - cell "Anthropic 发布 Claude Connectors，支持 Adobe、Blender、Autodesk Fusion" [ref=e317]
+                - cell "AI 助手进入设计/3D 建模/创意教育工作流" [ref=e318]
+                - cell "Anthropic Changelog" [ref=e319]:
+                  - link "Anthropic Changelog" [ref=e320] [cursor=pointer]:
+                    - /url: https://docs.anthropic.com/en/docs/changelog
+              - row "Claude Code 多项更新：Bedrock 默认模型升级、IDE 拖拽上传、扩展系统优化 Agent 编码工具迭代加速 Claude Code GitHub" [ref=e321]:
+                - cell "Claude Code" [ref=e322]
+                - cell "多项更新：Bedrock 默认模型升级、IDE 拖拽上传、扩展系统优化" [ref=e323]
+                - cell "Agent 编码工具迭代加速" [ref=e324]
+                - cell "Claude Code GitHub" [ref=e325]:
+                  - link "Claude Code GitHub" [ref=e326] [cursor=pointer]:
+                    - /url: https://github.com/anthropics/claude-code/releases
+              - row "Gemini Changelog Google 更新 Gemini API，新增企业 Agent 平台相关功能 Vertex AI 统一 Agent 开发栈 Gemini Changelog" [ref=e327]:
+                - cell "Gemini Changelog" [ref=e328]
+                - cell "Google 更新 Gemini API，新增企业 Agent 平台相关功能" [ref=e329]
+                - cell "Vertex AI 统一 Agent 开发栈" [ref=e330]
+                - cell "Gemini Changelog" [ref=e331]:
+                  - link "Gemini Changelog" [ref=e332] [cursor=pointer]:
+                    - /url: https://ai.google.dev/changelog
+              - row "Cursor Agent 5 月更新：多任务并行 Agent、代码审查自动化、扩展系统重构 10 个 Agent 并行执行 10 个项目 Cursor Changelog" [ref=e333]:
+                - cell "Cursor Agent" [ref=e334]
+                - cell "5 月更新：多任务并行 Agent、代码审查自动化、扩展系统重构" [ref=e335]
+                - cell "10 个 Agent 并行执行 10 个项目" [ref=e336]
+                - cell "Cursor Changelog" [ref=e337]:
+                  - link "Cursor Changelog" [ref=e338] [cursor=pointer]:
+                    - /url: https://www.cursor.com/changelog
+              - row "OpenClaw/Crabbox Crabbox 0.3.0 发布远程 Linux 运行环境 GitHub 浏览器登录、Cloudflare Access 集成 ProductHunt" [ref=e339]:
+                - cell "OpenClaw/Crabbox" [ref=e340]
+                - cell "Crabbox 0.3.0 发布远程 Linux 运行环境" [ref=e341]
+                - cell "GitHub 浏览器登录、Cloudflare Access 集成" [ref=e342]
+                - cell "ProductHunt" [ref=e343]:
+                  - link "ProductHunt" [ref=e344] [cursor=pointer]:
+                    - /url: https://www.producthunt.com/
+              - row "Proof 基于 Codex 的原生 AI 写作应用 Codex-native 工作流集成 ProductHunt" [ref=e345]:
+                - cell "Proof" [ref=e346]
+                - cell "基于 Codex 的原生 AI 写作应用" [ref=e347]
+                - cell "Codex-native 工作流集成" [ref=e348]
+                - cell "ProductHunt" [ref=e349]:
+                  - link "ProductHunt" [ref=e350] [cursor=pointer]:
+                    - /url: https://www.producthunt.com/
+              - row "Amazon Bedrock 接入 OpenAI 模型、Codex 及 AI 代理开发产品 AWS 成为一站式 AI 平台 新浪财经" [ref=e351]:
+                - cell "Amazon Bedrock" [ref=e352]
+                - cell "接入 OpenAI 模型、Codex 及 AI 代理开发产品" [ref=e353]
+                - cell "AWS 成为一站式 AI 平台" [ref=e354]
+                - cell "新浪财经" [ref=e355]:
+                  - link "新浪财经" [ref=e356] [cursor=pointer]:
+                    - /url: https://finance.sina.com.cn/world/2026-04-29/doc-inhwceiq7967460.shtml
+              - row "Google Gemini Enterprise 推出企业级 Agent 平台和新一代 TPU 统一构建/治理/安全/优化 Agent The AI Track" [ref=e357]:
+                - cell "Google Gemini Enterprise" [ref=e358]
+                - cell "推出企业级 Agent 平台和新一代 TPU" [ref=e359]
+                - cell "统一构建/治理/安全/优化 Agent" [ref=e360]
+                - cell "The AI Track" [ref=e361]:
+                  - link "The AI Track" [ref=e362] [cursor=pointer]:
+                    - /url: https://theaitrack.com/gemini-enterprise-agent-platform/
+              - row "OpenAI Workspace Agents ChatGPT 团队版上线 Workspace Agents 替代 Custom GPTs 面向企业重复性工作流 The AI Track" [ref=e363]:
+                - cell "OpenAI Workspace Agents" [ref=e364]
+                - cell "ChatGPT 团队版上线 Workspace Agents 替代 Custom GPTs" [ref=e365]
+                - cell "面向企业重复性工作流" [ref=e366]
+                - cell "The AI Track" [ref=e367]:
+                  - link "The AI Track" [ref=e368] [cursor=pointer]:
+                    - /url: https://theaitrack.com/openai-workspace-agents-chatgpt-enterprise/
+          - heading "国内" [level=3] [ref=e369]
+          - table [ref=e371]:
+            - rowgroup [ref=e372]:
+              - row "项目 动态 亮点 来源" [ref=e373]:
+                - columnheader "项目" [ref=e374]
+                - columnheader "动态" [ref=e375]
+                - columnheader "亮点" [ref=e376]
+                - columnheader "来源" [ref=e377]
+            - rowgroup [ref=e378]:
+              - row "百度搜索 AI 引擎 升级 Master Agent 架构，搜索从信息查找升级为任务执行 百度 App 日活同比增 1.6 倍 经济观察网" [ref=e379]:
+                - cell "百度搜索 AI 引擎" [ref=e380]
+                - cell "升级 Master Agent 架构，搜索从信息查找升级为任务执行" [ref=e381]
+                - cell "百度 App 日活同比增 1.6 倍" [ref=e382]
+                - cell "经济观察网" [ref=e383]:
+                  - link "经济观察网" [ref=e384] [cursor=pointer]:
+                    - /url: https://www.eeo.com.cn/2026/0429/856534.shtml
+              - row "百度联盟星云计划 向合作伙伴开放猎户座 AI 引擎 AI 能力下沉至联盟生态 经济观察网" [ref=e385]:
+                - cell "百度联盟星云计划" [ref=e386]
+                - cell "向合作伙伴开放猎户座 AI 引擎" [ref=e387]
+                - cell "AI 能力下沉至联盟生态" [ref=e388]
+                - cell "经济观察网" [ref=e389]:
+                  - link "经济观察网" [ref=e390] [cursor=pointer]:
+                    - /url: https://www.eeo.com.cn/2026/0429/856534.shtml
+              - row "DeepSeek V4 正式发布并开源，100 万 Token 超长上下文 V4-Pro/V4-Flash 两档，开放权重 量子位" [ref=e391]:
+                - cell "DeepSeek V4" [ref=e392]
+                - cell "正式发布并开源，100 万 Token 超长上下文" [ref=e393]
+                - cell "V4-Pro/V4-Flash 两档，开放权重" [ref=e394]
+                - cell "量子位" [ref=e395]:
+                  - link "量子位" [ref=e396] [cursor=pointer]:
+                    - /url: https://news.qq.com/rain/a/20260430A06P4600
+              - row "Kimi K2.6 月之暗面发布 K2.6，聚焦 Agent 赛道 与 DeepSeek V4 在 Agent 赛道狭路相逢 网易" [ref=e397]:
+                - cell "Kimi K2.6" [ref=e398]
+                - cell "月之暗面发布 K2.6，聚焦 Agent 赛道" [ref=e399]
+                - cell "与 DeepSeek V4 在 Agent 赛道狭路相逢" [ref=e400]
+                - cell "网易" [ref=e401]:
+                  - link "网易" [ref=e402] [cursor=pointer]:
+                    - /url: https://www.163.com/dy/article/KRDFHDKB0556LCGR.html
+              - row "智谱/MiniMax IPO 智谱和 MiniMax 登陆港交所，市值突破 500 亿美元 国产 AI 大模型资本化提速 新浪" [ref=e403]:
+                - cell "智谱/MiniMax IPO" [ref=e404]
+                - cell "智谱和 MiniMax 登陆港交所，市值突破 500 亿美元" [ref=e405]
+                - cell "国产 AI 大模型资本化提速" [ref=e406]
+                - cell "新浪" [ref=e407]:
+                  - link "新浪" [ref=e408] [cursor=pointer]:
+                    - /url: https://k.sina.cn/article_7857201856_1d45362c001904oyro.html
+              - row "国内大模型 4 月盘点 月之暗面、阿里、腾讯、DeepSeek 密集发布更新 4 月呈现\"日更\"节奏，竞争白热化 经济观察网" [ref=e409]:
+                - cell "国内大模型 4 月盘点" [ref=e410]
+                - cell "月之暗面、阿里、腾讯、DeepSeek 密集发布更新" [ref=e411]
+                - cell "4 月呈现\"日更\"节奏，竞争白热化" [ref=e412]
+                - cell "经济观察网" [ref=e413]:
+                  - link "经济观察网" [ref=e414] [cursor=pointer]:
+                    - /url: https://www.eeo.com.cn/2026/0429/856541.shtml
+          - separator [ref=e415]
+          - heading "头部厂商动态" [level=2] [ref=e416]
+          - paragraph [ref=e417]: 本周头部厂商动态集中在资本博弈和战略调整。Google 重金投资 Anthropic 改变算力格局，OpenAI 与微软关系重新定义，Meta 则通过收购加速机器人赛道布局。国内方面，百度升级搜索 AI 引擎，智谱和 MiniMax 完成 IPO。
+          - paragraph [ref=e418]:
+            - strong [ref=e419]: 信息源
+            - text: ：36kr / 新浪财经 / The Information / The Verge / 经济观察网
+          - list [ref=e420]:
+            - listitem [ref=e421]:
+              - strong [ref=e422]: Meta
+              - text: ：完成收购 Assured Robot Intelligence，ARI 团队并入 Meta Superintelligence Labs，加速人形机器人 AI 模型研发 — 来源：
+              - link "Humanoids Daily" [ref=e423] [cursor=pointer]:
+                - /url: https://www.humanoidsdaily.com/news/meta-acquires-assured-robot-intelligence-to-bolster-humanoid-ambitions
+            - listitem [ref=e424]:
+              - strong [ref=e425]: Google
+              - text: ：拟向 Anthropic 投入最高 400 亿美元（100 亿现金 + 300 亿算力），与其自家 Gemini 形成内部竞争 — 来源：
+              - link "36kr" [ref=e426] [cursor=pointer]:
+                - /url: https://www.36kr.com/p/3784243425565953
+            - listitem [ref=e427]:
+              - strong [ref=e428]: OpenAI
+              - text: ：结束与微软云服务独家合作，Azure 仍为主要云伙伴但不再排他；GPT-5.5 xhigh 模式上线，Sam Altman 称 fast 模式表现超预期 — 来源：
+              - link "The AI Track" [ref=e429] [cursor=pointer]:
+                - /url: https://theaitrack.com/microsoft-and-openai-end-exclusive-deal/
+            - listitem [ref=e430]:
+              - strong [ref=e431]: Anthropic
+              - text: ：Claude 年化收入暴涨 30 倍至 300 亿，发布 Claude Connectors 拓展设计/创意工具生态 — 来源：
+              - link "The AI Track" [ref=e432] [cursor=pointer]:
+                - /url: https://theaitrack.com/claude-connectors-adobe-blender/
+            - listitem [ref=e433]:
+              - strong [ref=e434]: Microsoft
+              - text: ：与 OpenAI 重组合作，结束云独占；同时 Azure 继续作为 OpenAI 主要云伙伴 — 来源：
+              - link "The AI Track" [ref=e435] [cursor=pointer]:
+                - /url: https://theaitrack.com/microsoft-and-openai-end-exclusive-deal/
+            - listitem [ref=e436]:
+              - strong [ref=e437]: 百度
+              - text: ：升级搜索 AI 引擎（Master Agent 架构），启动星云计划开放 AI 能力 — 来源：
+              - link "经济观察网" [ref=e438] [cursor=pointer]:
+                - /url: https://www.eeo.com.cn/2026/0429/856534.shtml
+          - separator [ref=e439]
+          - heading "融资与投资" [level=2] [ref=e440]
+          - paragraph [ref=e441]: 本周 AI 投融资格局延续资本密集态势，Google 400 亿美元注资 Anthropic 成为最大单笔。OpenAI 与微软关系重构、Anthropic 连收两笔百亿级输血，标志着 AI 基础设施赛道进入"算力即资本"阶段。
+          - paragraph [ref=e442]:
+            - strong [ref=e443]: 信息源
+            - text: ：TechCrunch / Crunchbase / 36kr / IT 桔子 / 新浪财经
+          - table [ref=e445]:
+            - rowgroup [ref=e446]:
+              - row "公司 轮次 金额 投资方 方向 来源" [ref=e447]:
+                - columnheader "公司" [ref=e448]
+                - columnheader "轮次" [ref=e449]
+                - columnheader "金额" [ref=e450]
+                - columnheader "投资方" [ref=e451]
+                - columnheader "方向" [ref=e452]
+                - columnheader "来源" [ref=e453]
+            - rowgroup [ref=e454]:
+              - row "Anthropic Strategic 400 亿美元（100 亿现金+300 亿算力） Google AI 基础设施/Claude 生态 36kr" [ref=e455]:
+                - cell "Anthropic" [ref=e456]
+                - cell "Strategic" [ref=e457]
+                - cell "400 亿美元（100 亿现金+300 亿算力）" [ref=e458]
+                - cell "Google" [ref=e459]
+                - cell "AI 基础设施/Claude 生态" [ref=e460]
+                - cell "36kr" [ref=e461]:
+                  - link "36kr" [ref=e462] [cursor=pointer]:
+                    - /url: https://www.36kr.com/p/3784243425565953
+              - row "智谱 AI IPO 市值 500 亿美元+ 港交所 大模型/企业 AI 新浪" [ref=e463]:
+                - cell "智谱 AI" [ref=e464]
+                - cell "IPO" [ref=e465]
+                - cell "市值 500 亿美元+" [ref=e466]
+                - cell "港交所" [ref=e467]
+                - cell "大模型/企业 AI" [ref=e468]
+                - cell "新浪" [ref=e469]:
+                  - link "新浪" [ref=e470] [cursor=pointer]:
+                    - /url: https://k.sina.cn/article_7857201856_1d45362c001904oyro.html
+              - row "MiniMax IPO 市值 500 亿美元+ 港交所 大模型/多模态 新浪" [ref=e471]:
+                - cell "MiniMax" [ref=e472]
+                - cell "IPO" [ref=e473]
+                - cell "市值 500 亿美元+" [ref=e474]
+                - cell "港交所" [ref=e475]
+                - cell "大模型/多模态" [ref=e476]
+                - cell "新浪" [ref=e477]:
+                  - link "新浪" [ref=e478] [cursor=pointer]:
+                    - /url: https://k.sina.cn/article_7857201856_1d45362c001904oyro.html
+              - row "DeepSeek 未公开 100 亿美元 多方 大模型/开源 新浪" [ref=e479]:
+                - cell "DeepSeek" [ref=e480]
+                - cell "未公开" [ref=e481]
+                - cell "100 亿美元" [ref=e482]
+                - cell "多方" [ref=e483]
+                - cell "大模型/开源" [ref=e484]
+                - cell "新浪" [ref=e485]:
+                  - link "新浪" [ref=e486] [cursor=pointer]:
+                    - /url: https://k.sina.cn/article_7857201856_1d45362c001904oyro.html
+              - row "Cursor (SpaceX 期权) 期权 600 亿美元收购期权 SpaceX AI 编程工具 财新" [ref=e487]:
+                - cell "Cursor (SpaceX 期权)" [ref=e488]
+                - cell "期权" [ref=e489]
+                - cell "600 亿美元收购期权" [ref=e490]
+                - cell "SpaceX" [ref=e491]
+                - cell "AI 编程工具" [ref=e492]
+                - cell "财新" [ref=e493]:
+                  - link "财新" [ref=e494] [cursor=pointer]:
+                    - /url: https://www.caixin.com/2026-04-22/102436729.html
+          - paragraph [ref=e495]:
+            - strong [ref=e496]: AI 投融资趋势分析
+            - text: （资深 VP 视角）
+          - paragraph [ref=e497]: 当前 AI 投融资呈现明显的"基础设施化"特征。Google 400 亿注资 Anthropic 的核心不是买模型，而是锁定 TPU 买家和算力护城河——算力承诺（300 亿）远超现金出资（100 亿），说明资本正在从"投模型"转向"投算力生态"。OpenAI 结束微软独占后，AWS 迅速接入 OpenAI 全线产品，云厂商之间的 AI 代理权争夺白热化。
+          - paragraph [ref=e498]: 对独立开发者而言，三个趋势值得关注：一是大模型 API 价格将持续下降（Anthropic 和 OpenAI 都在争夺企业客户），二是开源模型（DeepSeek V4）和商业模型的差距在缩小，三是 IPO 通道已经打开（智谱、MiniMax 港交所上市），VC 对 AI 赛道的信心仍强。建议：如果考虑融资，Agent 和垂直行业应用仍是资本最集中的方向；如果考虑成本，现在是大举采用 AI API 的好时机。
+          - separator [ref=e499]
+          - heading "观点与言论" [level=2] [ref=e500]
+          - paragraph [ref=e501]: 本周 AI Builder 社区讨论焦点集中在 AI Agent 的未来形态、编程工具的演进方向，以及模型能力与成本之间的平衡。Sam Altman 关于"更聪明 vs 更便宜"的思考引发广泛讨论，Aaron Levie 对"AI 取代程序员"的反驳也获得大量共鸣。
+          - paragraph [ref=e502]:
+            - strong [ref=e503]: 信息源
+            - text: ：follow-builders（X/Twitter AI Builders + Podcasts）
+          - paragraph [ref=e504]:
+            - strong [ref=e505]: Sam Altman
+            - text: ，OpenAI CEO
+          - blockquote [ref=e506]:
+            - paragraph [ref=e507]: "\"i keep thinking i want the models to be cheaper/faster more than i want them to be smarter"
+          - blockquote [ref=e508]:
+            - paragraph [ref=e509]: but it seems that just being smarter is still the most important thing"
+          - blockquote [ref=e510]:
+            - paragraph [ref=e511]: "\"我一直在想，我希望模型更便宜/更快，而不是更聪明。但事实证明，更聪明仍然是最重要的事情。\""
+          - blockquote [ref=e512]:
+            - paragraph [ref=e513]:
+              - text: 来源：
+              - link "X/Twitter" [ref=e514] [cursor=pointer]:
+                - /url: https://x.com/sama/status/2050671161915371998
+          - blockquote [ref=e515]:
+            - paragraph [ref=e516]: "\"5.5 xhigh in fast mode is really good"
+          - blockquote [ref=e517]:
+            - paragraph [ref=e518]: i think i got psyoped by twitter on medium for a bit"
+          - blockquote [ref=e519]:
+            - paragraph [ref=e520]: "\"5.5 xhigh 在 fast 模式下表现非常好。我觉得我一度被 Twitter 上的讨论误导去了 medium 模式。\""
+          - blockquote [ref=e521]:
+            - paragraph [ref=e522]:
+              - text: 来源：
+              - link "X/Twitter" [ref=e523] [cursor=pointer]:
+                - /url: https://x.com/sama/status/2050658558174437701
+          - paragraph [ref=e524]:
+            - strong [ref=e525]: Aaron Levie
+            - text: ，Box CEO
+          - blockquote [ref=e526]:
+            - paragraph [ref=e527]: "\"If you think AI replaces software engineers, here's a quick thought experiment."
+          - blockquote [ref=e528]:
+            - paragraph [ref=e529]: Imagine you're a life sciences company. 10 years ago you want to invest heavily in lab automation, processing data at scale, and other software. You look at the cost of doing so and realize you can't compete with tech companies on engineering talent. So you don't build anything.
+          - blockquote [ref=e530]:
+            - paragraph [ref=e531]: Now with AI, you can build 10x more with 10x fewer engineers. The demand for software just expanded massively. AI doesn't replace engineers — it makes every company a software company."
+          - blockquote [ref=e532]:
+            - paragraph [ref=e533]: "\"如果你认为 AI 会取代软件工程师，做个思想实验：想象你是一家生命科学公司。10 年前你想大力投资实验室自动化和大规模数据处理，但发现无法与科技公司争夺工程人才，所以什么都没建。现在有了 AI，你用 1/10 的工程师能做 10 倍的事情。对软件的需求刚刚大规模膨胀。AI 不会取代工程师——它让每家公司都成为软件公司。\""
+          - blockquote [ref=e534]:
+            - paragraph [ref=e535]:
+              - text: 来源：
+              - link "X/Twitter" [ref=e536] [cursor=pointer]:
+                - /url: https://x.com/levie/status/2050684160151617603
+          - paragraph [ref=e537]:
+            - strong [ref=e538]: Peter Yang
+            - text: ，Roblox 产品经理
+          - blockquote [ref=e539]:
+            - paragraph [ref=e540]: "\"It's very satisfying to get Codex or Claude Code to 'marie kondo' your local files and Google Drive."
+          - blockquote [ref=e541]:
+            - paragraph [ref=e542]: "I give these apps full access to my computer and gws (google workspace cli), then prompt things like: 'Tell me what apps load on computer bootup. Give me a plan to clean this up.'\""
+          - blockquote [ref=e543]:
+            - paragraph [ref=e544]: "\"让 Codex 或 Claude Code 帮你整理本地文件和 Google Drive 非常满足。我给这些应用完全的电脑访问权限，然后提示它们：'告诉我哪些应用在开机时加载，给我一个清理计划。'\""
+          - blockquote [ref=e545]:
+            - paragraph [ref=e546]:
+              - text: 来源：
+              - link "X/Twitter" [ref=e547] [cursor=pointer]:
+                - /url: https://x.com/petergyang/status/2050623358488997917
+          - paragraph [ref=e548]:
+            - strong [ref=e549]: Amjad Masad
+            - text: ，Replit CEO
+          - blockquote [ref=e550]:
+            - paragraph [ref=e551]: "\"10 project 10 parallel agents each\""
+          - blockquote [ref=e552]:
+            - paragraph [ref=e553]: "\"10 个项目，每个 10 个并行 Agent\""
+          - blockquote [ref=e554]:
+            - paragraph [ref=e555]:
+              - text: 来源：
+              - link "X/Twitter" [ref=e556] [cursor=pointer]:
+                - /url: https://x.com/amasad/status/2050793150713864678
+          - paragraph [ref=e557]:
+            - strong [ref=e558]: Swyx
+            - text: ，AI Engineer
+          - blockquote [ref=e559]:
+            - paragraph [ref=e560]: "\"Much respect to @tokengobbler who shutdown Vibe-kanban live onstage at AIE Europe - still with 30,000 MAU, and still living as an open source project."
+          - blockquote [ref=e561]:
+            - paragraph [ref=e562]: "'Everyone who is making money is doing 2 things: selling to enterprise, and reselling tokens. We were doing neither.'\""
+          - blockquote [ref=e563]:
+            - paragraph [ref=e564]: "\"非常敬佩 @tokengobbler 在 AIE Europe 大会现场关闭了 Vibe-kanban——仍有 3 万月活，并作为开源项目继续存在。'每个赚钱的人都在做两件事：向企业销售，和转售 token。我们两者都没做。'\""
+          - blockquote [ref=e565]:
+            - paragraph [ref=e566]:
+              - text: 来源：
+              - link "X/Twitter" [ref=e567] [cursor=pointer]:
+                - /url: https://x.com/swyx/status/2050753293601935777
+          - paragraph [ref=e568]:
+            - strong [ref=e569]: Nikunj Kothari
+            - text: ，FPV Ventures 合伙人
+          - blockquote [ref=e570]:
+            - paragraph [ref=e571]: "\"Too many funds are capping downside right now, instead of maximizing upside.."
+          - blockquote [ref=e572]:
+            - paragraph [ref=e573]: I'll often ask the GP/partner on why they did the deal and on my fifth why the real reason comes out which is 'well at least big token factory will acquire them so our downside is capped'"
+          - blockquote [ref=e574]:
+            - paragraph [ref=e575]: "\"现在太多基金在封住下行风险，而不是最大化上行收益。我经常问 GP/合伙人为什么做这笔交易，追问到第五个为什么时，真正的原因才会出来：'至少大厂会收购他们，所以我们的下行风险是封住的。'\""
+          - blockquote [ref=e576]:
+            - paragraph [ref=e577]:
+              - text: 来源：
+              - link "X/Twitter" [ref=e578] [cursor=pointer]:
+                - /url: https://x.com/nikunj/status/2050779734116856137
+          - paragraph [ref=e579]:
+            - strong [ref=e580]: Peter Steinberger
+            - text: ，OpenClaw 创始人
+          - blockquote [ref=e581]:
+            - paragraph [ref=e582]: "\"Crabbox 0.3.0 is out. Remote Linux runs for dirty worktrees. GitHub browser login, Blacksmith Testbox wrap, crabbox attach for live run replay, Durable run events, AWS image create, Cloudflare Access.\""
+          - blockquote [ref=e583]:
+            - paragraph [ref=e584]: "\"Crabbox 0.3.0 发布。远程 Linux 运行环境。支持 GitHub 浏览器登录、Blacksmith Testbox 封装、实时运行回放、持久化运行事件、AWS 镜像创建、Cloudflare Access。\""
+          - blockquote [ref=e585]:
+            - paragraph [ref=e586]:
+              - text: 来源：
+              - link "X/Twitter" [ref=e587] [cursor=pointer]:
+                - /url: https://x.com/steipete/status/2050490163810230579
+          - paragraph [ref=e588]:
+            - strong [ref=e589]: Dan Shipper
+            - text: ，Every CEO
+          - blockquote [ref=e590]:
+            - paragraph [ref=e591]: "\"clear that this is how we'll be doing most of our work for the next 10 years: agent running continuously on the left, application that you + the agent use on the right\""
+          - blockquote [ref=e592]:
+            - paragraph [ref=e593]: "\"很明显，未来 10 年我们大部分工作都将这样进行：Agent 在左侧持续运行，你 + Agent 共同使用的应用在右侧。\""
+          - blockquote [ref=e594]:
+            - paragraph [ref=e595]:
+              - text: 来源：
+              - link "X/Twitter" [ref=e596] [cursor=pointer]:
+                - /url: https://x.com/danshipper/status/2050583747041640608
+          - paragraph [ref=e597]:
+            - strong [ref=e598]: 播客精选
+          - blockquote [ref=e599]:
+            - paragraph [ref=e600]: "\"Greg Brockman on why human attention is the new bottleneck: We've solved the compute problem, we've solved the data problem, but we haven't solved the attention problem — how do you get humans to pay attention to the right things at the right time when AI can do so much?\""
+          - blockquote [ref=e601]:
+            - paragraph [ref=e602]: "\"Greg Brockman 谈为什么人类注意力是新的瓶颈：我们解决了算力问题，解决了数据问题，但还没有解决注意力问题——当 AI 能做这么多事情时，如何让人类在正确的时间关注正确的事情？\"—— Training Data 播客，Greg Brockman（OpenAI 联合创始人）"
+          - blockquote [ref=e603]:
+            - paragraph [ref=e604]:
+              - text: 来源：
+              - link "YouTube" [ref=e605] [cursor=pointer]:
+                - /url: https://www.youtube.com/playlist?list=PLOhHNjZItNnMm5tdW61JpnyxeYH5NDDx8
+          - separator [ref=e606]
+          - heading "研究与论文" [level=2] [ref=e607]
+          - paragraph [ref=e608]: 本周 ArXiv 论文呈现鲜明的"Agent 原生"趋势。Ara 框架提出 Agent 可执行的科研制品，LenVM 解决推理时效率与性能的平衡，RoundPipe 则让消费级 GPU 也能高效微调大模型。对独立开发者而言，这些论文指向一个清晰的未来：AI Agent 将成为科研和开发的基础单元。
+          - paragraph [ref=e609]:
+            - strong [ref=e610]: 信息源
+            - text: ：ArXiv（通过 ArXiv Watcher skill / deeppaper.ai 周报）
+          - 'heading "Ara: Agent 原生研究成果" [level=3] [ref=e611]'
+          - list [ref=e612]:
+            - listitem [ref=e613]:
+              - strong [ref=e614]: 团队
+              - text: "：未列出（ArXiv ID: 2604.24658v1）"
+            - listitem [ref=e615]:
+              - strong [ref=e616]: 链接
+              - text: ：
+              - link "https://arxiv.org/abs/2604.24658" [ref=e617] [cursor=pointer]:
+                - /url: https://arxiv.org/abs/2604.24658
+            - listitem [ref=e618]:
+              - strong [ref=e619]: 摘要
+              - text: ：提出 Ara（Agent-native Research Artifacts），一种机器可执行的研究包格式，克服传统叙述性论文的局限，使 AI Agent 能够更好地理解、复现和扩展科研成果。横跨 Agent、决策与交互、学习方法三个类别
+            - listitem [ref=e620]:
+              - strong [ref=e621]: 意义
+              - text: ：对独立开发者而言，Ara 格式意味着 AI Agent 可以自动复现论文结果并在此基础上构建应用，大幅降低从科研到产品的距离
+            - listitem [ref=e622]:
+              - strong [ref=e623]: 提交日期
+              - text: ：2026-05-03
+          - 'heading "LenVM: Token 级别长度建模" [level=3] [ref=e624]'
+          - list [ref=e625]:
+            - listitem [ref=e626]:
+              - strong [ref=e627]: 团队
+              - text: "：未列出（ArXiv ID: 2604.27039v1）"
+            - listitem [ref=e628]:
+              - strong [ref=e629]: 链接
+              - text: ：
+              - link "https://arxiv.org/abs/2604.27039" [ref=e630] [cursor=pointer]:
+                - /url: https://arxiv.org/abs/2604.27039
+            - listitem [ref=e631]:
+              - strong [ref=e632]: 摘要
+              - text: ：提出 LenVM，将剩余生成长度建模为价值估计问题，在推理时提供高效信号，实现性能与效率的可控权衡。横跨基础模型和 AI 安全/可解释性两个类别
+            - listitem [ref=e633]:
+              - strong [ref=e634]: 意义
+              - text: ：对独立开发者而言，LenVM 提供了一种新的推理优化手段，可在 API 调用中精确控制输出长度，降低 token 成本
+            - listitem [ref=e635]:
+              - strong [ref=e636]: 提交日期
+              - text: ：2026-05-03
+          - 'heading "RoundPipe: 消费级 GPU 上的高效训练" [level=3] [ref=e637]'
+          - list [ref=e638]:
+            - listitem [ref=e639]:
+              - strong [ref=e640]: 团队
+              - text: "：未列出（ArXiv ID: 2604.27085v1）"
+            - listitem [ref=e641]:
+              - strong [ref=e642]: 链接
+              - text: ：
+              - link "https://arxiv.org/abs/2604.27085" [ref=e643] [cursor=pointer]:
+                - /url: https://arxiv.org/abs/2604.27085
+            - listitem [ref=e644]:
+              - strong [ref=e645]: 摘要
+              - text: ：提出 RoundPipe，一种新的流水线调度方法，打破消费级 GPU 上的权重绑定约束，实现近乎零流水线气泡的大语言模型高效微调
+            - listitem [ref=e646]:
+              - strong [ref=e647]: 意义
+              - text: ：对独立开发者而言，这是降低模型训练门槛的关键突破——无需昂贵的数据中心 GPU，家用电脑也能微调大模型
+            - listitem [ref=e648]:
+              - strong [ref=e649]: 提交日期
+              - text: ：2026-05-03
+          - 'heading "FlashRT: 高效红队测试框架" [level=3] [ref=e650]'
+          - list [ref=e651]:
+            - listitem [ref=e652]:
+              - strong [ref=e653]: 团队
+              - text: "：未列出（ArXiv ID: 2604.28157）"
+            - listitem [ref=e654]:
+              - strong [ref=e655]: 链接
+              - text: ：
+              - link "https://arxiv.org/abs/2604.28157" [ref=e656] [cursor=pointer]:
+                - /url: https://arxiv.org/abs/2604.28157
+            - listitem [ref=e657]:
+              - strong [ref=e658]: 摘要
+              - text: ：提出 FlashRT，提升针对长上下文 LLM 的优化式提示注入和知识破坏攻击的计算和内存效率——对 LLM 安全测试的关键贡献
+            - listitem [ref=e659]:
+              - strong [ref=e660]: 意义
+              - text: ：对独立开发者而言，FlashRT 提供了更高效的安全测试工具，帮助在部署 AI 应用前发现漏洞
+            - listitem [ref=e661]:
+              - strong [ref=e662]: 提交日期
+              - text: ：2026-05-03
+          - heading "视觉生成新纪元：从原子映射到智能体世界建模" [level=3] [ref=e663]
+          - list [ref=e664]:
+            - listitem [ref=e665]:
+              - strong [ref=e666]: 团队
+              - text: "：未列出（ArXiv ID: 2604.28185v1）"
+            - listitem [ref=e667]:
+              - strong [ref=e668]: 链接
+              - text: ：
+              - link "https://arxiv.org/abs/2604.28185" [ref=e669] [cursor=pointer]:
+                - /url: https://arxiv.org/abs/2604.28185
+            - listitem [ref=e670]:
+              - strong [ref=e671]: 摘要
+              - text: ：提出视觉生成的五级分类体系——从原子生成到世界建模生成，论证该领域应从外观合成进化到基于结构、动力学、领域知识和因果性的智能视觉生成
+            - listitem [ref=e672]:
+              - strong [ref=e673]: 意义
+              - text: ：对独立开发者而言，这篇综述提供了视觉生成领域的全局视野，有助于判断技术方向和选择生成模型
+            - listitem [ref=e674]:
+              - strong [ref=e675]: 提交日期
+              - text: ：2026-05-03
+          - 'heading "Sapiens2: 高分辨率人体视觉 Transformer" [level=3] [ref=e676]'
+          - list [ref=e677]:
+            - listitem [ref=e678]:
+              - strong [ref=e679]: 团队
+              - text: "：Meta Research（ArXiv ID: 2604.21681v1）"
+            - listitem [ref=e680]:
+              - strong [ref=e681]: 链接
+              - text: ：
+              - link "https://arxiv.org/abs/2604.21681" [ref=e682] [cursor=pointer]:
+                - /url: https://arxiv.org/abs/2604.21681
+            - listitem [ref=e683]:
+              - strong [ref=e684]: 摘要
+              - text: ：提出 Sapiens2，一系列高分辨率 Transformer 模型用于人体视觉任务，通过改进的预训练、数据和架构在多个基准上达到 SOTA
+            - listitem [ref=e685]:
+              - strong [ref=e686]: 意义
+              - text: ：对独立开发者而言，高精度人体视觉模型可应用于健身、运动分析、虚拟试衣等产品场景
+            - listitem [ref=e687]:
+              - strong [ref=e688]: 提交日期
+              - text: ：2026-04-29
+          - heading "合规性与合理性：LLM 推理可控性研究" [level=3] [ref=e689]
+          - list [ref=e690]:
+            - listitem [ref=e691]:
+              - strong [ref=e692]: 团队
+              - text: "：未列出（ArXiv ID: 2604.27251v1）"
+            - listitem [ref=e693]:
+              - strong [ref=e694]: 链接
+              - text: ：
+              - link "https://arxiv.org/abs/2604.27251" [ref=e695] [cursor=pointer]:
+                - /url: https://arxiv.org/abs/2604.27251
+            - listitem [ref=e696]:
+              - strong [ref=e697]: 摘要
+              - text: ：研究 LLM 中合规性与合理性之间的张力，揭示 LLM 优先考虑合理性但可通过机制干预引导至合规
+            - listitem [ref=e698]:
+              - strong [ref=e699]: 意义
+              - text: ：对独立开发者而言，理解 LLM 的合规性-合理性权衡有助于设计更可靠的 AI 应用提示策略
+            - listitem [ref=e700]:
+              - strong [ref=e701]: 提交日期
+              - text: ：2026-05-03
+          - separator [ref=e702]
+          - paragraph [ref=e703]:
+            - emphasis [ref=e704]: 由 AI 自动采集整理 · 数据截至 2026-05-04 07:30 · 如有遗漏欢迎补充
+        - generic [ref=e705]:
+          - heading "评论" [level=2] [ref=e706]:
+            - img [ref=e707]
+            - text: 评论
+          - generic [ref=e710]: 还没有评论，来说两句吧~
+          - generic [ref=e900]:
+            - generic [ref=e901]:
+              - img "南宫乘风" [ref=e902]
+              - generic [ref=e903]:
+                - text: 你将以
+                - strong [ref=e904]: 南宫乘风
+            - textbox "输入评论内容..." [ref=e905]
+            - generic [ref=e906]:
+              - button "发表评论" [disabled]:
+                - img
+                - text: 发表评论
+        - generic [ref=e711]:
+          - heading "相关文章" [level=2] [ref=e712]
+          - generic [ref=e713]:
+            - link "李自在AI 日报 | 2026-04-29 Daily News 0 0 0 李自在AI 日报 | 2026-04-29 OpenAI造手机+更新微软合作，Google接手五角大楼AI合同，DeepSeek-V4开源百万字上下文，Ineffable Intelligence获11亿美元种子轮 AI 开源 大模型 李自在 · 4月29日 18 分钟阅读" [ref=e715] [cursor=pointer]:
+              - /url: /zh/article/ai-fast-learning-2026-04-29
+              - generic [ref=e716]:
+                - img "李自在AI 日报 | 2026-04-29" [ref=e717]
+                - generic [ref=e718]: Daily News
+                - generic [ref=e719]:
+                  - button "0" [ref=e720]:
+                    - img [ref=e721]
+                    - generic [ref=e727]: "0"
+                  - generic [ref=e728]:
+                    - img [ref=e729]
+                    - generic [ref=e731]: "0"
+                  - generic [ref=e732]:
+                    - img [ref=e733]
+                    - generic [ref=e735]: "0"
+              - generic [ref=e736]:
+                - heading "李自在AI 日报 | 2026-04-29" [level=3] [ref=e737]
+                - paragraph [ref=e738]: OpenAI造手机+更新微软合作，Google接手五角大楼AI合同，DeepSeek-V4开源百万字上下文，Ineffable Intelligence获11亿美元种子轮
+                - generic [ref=e739]:
+                  - generic [ref=e740]: AI
+                  - generic [ref=e741]: 开源
+                  - generic [ref=e742]: 大模型
+                - generic [ref=e743]:
+                  - generic [ref=e744]:
+                    - generic [ref=e745]: 李自在
+                    - generic [ref=e746]: ·
+                    - generic [ref=e747]: 4月29日
+                  - generic [ref=e749]:
+                    - img [ref=e750]
+                    - generic [ref=e753]: 18 分钟阅读
+            - link "李自在AI 日报 | 2026-05-03 Daily News 0 0 0 李自在AI 日报 | 2026-05-03 四大科技巨头AI资本支出飙升至7250亿美元，Cursor SDK发布让AI编程变基建，Meta收购机器人AI公司ARI，腾讯开源Hy-MT翻译模型 AI 开源 Agent 李自在 · 5月3日 20 分钟阅读" [ref=e755] [cursor=pointer]:
+              - /url: /zh/article/ai-fast-learning-2026-05-03
+              - generic [ref=e756]:
+                - img "李自在AI 日报 | 2026-05-03" [ref=e757]
+                - generic [ref=e758]: Daily News
+                - generic [ref=e759]:
+                  - button "0" [ref=e760]:
+                    - img [ref=e761]
+                    - generic [ref=e767]: "0"
+                  - generic [ref=e768]:
+                    - img [ref=e769]
+                    - generic [ref=e771]: "0"
+                  - generic [ref=e772]:
+                    - img [ref=e773]
+                    - generic [ref=e775]: "0"
+              - generic [ref=e776]:
+                - heading "李自在AI 日报 | 2026-05-03" [level=3] [ref=e777]
+                - paragraph [ref=e778]: 四大科技巨头AI资本支出飙升至7250亿美元，Cursor SDK发布让AI编程变基建，Meta收购机器人AI公司ARI，腾讯开源Hy-MT翻译模型
+                - generic [ref=e779]:
+                  - generic [ref=e780]: AI
+                  - generic [ref=e781]: 开源
+                  - generic [ref=e782]: Agent
+                - generic [ref=e783]:
+                  - generic [ref=e784]:
+                    - generic [ref=e785]: 李自在
+                    - generic [ref=e786]: ·
+                    - generic [ref=e787]: 5月3日
+                  - generic [ref=e789]:
+                    - img [ref=e790]
+                    - generic [ref=e793]: 20 分钟阅读
+            - link "李自在AI 日报 | 2026-05-01 Daily News 0 0 0 李自在AI 日报 | 2026-05-01 OpenAI与微软重写合作条款、GPT-5.5-Cyber发布、DeepSeek-V4预览版推动国产芯片生态、中科院发布磐石100模型体系 AI 开源 大模型 李自在 · 5月1日 18 分钟阅读" [ref=e795] [cursor=pointer]:
+              - /url: /zh/article/ai-fast-learning-2026-05-01
+              - generic [ref=e796]:
+                - img "李自在AI 日报 | 2026-05-01" [ref=e797]
+                - generic [ref=e798]: Daily News
+                - generic [ref=e799]:
+                  - button "0" [ref=e800]:
+                    - img [ref=e801]
+                    - generic [ref=e807]: "0"
+                  - generic [ref=e808]:
+                    - img [ref=e809]
+                    - generic [ref=e811]: "0"
+                  - generic [ref=e812]:
+                    - img [ref=e813]
+                    - generic [ref=e815]: "0"
+              - generic [ref=e816]:
+                - heading "李自在AI 日报 | 2026-05-01" [level=3] [ref=e817]
+                - paragraph [ref=e818]: OpenAI与微软重写合作条款、GPT-5.5-Cyber发布、DeepSeek-V4预览版推动国产芯片生态、中科院发布磐石100模型体系
+                - generic [ref=e819]:
+                  - generic [ref=e820]: AI
+                  - generic [ref=e821]: 开源
+                  - generic [ref=e822]: 大模型
+                - generic [ref=e823]:
+                  - generic [ref=e824]:
+                    - generic [ref=e825]: 李自在
+                    - generic [ref=e826]: ·
+                    - generic [ref=e827]: 5月1日
+                  - generic [ref=e829]:
+                    - img [ref=e830]
+                    - generic [ref=e833]: 18 分钟阅读
+      - complementary [ref=e834]:
+        - generic [ref=e835]:
+          - generic [ref=e836]:
+            - generic [ref=e837]: 内容形式
+            - generic [ref=e838]:
+              - generic [ref=e839]: 📖 文章
+              - generic [ref=e840]: 🎙️ 播客
+              - generic [ref=e841]: 📊 幻灯片
+          - generic [ref=e907]:
+            - generic [ref=e908]: 目录
+            - navigation [ref=e909]:
+              - link "01 今日概览" [ref=e910] [cursor=pointer]:
+                - /url: "#heading-今日概览"
+                - generic [ref=e911]: "01"
+                - text: 今日概览
+              - link "02 头条聚焦" [ref=e912] [cursor=pointer]:
+                - /url: "#heading-头条聚焦"
+                - generic [ref=e913]: "02"
+                - text: 头条聚焦
+              - link "03 Meta 完成收购机器人 AI 公司 ARI，加速人形机器人布局" [ref=e914] [cursor=pointer]:
+                - /url: "#heading-meta-完成收购机器人-ai-公司-ari-加速人形机器人布局"
+                - generic [ref=e915]: "03"
+                - text: Meta 完成收购机器人 AI 公司 ARI，加速人形机器人布局
+              - link "04 Google 拟向 Anthropic 投入最高 400 亿美元" [ref=e916] [cursor=pointer]:
+                - /url: "#heading-google-拟向-anthropic-投入最高-400-亿美元"
+                - generic [ref=e917]: "04"
+                - text: Google 拟向 Anthropic 投入最高 400 亿美元
+              - link "05 Microsoft 与 OpenAI 结束云服务独家合作" [ref=e918] [cursor=pointer]:
+                - /url: "#heading-microsoft-与-openai-结束云服务独家合作"
+                - generic [ref=e919]: "05"
+                - text: Microsoft 与 OpenAI 结束云服务独家合作
+              - link "06 Musk 诉 Altman 庭审进入实质阶段" [ref=e920] [cursor=pointer]:
+                - /url: "#heading-musk-诉-altman-庭审进入实质阶段"
+                - generic [ref=e921]: "06"
+                - text: Musk 诉 Altman 庭审进入实质阶段
+              - link "07 中国阻止 Meta 收购 AI 初创公司 Manus" [ref=e922] [cursor=pointer]:
+                - /url: "#heading-中国阻止-meta-收购-ai-初创公司-manus"
+                - generic [ref=e923]: "07"
+                - text: 中国阻止 Meta 收购 AI 初创公司 Manus
+              - link "08 亚马逊 AWS 上架 OpenAI 全新产品线" [ref=e924] [cursor=pointer]:
+                - /url: "#heading-亚马逊-aws-上架-openai-全新产品线"
+                - generic [ref=e925]: "08"
+                - text: 亚马逊 AWS 上架 OpenAI 全新产品线
+              - link "09 开源速递" [ref=e926] [cursor=pointer]:
+                - /url: "#heading-开源速递"
+                - generic [ref=e927]: "09"
+                - text: 开源速递
+              - link "10 DeepSeek-TUI" [ref=e928] [cursor=pointer]:
+                - /url: "#heading-deepseek-tui"
+                - generic [ref=e929]: "10"
+                - text: DeepSeek-TUI
+              - link "11 Pixelle-Video" [ref=e930] [cursor=pointer]:
+                - /url: "#heading-pixelle-video"
+                - generic [ref=e931]: "11"
+                - text: Pixelle-Video
+              - link "12 local-deep-research" [ref=e932] [cursor=pointer]:
+                - /url: "#heading-local-deep-research"
+                - generic [ref=e933]: "12"
+                - text: local-deep-research
+              - link "13 OpenVoice" [ref=e934] [cursor=pointer]:
+                - /url: "#heading-openvoice"
+                - generic [ref=e935]: "13"
+                - text: OpenVoice
+              - link "14 Crabbox" [ref=e936] [cursor=pointer]:
+                - /url: "#heading-crabbox"
+                - generic [ref=e937]: "14"
+                - text: Crabbox
+              - link "15 AlphaClaw" [ref=e938] [cursor=pointer]:
+                - /url: "#heading-alphaclaw"
+                - generic [ref=e939]: "15"
+                - text: AlphaClaw
+              - link "16 OpenWrt" [ref=e940] [cursor=pointer]:
+                - /url: "#heading-openwrt"
+                - generic [ref=e941]: "16"
+                - text: OpenWrt
+              - link "17 Cursor Changelog 5 月更新" [ref=e942] [cursor=pointer]:
+                - /url: "#heading-cursor-changelog-5-月更新"
+                - generic [ref=e943]: "17"
+                - text: Cursor Changelog 5 月更新
+              - 'link "18 GitHub Blog AI: AI 驱动的开发者体验升级" [ref=e944] [cursor=pointer]':
+                - /url: "#heading-github-blog-ai-ai-驱动的开发者体验升级"
+                - generic [ref=e945]: "18"
+                - text: "GitHub Blog AI: AI 驱动的开发者体验升级"
+              - link "19 Sapiens2" [ref=e946] [cursor=pointer]:
+                - /url: "#heading-sapiens2"
+                - generic [ref=e947]: "19"
+                - text: Sapiens2
+              - link "20 模型与产品" [ref=e948] [cursor=pointer]:
+                - /url: "#heading-模型与产品"
+                - generic [ref=e949]: "20"
+                - text: 模型与产品
+              - link "21 国外" [ref=e950] [cursor=pointer]:
+                - /url: "#heading-国外"
+                - generic [ref=e951]: "21"
+                - text: 国外
+              - link "22 国内" [ref=e952] [cursor=pointer]:
+                - /url: "#heading-国内"
+                - generic [ref=e953]: "22"
+                - text: 国内
+              - link "23 头部厂商动态" [ref=e954] [cursor=pointer]:
+                - /url: "#heading-头部厂商动态"
+                - generic [ref=e955]: "23"
+                - text: 头部厂商动态
+              - link "24 融资与投资" [ref=e956] [cursor=pointer]:
+                - /url: "#heading-融资与投资"
+                - generic [ref=e957]: "24"
+                - text: 融资与投资
+              - link "25 观点与言论" [ref=e958] [cursor=pointer]:
+                - /url: "#heading-观点与言论"
+                - generic [ref=e959]: "25"
+                - text: 观点与言论
+              - link "26 研究与论文" [ref=e960] [cursor=pointer]:
+                - /url: "#heading-研究与论文"
+                - generic [ref=e961]: "26"
+                - text: 研究与论文
+              - 'link "27 Ara: Agent 原生研究成果" [ref=e962] [cursor=pointer]':
+                - /url: "#heading-ara-agent-原生研究成果"
+                - generic [ref=e963]: "27"
+                - text: "Ara: Agent 原生研究成果"
+              - 'link "28 LenVM: Token 级别长度建模" [ref=e964] [cursor=pointer]':
+                - /url: "#heading-lenvm-token-级别长度建模"
+                - generic [ref=e965]: "28"
+                - text: "LenVM: Token 级别长度建模"
+              - 'link "29 RoundPipe: 消费级 GPU 上的高效训练" [ref=e966] [cursor=pointer]':
+                - /url: "#heading-roundpipe-消费级-gpu-上的高效训练"
+                - generic [ref=e967]: "29"
+                - text: "RoundPipe: 消费级 GPU 上的高效训练"
+              - 'link "30 FlashRT: 高效红队测试框架" [ref=e968] [cursor=pointer]':
+                - /url: "#heading-flashrt-高效红队测试框架"
+                - generic [ref=e969]: "30"
+                - text: "FlashRT: 高效红队测试框架"
+              - link "31 视觉生成新纪元：从原子映射到智能体世界建模" [ref=e970] [cursor=pointer]:
+                - /url: "#heading-视觉生成新纪元-从原子映射到智能体世界建模"
+                - generic [ref=e971]: "31"
+                - text: 视觉生成新纪元：从原子映射到智能体世界建模
+              - 'link "32 Sapiens2: 高分辨率人体视觉 Transformer" [ref=e972] [cursor=pointer]':
+                - /url: "#heading-sapiens2-高分辨率人体视觉-transformer"
+                - generic [ref=e973]: "32"
+                - text: "Sapiens2: 高分辨率人体视觉 Transformer"
+              - link "33 合规性与合理性：LLM 推理可控性研究" [ref=e974] [cursor=pointer]:
+                - /url: "#heading-合规性与合理性-llm-推理可控性研究"
+                - generic [ref=e975]: "33"
+                - text: 合规性与合理性：LLM 推理可控性研究
+          - generic [ref=e842]:
+            - generic [ref=e843]: 阅读数据
+            - generic [ref=e844]:
+              - generic [ref=e845]:
+                - generic [ref=e846]: "3"
+                - generic [ref=e847]: 浏览
+              - generic [ref=e848]:
+                - generic [ref=e849]: "0"
+                - generic [ref=e850]: 点赞
+          - generic [ref=e851]:
+            - generic [ref=e852]: 标签
+            - generic [ref=e853]:
+              - generic [ref=e854]: AI
+              - generic [ref=e855]: 开源
+              - generic [ref=e856]: 大模型
+              - generic [ref=e857]: Agent
+              - generic [ref=e858]: 机器人
+  - contentinfo [ref=e859]:
+    - generic [ref=e860]:
+      - generic [ref=e861]:
+        - heading "Zizai Blog" [level=3] [ref=e862]
+        - generic [ref=e863]:
+          - link "Twitter" [ref=e864] [cursor=pointer]:
+            - /url: https://twitter.com/zizaiblog
+            - img [ref=e865]
+          - link "YouTube" [ref=e867] [cursor=pointer]:
+            - /url: https://youtube.com/@zizaili
+            - img [ref=e868]
+          - link "LinkedIn" [ref=e871] [cursor=pointer]:
+            - /url: https://www.linkedin.com/in/zizai-li
+            - img [ref=e872]
+        - paragraph [ref=e876]: 保持竞争力
+        - generic [ref=e878]:
+          - textbox "输入你的邮箱..." [ref=e879]
+          - button "订阅" [ref=e880]
+      - generic [ref=e881]:
+        - link "关于" [ref=e882] [cursor=pointer]:
+          - /url: /zh/about
+        - link "归档" [ref=e883] [cursor=pointer]:
+          - /url: /zh/archive
+        - link "推荐" [ref=e884] [cursor=pointer]:
+          - /url: /zh/recommendations
+        - link "站点地图" [ref=e885] [cursor=pointer]:
+          - /url: /zh/sitemap
+        - link "隐私政策" [ref=e886] [cursor=pointer]:
+          - /url: /zh/privacy
+        - link "服务条款" [ref=e887] [cursor=pointer]:
+          - /url: /zh/terms
+        - link "信息收集声明" [ref=e888] [cursor=pointer]:
+          - /url: /zh/collection-notice
+      - generic [ref=e889]: © 2026 Zizai Blog. 保留所有权利。
+  - button "回到顶部" [ref=e987]:
+    - img [ref=e988]
+  - region "Notifications alt+T"
+  - generic [ref=e894] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e895]:
+      - img [ref=e896]
+    - generic [ref=e976]:
+      - button "Open issues overlay" [ref=e977]:
+        - generic [ref=e978]:
+          - generic [ref=e979]: "0"
+          - generic [ref=e980]: "1"
+        - generic [ref=e981]: Issue
+      - button "Collapse issues badge" [ref=e982]:
+        - img [ref=e983]
+  - alert [ref=e985]

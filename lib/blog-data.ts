@@ -4,7 +4,7 @@
  * 替代原来的 lib/content.ts，从 Cloudflare R2 获取文章数据
  */
 
-import type { Article, Category } from '@/types/index';
+import type { Article, Category, ContentTypes, SlideData, Chapter } from '@/types/index';
 import { getLikes, getBatchViews } from '@/lib/services';
 import { config } from '@/lib/env';
 
@@ -64,6 +64,15 @@ export async function getAllArticles(): Promise<Article[]> {
     },
     category: item.category || { name: '未分类', slug: 'uncategorized' },
     tags: item.tags || [],
+    contentType: item.contentType || 'article',
+    audioDuration: item.audioDuration,
+    chapters: item.chapters,
+    slideCount: item.slideCount,
+    // 新架构：多内容类型
+    contentTypes: item.contentTypes as ContentTypes | undefined,
+    slidesBaseUrl: item.contentTypes?.slides
+      ? `${R2_BASE}/blog-data/articles/${item.category?.slug || 'uncategorized'}/${item.slug}/slides`
+      : undefined,
   }));
 
   // 批量获取点赞、浏览和评论数据
@@ -130,6 +139,40 @@ async function getArticleContent(categorySlug: string, articleSlug: string): Pro
 }
 
 /**
+ * 获取播客音频 URL
+ * 从 contentTypes.podcast.audioFile 推断扩展名，兜底 .mp3
+ */
+function getPodcastAudioUrl(categorySlug: string, articleSlug: string, audioFile?: string): string {
+  const ext = audioFile?.split('.').pop()?.toLowerCase() || 'mp3';
+  return `${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/podcast/audio.${ext}`;
+}
+
+/**
+ * 获取播客脚本（Markdown）
+ */
+async function getPodcastScript(categorySlug: string, articleSlug: string): Promise<string> {
+  const res = await fetch(`${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/podcast/script.md`, {
+    next: { revalidate: 3600 },
+  });
+
+  if (!res.ok) return '';
+  return res.text();
+}
+
+/**
+ * 获取幻灯片数据
+ */
+async function getSlidesData(categorySlug: string, articleSlug: string): Promise<SlideData[]> {
+  const res = await fetch(`${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/slides.json`, {
+    next: { revalidate: 3600 },
+  });
+
+  if (!res.ok) return [];
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+}
+
+/**
  * 根据 slug 获取单篇文章（完整数据）
  */
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
@@ -137,12 +180,51 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
   const article = articles.find(a => a.slug === slug);
   if (!article) return null;
 
-  const content = await getArticleContent(article.category.slug, slug);
+  const contentType = article.contentType || 'article';
+  const categorySlug = article.category.slug;
 
-  return {
+  // 获取主内容
+  const content = await getArticleContent(categorySlug, slug);
+  const result: Article = {
     ...article,
     content: content || '',
   };
+
+  // 新架构：根据 contentTypes 加载多内容类型数据
+  const ct = article.contentTypes;
+
+  if (ct?.podcast) {
+    result.audioUrl = getPodcastAudioUrl(categorySlug, slug, ct.podcast.audioFile);
+    if (ct.podcast.hasScript) {
+      result.scriptContent = await getPodcastScript(categorySlug, slug);
+    }
+  } else if (contentType === 'podcast') {
+    // 旧架构兼容
+    result.audioUrl = getPodcastAudioUrl(categorySlug, slug);
+    result.scriptContent = await getPodcastScript(categorySlug, slug);
+  }
+
+  if (ct?.slides) {
+    // HTML 幻灯片：构造 URL，不需要预加载数据
+    result.slidesBaseUrl = `${R2_BASE}/blog-data/articles/${categorySlug}/${slug}/slides`;
+    result.slideCount = ct.slides.slideCount;
+  } else if (contentType === 'slides') {
+    // 旧架构兼容：Markdown 幻灯片
+    if (content.includes('\n---\n')) {
+      const slides = content.split('\n---\n').filter(Boolean);
+      result.slidesData = slides.map((md, index) => ({
+        id: `slide-${index}`,
+        index,
+        markdown: md.trim(),
+      }));
+      result.slideCount = result.slidesData.length;
+    } else {
+      result.slidesData = await getSlidesData(categorySlug, slug);
+      result.slideCount = result.slidesData.length;
+    }
+  }
+
+  return result;
 }
 
 /**

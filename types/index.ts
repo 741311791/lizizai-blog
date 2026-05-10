@@ -4,6 +4,42 @@
  * 前端显示类型，由 lib/content.ts 提供
  */
 
+/** 内容类型 */
+export type ContentType = 'article' | 'podcast' | 'slides';
+
+/** 文章可用的内容类型描述（来自 R2 meta.json contentTypes 字段） */
+export interface ContentTypes {
+  article: true;
+  podcast?: {
+    audioFile: string;
+    audioSize: number;
+    hasScript: boolean;
+    chapters?: Chapter[];
+    audioDuration?: number;
+  };
+  slides?: {
+    slideCount: number;
+    source: 'html_slides';
+    hasScreenshots: boolean;
+    manifest?: { file: string; label: string }[];
+  };
+}
+
+/** 播客章节 */
+export interface Chapter {
+  id: string;
+  title: string;
+  startTime: number; // 秒
+}
+
+/** 幻灯片数据 */
+export interface SlideData {
+  id: string;
+  index: number;
+  markdown: string;
+  notes?: string;
+}
+
 export interface Article {
   id: string;
   title: string;
@@ -30,6 +66,18 @@ export interface Article {
     name: string;
     slug: string;
   }[];
+  // 多内容类型扩展字段（全部可选，默认 article）
+  contentType?: ContentType;
+  audioUrl?: string;
+  audioDuration?: number;
+  chapters?: Chapter[];
+  scriptContent?: string;
+  slidesData?: SlideData[];
+  slideCount?: number;
+  // 新架构：多内容类型可用性描述
+  contentTypes?: ContentTypes;
+  // HTML 幻灯片基础 URL（前端拼接 iframe src）
+  slidesBaseUrl?: string;
 }
 
 export interface Category {

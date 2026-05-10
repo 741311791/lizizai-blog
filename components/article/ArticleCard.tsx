@@ -8,7 +8,8 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getArticleImageUrl } from '@/lib/utils/image';
-import ShareMenu from '@/components/share/ShareMenu';
+import dynamic from 'next/dynamic';
+const ShareMenu = dynamic(() => import('@/components/share/ShareMenu'), { ssr: false });
 import { config } from '@/lib/env';
 import type { Article } from '@/types/index';
 
@@ -39,6 +40,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
   const [shares, setShares] = useState(sharesCount);
   const description = subtitle || excerpt;
   const imageUrl = getArticleImageUrl(featuredImage, id);
+  const contentType = article.contentType || 'article';
 
   return (
     <Card className="group overflow-hidden border-border bg-card hover:bg-card transition-colors duration-200 h-full flex flex-col">
@@ -53,15 +55,29 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             unoptimized={imageUrl.includes('picsum.photos')}
           />
 
-          {/* 分类标签 */}
-          {category && (
+          {/* 内容类型 / 分类标签 */}
+          {contentType === 'podcast' ? (
+            <Badge
+              variant="secondary"
+              className="absolute top-3 left-3 text-xs bg-accent/80 text-accent-foreground backdrop-blur-sm hover:bg-accent/80"
+            >
+              🎙️ {t('podcast')}
+            </Badge>
+          ) : contentType === 'slides' ? (
+            <Badge
+              variant="secondary"
+              className="absolute top-3 left-3 text-xs bg-accent/80 text-accent-foreground backdrop-blur-sm hover:bg-accent/80"
+            >
+              📊 {t('slides')}
+            </Badge>
+          ) : category ? (
             <Badge
               variant="secondary"
               className="absolute top-3 left-3 text-xs bg-accent/80 text-accent-foreground backdrop-blur-sm hover:bg-accent/80"
             >
               {category.name}
             </Badge>
-          )}
+          ) : null}
 
           {/* Hover 覆盖层 - 桌面端显示 */}
           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex items-center justify-center gap-6">
@@ -146,7 +162,14 @@ export default function ArticleCard({ article }: ArticleCardProps) {
               {readingTime && (
                 <div className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  <span>{t('readingTime', { count: readingTime })}</span>
+                  <span>
+                    {contentType === 'podcast'
+                      ? t('listenTime', { count: readingTime })
+                      : contentType === 'slides'
+                      ? t('slideCount', { count: article.slideCount || 0 })
+                      : t('readingTime', { count: readingTime })
+                    }
+                  </span>
                 </div>
               )}
             </div>

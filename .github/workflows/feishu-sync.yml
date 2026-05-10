@@ -1,0 +1,50 @@
+name: 飞书博客同步
+
+on:
+  # 每日北京时间 03:00（UTC 19:00 前一天）
+  schedule:
+    - cron: '0 19 * * *'
+
+  # 手动触发
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: workers/feishu-blog-sync/pnpm-lock.yaml
+
+      - name: 安装依赖
+        run: pnpm install
+        working-directory: workers/feishu-blog-sync
+
+      - name: 执行同步
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_FOLDER_TOKEN: ${{ secrets.FEISHU_FOLDER_TOKEN }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: lizizai-blog
+          R2_BASE_PATH: blog-data
+          R2_PUBLIC_URL: https://pub-7fc5ed7acc9844ab99297fa6b47f55e6.r2.dev
+        run: npx tsx src/cli.ts
+        working-directory: workers/feishu-blog-sync
+
+      - name: 同步结果通知（失败时）
+        if: failure()
+        run: |
+          echo "::error::飞书博客同步失败，请检查日志"

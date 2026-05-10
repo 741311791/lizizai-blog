@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About me module redesign</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --background: #09090b;
+        --foreground: #fafaf9;
+        --card: #18181b;
+        --surface: #27272a;
+        --muted: #78716c;
+        --secondary: #a8a29e;
+        --border: #27272a;
+        --accent: #d97706;
+        --accent-hover: #f59e0b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--background);
+        color: var(--foreground);
+        font-family: "Noto Sans SC", "PingFang SC", sans-serif;
+      }
+
+      .frame {
+        width: 2048px;
+        min-height: 920px;
+        display: grid;
+        place-items: center;
+        padding: 72px 96px;
+      }
+
+      .about {
+        width: min(100%, 1180px);
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 0.85fr) max-content;
+        gap: 72px;
+        align-items: end;
+        margin-bottom: 56px;
+      }
+
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin: 0 0 18px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 36px;
+        height: 1px;
+        background: var(--accent);
+      }
+
+      h1,
+      h2 {
+        font-family: "Noto Serif SC", "Songti SC", serif;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        max-width: 700px;
+        margin: 0;
+        font-size: 68px;
+        font-weight: 900;
+        line-height: 1.18;
+      }
+
+      .section-summary {
+        margin: 0;
+        color: var(--secondary);
+        font-size: 18px;
+        line-height: 1.8;
+        white-space: nowrap;
+      }
+
+      .panel {
+        display: grid;
+        grid-template-columns: 360px minmax(0, 1fr);
+        gap: 72px;
+        align-items: stretch;
+        padding: 44px 0 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .portrait-rail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 420px;
+      }
+
+      .portrait {
+        position: relative;
+        width: 316px;
+        aspect-ratio: 1 / 1.25;
+        overflow: hidden;
+      }
+
+      .portrait img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(1);
+      }
+
+      .socials {
+        display: flex;
+        gap: 14px;
+        margin-top: 22px;
+        justify-content: center;
+      }
+
+      .socials a {
+        display: grid;
+        width: 40px;
+        height: 40px;
+        place-items: center;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--secondary);
+        text-decoration: none;
+        transition: border-color 200ms ease, color 200ms ease;
+      }
+
+      .socials a:hover {
+        border-color: var(--accent);
+        color: var(--accent-hover);
+      }
+
+      .meta {
+        margin-top: 24px;
+        padding-top: 32px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.7;
+        text-align: center;
+      }
+
+      .copy {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 220px;
+        gap: 52px;
+      }
+
+      .bio h2 {
+        margin: -6px 0 24px;
+        font-size: 40px;
+        font-weight: 900;
+        line-height: 1.35;
+      }
+
+      .bio p {
+        max-width: 690px;
+        margin: 0;
+        color: var(--secondary);
+        font-size: 18px;
+        line-height: 1.95;
+      }
+
+      .bio p + p {
+        margin-top: 22px;
+      }
+
+      .bio strong {
+        color: var(--foreground);
+        font-weight: 600;
+      }
+
+      .focus-list {
+        align-self: start;
+        margin-top: 6px;
+        border-left: 1px solid var(--border);
+      }
+
+      .focus-item {
+        padding: 0 0 24px 22px;
+      }
+
+      .focus-item + .focus-item {
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+      }
+
+      .focus-kicker {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .focus-title {
+        margin: 0;
+        color: var(--foreground);
+        font-family: "Noto Serif SC", serif;
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.45;
+      }
+
+      .statement {
+        grid-column: 1 / -1;
+        margin-top: 36px;
+        padding: 0;
+        color: var(--foreground);
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 1.8;
+      }
+
+      @media (max-width: 900px) {
+        .frame {
+          width: 390px;
+          min-height: 1260px;
+          padding: 48px 20px;
+          place-items: start center;
+        }
+
+        .section-head,
+        .panel,
+        .copy {
+          grid-template-columns: 1fr;
+          gap: 32px;
+        }
+
+        h1 {
+          font-size: 42px;
+        }
+
+        .section-summary,
+        .bio p {
+          font-size: 16px;
+        }
+
+        .section-summary {
+          white-space: normal;
+        }
+
+        .portrait {
+          width: 100%;
+          aspect-ratio: 1 / 1.08;
+        }
+
+        .portrait-rail {
+          min-height: auto;
+        }
+
+        .meta {
+          margin-top: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="frame">
+      <section class="about" aria-label="关于我">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">关于我</p>
+            <h1>李自在是谁？</h1>
+          </div>
+          <p class="section-summary">
+            一个把工程、产品和写作放在同一张桌子上的创作者，长期探索技术如何变成更清醒、更有质感的日常实践。
+          </p>
+        </div>
+
+        <div class="panel">
+          <aside class="portrait-rail">
+            <figure class="portrait">
+              <img src="../public/avator/avatar_smile.png" alt="李自在头像" />
+            </figure>
+            <nav class="socials" aria-label="社交链接">
+              <a href="#" aria-label="X">X</a>
+              <a href="#" aria-label="YouTube">▶</a>
+              <a href="#" aria-label="LinkedIn">in</a>
+            </nav>
+            <div class="meta">
+              写作者 / 开发者 / 产品设计师<br />
+              关注 AI、创造力、生产力与未来工作方式
+            </div>
+          </aside>
+
+          <div class="copy">
+            <article class="bio">
+              <h2>你好，我是自在。</h2>
+              <p>
+                我是一个创作者、开发者和写作者，痴迷于思维、技术和构建有意义的数字体验的艺术。
+              </p>
+              <p>
+                之前我作为软件工程师和产品设计师工作，帮助团队构建人们喜爱的产品。现在我专注于写作，探讨创造力、生产力和 AI 时代工作的未来。
+              </p>
+            </article>
+
+            <aside class="focus-list" aria-label="关注方向">
+              <div class="focus-item">
+                <span class="focus-kicker">01</span>
+                <p class="focus-title">AI 时代的工作流</p>
+              </div>
+              <div class="focus-item">
+                <span class="focus-kicker">02</span>
+                <p class="focus-title">创造者的思维系统</p>
+              </div>
+              <div class="focus-item">
+                <span class="focus-kicker">03</span>
+                <p class="focus-title">高质量数字体验</p>
+              </div>
+            </aside>
+
+            <div class="statement">
+              那些好奇的人，我目前不接受咨询客户或「聊聊想法」的邀约。如果你想向我学习，请探索上面的文章和课程。
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

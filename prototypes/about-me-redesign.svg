@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="920" viewBox="0 0 2048 920" role="img" aria-labelledby="title desc">
+  <title id="title">首页 About me 模块重设计原型</title>
+  <desc id="desc">深色编辑杂志风的关于我模块，左侧为头像和社交入口，右侧为作者介绍与关注方向。</desc>
+  <defs>
+    <clipPath id="portraitClip">
+      <rect x="434" y="328" width="316" height="395" rx="8" />
+    </clipPath>
+    <style>
+      .bg { fill: #09090b; }
+      .fg { fill: #fafaf9; }
+      .secondary { fill: #a8a29e; }
+      .muted { fill: #78716c; }
+      .border { stroke: #27272a; }
+      .accent { fill: #d97706; }
+      .card { fill: #18181b; }
+      .serif { font-family: "Noto Serif SC", "Songti SC", serif; letter-spacing: 0; }
+      .sans { font-family: "Noto Sans SC", "PingFang SC", sans-serif; letter-spacing: 0; }
+      .label { font-size: 13px; font-weight: 600; letter-spacing: 3px; }
+      .body { font-size: 18px; font-weight: 400; }
+      .small { font-size: 13px; font-weight: 400; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="2048" height="920" />
+
+  <g transform="translate(0 0)">
+    <line x1="434" y1="268" x2="470" y2="268" stroke="#d97706" stroke-width="1" />
+    <text x="484" y="273" class="sans label muted">关于我</text>
+    <text x="434" y="366" class="serif fg" font-size="68" font-weight="900">李自在是谁？</text>
+
+    <text x="1110" y="305" class="sans secondary body">一个把工程、产品和写作放在同一张桌子上的创作者，长期探索技术如何变成更清醒、更有质感的日常实践。</text>
+
+    <line x1="434" y1="438" x2="1614" y2="438" class="border" stroke-width="1" />
+
+    <image href="../public/avator/avatar_smile.png" x="434" y="328" width="316" height="395" preserveAspectRatio="xMidYMid slice" clip-path="url(#portraitClip)" opacity="0.92" style="filter: grayscale(100%);" />
+
+    <g transform="translate(504 752)" class="sans">
+      <circle cx="20" cy="20" r="20" fill="none" stroke="#27272a" />
+      <text x="20" y="26" text-anchor="middle" class="secondary" font-size="15" font-weight="600">X</text>
+      <circle cx="74" cy="20" r="20" fill="none" stroke="#27272a" />
+      <text x="74" y="26" text-anchor="middle" class="secondary" font-size="15" font-weight="600">▶</text>
+      <circle cx="128" cy="20" r="20" fill="none" stroke="#27272a" />
+      <text x="128" y="26" text-anchor="middle" class="secondary" font-size="15" font-weight="600">in</text>
+    </g>
+
+    <text x="592" y="842" text-anchor="middle" class="sans muted small">
+      <tspan x="592" dy="0">写作者 / 开发者 / 产品设计师</tspan>
+      <tspan x="592" dy="24">关注 AI、创造力、生产力与未来工作方式</tspan>
+    </text>
+
+    <text x="822" y="510" class="serif fg" font-size="40" font-weight="900">你好，我是自在。</text>
+    <text x="822" y="574" class="sans secondary body">
+      <tspan x="822" dy="0">我是一个创作者、开发者和写作者，痴迷于思维、技术和构建有意义的数字体验的艺术。</tspan>
+      <tspan x="822" dy="68">之前我作为软件工程师和产品设计师工作，帮助团队构建人们喜爱的产品。</tspan>
+      <tspan x="822" dy="34">现在我专注于写作，探讨创造力、生产力和 AI 时代工作的未来。</tspan>
+    </text>
+
+    <line x1="1342" y1="487" x2="1342" y2="697" class="border" stroke-width="1" />
+    <g class="sans">
+      <text x="1365" y="500" class="accent label">01</text>
+      <text x="1365" y="540" class="serif fg" font-size="22" font-weight="700">AI 时代的工作流</text>
+      <line x1="1365" y1="574" x2="1574" y2="574" class="border" stroke-width="1" />
+
+      <text x="1365" y="622" class="accent label">02</text>
+      <text x="1365" y="662" class="serif fg" font-size="22" font-weight="700">创造者的思维系统</text>
+      <line x1="1365" y1="696" x2="1574" y2="696" class="border" stroke-width="1" />
+
+      <text x="1365" y="744" class="accent label">03</text>
+      <text x="1365" y="784" class="serif fg" font-size="22" font-weight="700">高质量数字体验</text>
+    </g>
+
+    <text x="822" y="770" class="sans fg" font-size="17" font-weight="600">
+      <tspan x="822" dy="0">那些好奇的人，我目前不接受咨询客户或「聊聊想法」的邀约。</tspan>
+      <tspan x="822" dy="31">如果你想向我学习，请探索上面的文章和课程。</tspan>
+    </text>
+  </g>
+</svg>

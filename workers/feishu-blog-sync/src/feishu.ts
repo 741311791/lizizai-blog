@@ -138,6 +138,81 @@ export class FeishuClient {
   }
 
   /**
+   * 下载云盘中的任意文件（音频、HTML、CSS 等上传文件）
+   * 使用 drive/v1/files/:file_token/download 端点
+   */
+  async downloadDriveFile(fileToken: string): Promise<ArrayBuffer> {
+    const token = await this.getToken();
+
+    // 飞书云盘文件下载 API：GET /drive/v1/files/:file_token/download
+    const res = await fetch(`${FEISHU_BASE_URL}/drive/v1/files/${fileToken}/download`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+      redirect: 'follow',
+    });
+
+    if (res.ok) {
+      return await res.arrayBuffer();
+    }
+
+    // 如果直接下载失败，回退到 medias/batch_get_download_url
+    console.warn(`File download failed (${res.status}), trying medias/batch_get_download_url`);
+    const batchRes = await fetch(`${FEISHU_BASE_URL}/drive/v1/medias/batch_get_download_url`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ file_tokens: [fileToken] }),
+    });
+
+    const batchText = await batchRes.text();
+    let batchData: any;
+    try {
+      batchData = JSON.parse(batchText);
+    } catch {
+      throw new Error(`Both download methods failed. batch response: ${batchText.slice(0, 200)}`);
+    }
+
+    if (batchData.code !== 0 || !batchData.data?.download_urls?.[0]?.download_url) {
+      throw new Error(`Failed to download file ${fileToken}: code=${batchData.code}, msg=${batchData.msg}`);
+    }
+
+    const downloadUrl = batchData.data.download_urls[0].download_url;
+    const fileRes = await fetch(downloadUrl);
+    if (!fileRes.ok) {
+      throw new Error(`Failed to download from temp URL: status=${fileRes.status}`);
+    }
+    return await fileRes.arrayBuffer();
+  }
+
+  /**
+   * 递归列出文件夹下所有文件（含子文件夹）
+   * 返回带相对路径的文件列表，用于 PPT 等文件夹的整体同步
+   */
+  async listAllFilesRecursive(
+    folderToken: string,
+    basePath: string = ''
+  ): Promise<Array<FeishuFile & { path: string }>> {
+    const items = await this.listFiles(folderToken);
+    const result: Array<FeishuFile & { path: string }> = [];
+
+    for (const item of items) {
+      const itemPath = basePath ? `${basePath}/${item.name}` : item.name;
+
+      if (item.type === 'folder') {
+        // 递归进入子文件夹
+        const subFiles = await this.listAllFilesRecursive(item.token, itemPath);
+        result.push(...subFiles);
+      } else {
+        // 普通文件，记录相对路径
+        result.push({ ...item, path: itemPath });
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * 下载图片
    * 飞书 docx 文档内嵌图片的 token 使用 drive/v1/medias/{file_token}/download 端点
    * 如果失败，回退到 batch_get_download_url

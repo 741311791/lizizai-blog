@@ -6,8 +6,9 @@ compatibility_date = "2024-01-01"
 binding = "R2"
 bucket_name = "lizizai-blog"
 
-[triggers]
-crons = ["0 3 * * *"]
+# 同步已迁移到 GitHub Actions，CRON 触发器不再需要
+# [triggers]
+# crons = ["0 1 * * *"]
 
 [vars]
 FEISHU_APP_ID = "cli_a951d50564f89bb5"

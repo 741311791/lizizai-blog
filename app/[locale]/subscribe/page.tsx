@@ -301,7 +301,7 @@ function SubscribePageContent() {
                 {[1, 2, 3, 4].map((i) => (
                   <div
                     key={i}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary border-2 border-background"
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/50 border-2 border-background"
                   />
                 ))}
               </div>

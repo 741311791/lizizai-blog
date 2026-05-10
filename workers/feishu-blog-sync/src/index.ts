@@ -1,13 +1,14 @@
 /**
- * 飞书博客同步 Worker
+ * 飞书博客同步 Worker（只读服务）
  *
- * 定时任务：每天自动同步
- * HTTP 触发：手动同步（需验证 SYNC_TOKEN）
+ * 同步逻辑已迁移到 GitHub Actions，Worker 仅保留只读端点：
+ * - /health  健康检查
+ * - /status  同步状态（读取 R2 中的 articles.json）
+ * - /debug/feishu  调试飞书文件夹结构
  */
 
-import { performSync } from './sync';
+import { type SyncEnv, type R2Bucket } from './sync';
 
-// CORS 头
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -25,8 +26,7 @@ export interface Env {
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    // 处理 CORS 预检
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders });
     }
@@ -36,47 +36,36 @@ export default {
     // 健康检查
     if (url.pathname === '/health') {
       return new Response(JSON.stringify({ status: 'ok' }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
     }
 
-    // 手动同步端点
-    if (url.pathname === '/sync' && request.method === 'POST') {
-      const token = request.headers.get('X-Sync-Token');
+    // 调试：查看飞书文件夹结构
+    if (url.pathname === '/debug/feishu' && request.method === 'GET') {
+      const token = request.headers.get('X-Sync-Token') || url.searchParams.get('token');
       if (token !== env.SYNC_TOKEN) {
         return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-          status: 401,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          status: 401, headers: { 'Content-Type': 'application/json', ...corsHeaders },
         });
       }
 
-      const r2PublicUrl = env.R2_PUBLIC_URL || `https://${url.host}`;
-      console.log(`Using R2_PUBLIC_URL: ${r2PublicUrl}`);
+      const { FeishuClient } = await import('./feishu');
+      const client = new FeishuClient(env.FEISHU_APP_ID, env.FEISHU_APP_SECRET);
+      const folderToken = url.searchParams.get('folder') || env.FEISHU_FOLDER_TOKEN;
+      const items = await client.listFiles(folderToken);
 
-      const result = await performSync({
-        R2: env.R2,
-        FEISHU_APP_ID: env.FEISHU_APP_ID,
-        FEISHU_APP_SECRET: env.FEISHU_APP_SECRET,
-        FEISHU_FOLDER_TOKEN: env.FEISHU_FOLDER_TOKEN,
-        R2_BASE_PATH: env.R2_BASE_PATH || 'blog-data',
-        R2_PUBLIC_URL: r2PublicUrl,
-      });
-
-      return new Response(JSON.stringify(result), {
-        status: result.success ? 200 : 500,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      return new Response(JSON.stringify({ folderToken, items }, null, 2), {
+        status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
     }
 
-    // 获取同步状态
+    // 同步状态（读取 R2 中的 articles.json）
     if (url.pathname === '/status') {
       try {
-        const obj = await env.R2.get(`${env.R2_BASE_PATH}/articles.json`);
+        const obj = await env.R2.get(`${env.R2_BASE_PATH || 'blog-data'}/articles.json`);
         if (!obj) {
           return new Response(JSON.stringify({ synced: false }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+            status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
         }
         const data = JSON.parse(new TextDecoder().decode(await obj.arrayBuffer()));
@@ -85,44 +74,17 @@ export default {
           articleCount: data.length,
           lastSync: new Date().toISOString(),
         }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders },
         });
       } catch (err) {
         return new Response(JSON.stringify({ error: String(err) }), {
-          status: 500,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders },
         });
       }
     }
 
     return new Response(JSON.stringify({ error: 'Not Found' }), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      status: 404, headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
-  },
-
-  // 定时触发器（每天执行）
-  async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
-    console.log('Scheduled sync triggered at', new Date().toISOString());
-
-    const result = await performSync({
-      R2: env.R2,
-      FEISHU_APP_ID: env.FEISHU_APP_ID,
-      FEISHU_APP_SECRET: env.FEISHU_APP_SECRET,
-      FEISHU_FOLDER_TOKEN: env.FEISHU_FOLDER_TOKEN,
-      R2_BASE_PATH: env.R2_BASE_PATH || 'blog-data',
-      R2_PUBLIC_URL: env.R2_PUBLIC_URL || 'https://cdn.lizizai.xyz',
-    });
-
-    console.log('Scheduled sync result:', result);
   },
 };
-
-// R2 Bucket 类型定义
-interface R2Bucket {
-  get(key: string): Promise<{ arrayBuffer(): Promise<ArrayBuffer> } | null>;
-  put(key: string, value: ArrayBuffer | string, options?: any): Promise<void>;
-  list(options?: { prefix?: string; limit?: number; cursor?: string }): Promise<{ objects: { key: string }[]; truncated: boolean; cursor?: string }>;
-  delete(key: string): Promise<void>;
-}
