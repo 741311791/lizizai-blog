@@ -5,7 +5,7 @@
  * 在 GitHub Actions 或本地执行
  */
 
-import { performSync, type SyncEnv } from './sync';
+import { performSync, type SyncEnv, type SyncResult } from './sync';
 import { R2Client } from './lib/r2-client';
 
 async function main() {
@@ -38,9 +38,12 @@ async function main() {
     R2_PUBLIC_URL: process.env.R2_PUBLIC_URL || 'https://pub-7fc5ed7acc9844ab99297fa6b47f55e6.r2.dev',
   };
 
-  console.log(`[sync] 开始同步: ${new Date().toISOString()}`);
-  const result = await performSync(env);
-  console.log(`[sync] 完成: ${result.articleCount} 篇文章`);
+  const args = process.argv.slice(2);
+  const forceSync = args.includes('--force');
+
+  console.log(`[sync] 开始${forceSync ? '全量' : '增量'}同步: ${new Date().toISOString()}`);
+  const result = await performSync(env, forceSync);
+  console.log(`[sync] 完成: ${result.articleCount} 篇文章 (同步: ${result.synced}, 跳过: ${result.skipped})`);
 }
 
 main().catch(err => {

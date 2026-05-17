@@ -9,11 +9,14 @@ import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Clock, ChevronRight } from 'lucide-react';
 import { getArticlesByCategory } from '@/lib/blog-data';
-import { getTranslations } from 'next-intl/server';
+import { getBadgeContent, type TranslateFn } from '@/lib/content-utils';
+import { getTranslations, getLocale } from 'next-intl/server';
 import type { Article } from '@/types/index';
 
 export default async function DailyNews() {
   const t = await getTranslations('aiNews');
+  const tArticle = await getTranslations('article');
+  const locale = await getLocale();
   const articles = await getArticlesByCategory('daily-news');
 
   // 无文章时整体隐藏
@@ -45,7 +48,7 @@ export default async function DailyNews() {
       <div className="relative -mx-4 px-4">
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
           {articles.slice(0, 8).map((article: Article) => (
-            <NewsCard key={article.id} article={article} />
+            <NewsCard key={article.id} article={article} locale={locale} tArticle={tArticle} />
           ))}
         </div>
         {/* 右侧渐隐遮罩 */}
@@ -55,23 +58,14 @@ export default async function DailyNews() {
   );
 }
 
-function NewsCard({ article }: { article: Article }) {
-  const contentType = article.contentType || 'article';
-
+function NewsCard({ article, locale, tArticle }: { article: Article; locale: string; tArticle: TranslateFn }) {
+  const badgeContent = getBadgeContent(tArticle, article.contentType, article.category?.name, article.slideCount);
   const date = article.publishedAt
-    ? new Date(article.publishedAt).toLocaleDateString('zh-CN', {
-        month: 'short',
-        day: 'numeric',
-      })
+    ? new Date(article.publishedAt).toLocaleDateString(
+        locale === 'zh' ? 'zh-CN' : 'en-US',
+        { month: 'short', day: 'numeric' }
+      )
     : '';
-
-  // 类型标签：优先显示内容类型，其次分类
-  const badgeContent =
-    contentType === 'podcast'
-      ? '🎙️ 播客'
-      : contentType === 'slides'
-      ? `📊 ${article.slideCount || 0} 页`
-      : article.category?.name;
 
   return (
     <Link href={`/article/${article.slug}`} className="flex-shrink-0 snap-start">

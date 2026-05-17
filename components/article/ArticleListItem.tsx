@@ -8,6 +8,8 @@ import { Share2, Clock } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { getArticleImageUrl } from '@/lib/utils/image';
+import ContentTypeBadge from './ContentTypeBadge';
+import { getTimeLabel } from '@/lib/content-utils';
 import { config } from '@/lib/env';
 import type { Article } from '@/types/index';
 
@@ -43,14 +45,7 @@ export default function ArticleListItem({ article }: ArticleListItemProps) {
   const description = subtitle || excerpt;
   const imageUrl = getArticleImageUrl(featuredImage, id);
   const contentType = article.contentType || 'article';
-
-  // 根据内容类型返回不同的时间描述
-  const timeLabel =
-    contentType === 'podcast'
-      ? t('listenTime', { count: readingTime || 0 })
-      : contentType === 'slides'
-      ? t('slideCount', { count: article.slideCount || 0 })
-      : t('readingTime', { count: readingTime || 0 });
+  const timeLabel = getTimeLabel(t, article.contentType, readingTime || 0, article.slideCount);
 
   return (
     <Link href={`/article/${slug}`}>
@@ -67,17 +62,10 @@ export default function ArticleListItem({ article }: ArticleListItemProps) {
           )}
           {/* 内容类型标识 + 标签 */}
           <div className="flex flex-wrap gap-1.5 mb-3">
-            {/* 播客/PPT 类型标识 */}
-            {contentType === 'podcast' && (
-              <span className="text-xs font-medium px-2 py-0.5 rounded-md bg-primary/15 text-primary">
-                🎙️ {t('podcast')}
-              </span>
-            )}
-            {contentType === 'slides' && (
-              <span className="text-xs font-medium px-2 py-0.5 rounded-md bg-primary/15 text-primary">
-                📊 {t('slideCount', { count: article.slideCount || 0 })}
-              </span>
-            )}
+            <ContentTypeBadge
+              article={article}
+              compact
+            />
             {tags && tags.slice(0, 3).map((tag) => (
               <span
                 key={tag.slug}
@@ -139,6 +127,7 @@ export default function ArticleListItem({ article }: ArticleListItemProps) {
             src={imageUrl}
             alt={title}
             fill
+            sizes="(max-width: 640px) 96px, 160px"
             className="object-cover transition-transform group-hover:scale-105"
             unoptimized={imageUrl.includes('picsum.photos')}
           />

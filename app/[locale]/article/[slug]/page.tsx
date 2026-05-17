@@ -1,5 +1,4 @@
 import { getArticleBySlug, getRelatedArticles, getAllArticleSlugs } from '@/lib/blog-data';
-import { getLikes, getViews } from '@/lib/services';
 import { notFound } from 'next/navigation';
 import { generateArticleMetadata, generateArticleJsonLd } from '@/lib/seo';
 import ArticleDetailClient from '@/components/article/ArticleDetailClient';
@@ -51,12 +50,6 @@ export default async function ArticlePage({
     notFound();
   }
 
-  // 从 Cloudflare 服务获取动态数据
-  const [likes, views] = await Promise.all([
-    getLikes(article.id),
-    getViews(article.id),
-  ]);
-
   // 获取相关文章
   const relatedArticles = article.category?.slug
     ? await getRelatedArticles(article.category.slug, article.slug, 3)
@@ -82,8 +75,8 @@ export default async function ArticlePage({
 
       <ArticleDetailClient
         article={article}
-        likes={likes || article.likes}
-        views={views || article.views || 0}
+        likes={article.likes}
+        views={article.views || 0}
         relatedArticles={relatedArticles}
       />
     </>

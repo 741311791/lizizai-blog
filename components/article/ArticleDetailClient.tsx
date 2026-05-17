@@ -1,25 +1,51 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import AuthorCard from './AuthorCard';
 import ArticleActions from './ArticleActions';
 import ArticleContent from './ArticleContent';
 import MobileToc from './MobileToc';
 import MobileChapterList from './MobileChapterList';
 import MobileSlideNav from './MobileSlideNav';
-import AudioPlayer from './AudioPlayer';
-import PodcastSidebar from './PodcastSidebar';
-import SlideViewer from './SlideViewer';
-import SlidesSidebar from './SlidesSidebar';
 import ContentTypeBadge from './ContentTypeBadge';
 import ContentComingSoon from './ContentComingSoon';
 import ContentTypeSwitcher from './ContentTypeSwitcher';
 import ReadingProgress from './ReadingProgress';
-import ImageLightbox from './ImageLightbox';
-import CommentSection from './CommentSection';
 import RelatedArticles from './RelatedArticles';
 import ArticleSidebar from './ArticleSidebar';
 import type { Article } from '@/types/index';
+
+const AudioPlayer = dynamic(() => import('./AudioPlayer'), {
+  loading: () => <div className="h-20 rounded-lg bg-muted animate-pulse mb-8" />,
+});
+
+const SlideViewer = dynamic(() => import('./SlideViewer'), {
+  loading: () => <div className="aspect-video rounded-lg bg-muted animate-pulse" />,
+});
+
+const sidebarLoading = () => <div className="h-64 rounded-lg bg-muted animate-pulse" />;
+
+const PodcastSidebar = dynamic(() => import('./PodcastSidebar'), {
+  loading: sidebarLoading,
+});
+
+const SlidesSidebar = dynamic(() => import('./SlidesSidebar'), {
+  loading: sidebarLoading,
+});
+
+const ImageLightbox = dynamic(() => import('./ImageLightbox'), {
+  ssr: false,
+});
+
+const CommentSection = dynamic(() => import('./CommentSection'), {
+  loading: () => (
+    <div className="mt-12 space-y-4">
+      <div className="h-8 w-32 rounded-lg bg-muted animate-pulse" />
+      <div className="h-24 rounded-lg bg-muted animate-pulse" />
+    </div>
+  ),
+});
 
 interface ArticleDetailClientProps {
   article: Article;
@@ -216,7 +242,7 @@ export default function ArticleDetailClient({
             {/* 文章头部（所有类型共用） */}
             <header className="mb-8 space-y-4">
               <ContentTypeBadge
-                contentType={realContentType}
+                article={article}
                 categoryName={article.category?.name}
               />
               <h1 className="text-3xl font-bold tracking-tight lg:text-4xl">

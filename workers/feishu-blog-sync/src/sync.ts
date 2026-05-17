@@ -7,6 +7,7 @@
 
 import { FeishuClient, type FeishuFile } from './feishu';
 import { convertBlocksToMarkdown, type ImageInfo } from './converter';
+import sharp from 'sharp';
 
 // ─── 类型定义 ───
 
@@ -35,6 +36,7 @@ export interface ArticleMeta {
   updatedAt: string;
   readingTime: number;
   coverImage?: string;
+  coverThumbnail?: string;
   feishuDocToken: string;
   blogFolderToken?: string;
   contentTypes?: {
@@ -69,6 +71,73 @@ export interface SyncEnv {
   FEISHU_FOLDER_TOKEN: string;
   R2_BASE_PATH: string;
   R2_PUBLIC_URL: string;
+}
+
+export interface SyncResult {
+  articleCount: number;
+  synced: number;    // 实际同步的文章数
+  skipped: number;   // 跳过的文章数（未修改）
+}
+
+// ─── 飞书子文件夹名称常量 ───
+
+const FOLDER_NAMES = {
+  article: ['文章', 'article'],
+  podcast: ['播客', 'podcast'],
+  slides:  ['PPT', 'ppt'],
+} as const;
+
+function isSubFolder(name: string, aliases: readonly string[]): boolean {
+  return aliases.includes(name);
+}
+
+// ─── 增量判断 ───
+
+/**
+ * 判断单文档文章是否需要同步
+ * 比较飞书 modified_time 与 R2 meta.json updatedAt
+ */
+function docNeedsSync(
+  file: FeishuFile,
+  existingMap: Map<string, ArticleMeta>,
+): { needsSync: boolean; cached?: ArticleMeta } {
+  const cached = existingMap.get(file.token);
+  if (!cached) return { needsSync: true };
+  const feishuMs = parseInt(file.modified_time) * 1000;
+  const r2Ms = new Date(cached.updatedAt).getTime();
+  return { needsSync: feishuMs > r2Ms, cached };
+}
+
+/**
+ * 深层检测：判断多内容类型文件夹是否需要同步
+ * 遍历文章、播客、PPT 子文件夹，检查所有文件的 modified_time
+ * 返回 subItems 供后续复用，避免重复 listFiles 调用
+ */
+async function blogFolderNeedsSync(
+  client: FeishuClient,
+  blogFolder: FeishuFile,
+  existingMap: Map<string, ArticleMeta>,
+): Promise<{ needsSync: boolean; cached?: ArticleMeta; subItems?: FeishuFile[] }> {
+  const cached = [...existingMap.values()].find(a => a.blogFolderToken === blogFolder.token);
+  if (!cached) return { needsSync: true };
+
+  const r2Ms = new Date(cached.updatedAt).getTime();
+  const subItems = await client.listFiles(blogFolder.token);
+
+  const foldersToCheck = subItems.filter(s =>
+    s.type === 'folder' && (isSubFolder(s.name, FOLDER_NAMES.article) || isSubFolder(s.name, FOLDER_NAMES.podcast) || isSubFolder(s.name, FOLDER_NAMES.slides))
+  );
+
+  for (const folder of foldersToCheck) {
+    const files = await client.listFiles(folder.token);
+    for (const f of files) {
+      if (parseInt(f.modified_time) * 1000 > r2Ms) {
+        return { needsSync: true, cached, subItems };
+      }
+    }
+  }
+
+  return { needsSync: false, cached };
 }
 
 // ─── 工具函数 ───
@@ -129,10 +198,10 @@ async function loadExistingIndex(r2: R2Bucket, r2BasePath: string): Promise<Arti
 // ─── 主流程 ───
 
 /**
- * 执行完整同步：扫描 → 顺序处理每篇文章 → 写入索引
- * 无子请求限制，可在 GitHub Actions 或本地 Node.js 环境中运行
+ * 执行同步：扫描 → 增量判断 → 仅同步变更文章 → 写入索引
+ * 默认增量模式，forceSync=true 时全量同步
  */
-export async function performSync(env: SyncEnv): Promise<{ articleCount: number }> {
+export async function performSync(env: SyncEnv, forceSync = false): Promise<SyncResult> {
   const client = new FeishuClient(env.FEISHU_APP_ID, env.FEISHU_APP_SECRET);
 
   // 1. 扫描根文件夹，生成分类列表
@@ -146,22 +215,23 @@ export async function performSync(env: SyncEnv): Promise<{ articleCount: number 
     categories.push({ name: '未分类', slug: 'uncategorized', description: '未分类文章', folderToken: env.FEISHU_FOLDER_TOKEN });
   }
 
-  console.log(`[sync] ${categories.length} 个分类, ${rootDocFiles.length} 个根目录文档`);
+  console.log(`[sync] ${categories.length} 个分类, ${rootDocFiles.length} 个根目录文档 (${forceSync ? '全量' : '增量'})`);
 
   // 2. 保存分类
   await env.R2.put(`${env.R2_BASE_PATH}/categories.json`, JSON.stringify(categories, null, 2), {
     httpMetadata: { contentType: 'application/json' },
   });
 
-  // 3. 增量判断
+  // 3. 加载已有索引
   const existingIndex = await loadExistingIndex(env.R2, env.R2_BASE_PATH);
-  const existingDocTokenMap = new Map(existingIndex.map(a => [a.feishuDocToken, a]));
-  console.log(`[sync] 已缓存 ${existingDocTokenMap.size} 篇`);
+  const existingMap = new Map(existingIndex.map(a => [a.feishuDocToken, a]));
+  console.log(`[sync] 已缓存 ${existingMap.size} 篇`);
 
-  // 4. 顺序处理每篇文章
+  // 4. 顺序处理每篇文章（含增量判断）
   const allArticles: ArticleMeta[] = [];
   const allDocTokens: string[] = [];
   const allFolderTokens: string[] = [];
+  let synced = 0, skipped = 0;
 
   for (const category of categories) {
     const items = category.slug === 'uncategorized' ? rootDocFiles : await client.listFiles(category.folderToken);
@@ -170,27 +240,49 @@ export async function performSync(env: SyncEnv): Promise<{ articleCount: number 
     for (const item of items) {
       try {
         if (item.type === 'folder') {
-          // 多内容类型文件夹
-          const subItems = await client.listFiles(item.token);
-          const hasArticleFolder = subItems.some(s => s.type === 'folder' && (s.name === '文章' || s.name === 'article'));
+          // 多内容类型文件夹：深层增量检测
+          let syncSubItems: FeishuFile[] | undefined;
+          if (!forceSync) {
+            const { needsSync, cached, subItems } = await blogFolderNeedsSync(client, item, existingMap);
+            if (!needsSync && cached) {
+              console.log(`  [skip] ${item.name} (未修改)`);
+              allArticles.push(cached);
+              allFolderTokens.push(item.token);
+              skipped++;
+              continue;
+            }
+            syncSubItems = subItems;
+          }
+
+          // 复用增量检测已获取的 subItems，避免重复 listFiles
+          const subItems = syncSubItems || await client.listFiles(item.token);
+          const hasArticleFolder = subItems.some(s => s.type === 'folder' && isSubFolder(s.name, FOLDER_NAMES.article));
 
           if (hasArticleFolder) {
             const article = await syncBlogFolder(client, item, category, env);
             if (article) {
               allArticles.push(article);
               allFolderTokens.push(item.token);
+              synced++;
             }
           }
         } else if (item.type === 'docx') {
-          // 单文档文章（旧格式兼容）
-          const cached = existingDocTokenMap.get(item.token);
-          if (cached) {
-            allArticles.push(cached);
-          } else {
-            const article = await syncDocument(client, item, category, env.R2, env.R2_BASE_PATH, env.R2_PUBLIC_URL);
-            allArticles.push(article);
+          // 单文档文章（旧格式兼容）：modified_time 增量检测
+          if (!forceSync) {
+            const { needsSync, cached } = docNeedsSync(item, existingMap);
+            if (!needsSync && cached) {
+              console.log(`  [skip] ${item.name} (未修改)`);
+              allArticles.push(cached);
+              allDocTokens.push(item.token);
+              skipped++;
+              continue;
+            }
           }
+
+          const article = await syncDocument(client, item, category, env.R2, env.R2_BASE_PATH, env.R2_PUBLIC_URL);
+          allArticles.push(article);
           allDocTokens.push(item.token);
+          synced++;
         }
       } catch (err) {
         console.error(`[sync] 处理失败 ${item.name}:`, err);
@@ -210,8 +302,8 @@ export async function performSync(env: SyncEnv): Promise<{ articleCount: number 
     console.error('[sync] 清理失败（不影响索引）:', err);
   }
 
-  console.log(`[sync] 同步完成: ${allArticles.length} 篇文章`);
-  return { articleCount: allArticles.length };
+  console.log(`[sync] 同步完成: ${allArticles.length} 篇文章 (同步: ${synced}, 跳过: ${skipped})`);
+  return { articleCount: allArticles.length, synced, skipped };
 }
 
 // ─── 文件夹同步 ───
@@ -239,10 +331,45 @@ async function syncBlogFolder(
   }
 
   // 1. 同步文章（必选）
-  const articleDocs = (await client.listFiles(articleFolder.token)).filter(f => f.type === 'docx');
+  const articleFolderItems = await client.listFiles(articleFolder.token);
+  const articleDocs = articleFolderItems.filter(f => f.type === 'docx');
   if (articleDocs.length === 0) return null;
 
   const baseMeta = await syncDocument(client, articleDocs[0], category, env.R2, env.R2_BASE_PATH, env.R2_PUBLIC_URL);
+
+  // 1.5 同步封面图 + 自动生成缩略图
+  const coverFile = articleFolderItems.find(f =>
+    f.type !== 'folder' && /^cover\.(png|jpe?g|webp|gif)$/i.test(f.name)
+  );
+  if (coverFile) {
+    try {
+      const coverData = await client.downloadDriveFile(coverFile.token);
+      const coverExt = coverFile.name.split('.').pop()!.toLowerCase();
+      const r2ArticleDir = `${env.R2_BASE_PATH}/articles/${category.slug}/${baseMeta.slug}`;
+
+      // 上传原始封面
+      const coverR2Path = `${r2ArticleDir}/cover.${coverExt}`;
+      await env.R2.put(coverR2Path, coverData, {
+        httpMetadata: { contentType: getContentType(coverFile.name) },
+      });
+      baseMeta.coverImage = `${env.R2_PUBLIC_URL}/${coverR2Path}`;
+
+      // 生成 400px 宽 WebP 缩略图
+      const thumbBuffer = await sharp(Buffer.from(coverData))
+        .resize(400, 300, { fit: 'cover', position: 'centre' })
+        .webp({ quality: 80 })
+        .toBuffer();
+      const thumbR2Path = `${r2ArticleDir}/cover-thumb.webp`;
+      await env.R2.put(thumbR2Path, thumbBuffer, {
+        httpMetadata: { contentType: 'image/webp' },
+      });
+      baseMeta.coverThumbnail = `${env.R2_PUBLIC_URL}/${thumbR2Path}`;
+
+      console.log(`  封面图同步完成: cover.${coverExt} + cover-thumb.webp (${(thumbBuffer.byteLength / 1024).toFixed(1)}KB)`);
+    } catch (err) {
+      console.error(`  封面图同步失败（不影响文章）:`, err);
+    }
+  }
 
   // 2. 同步播客（可选，失败不阻塞）
   let podcastMeta: PodcastMeta | undefined;

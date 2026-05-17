@@ -8,41 +8,62 @@ import { Metadata } from 'next';
 // 网站基础信息
 export const siteConfig = {
   name: 'Zizai Blog',
-  title: 'Zizai Blog - AI时代的个人成长与创业指南',
-  description: '帮助你在快速变化的世界中保持竞争力。探索AI、写作、营销策略，打造一人企业，设计理想生活方式。',
+  title: {
+    zh: 'Zizai Blog - AI时代的个人成长与创业指南',
+    en: 'Zizai Blog - Personal Growth & Startup Guide in the AI Era',
+  },
+  description: {
+    zh: '帮助你在快速变化的世界中保持竞争力。探索AI、写作、营销策略，打造一人企业，设计理想生活方式。',
+    en: 'Stay competitive in a rapidly changing world. Explore AI, writing, marketing strategies, build a one-person business, and design your ideal lifestyle.',
+  },
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://lizizai.xyz',
   ogImage: '/og-image.png',
   twitterHandle: '@zizaiblog',
   author: {
-    name: 'DAN KOE',
+    name: 'Zizai Li',
     url: 'https://lizizai.xyz/about',
   },
-  keywords: [
-    'AI工具',
-    '个人成长',
-    '一人企业',
-    '写作技巧',
-    '营销策略',
-    '自动化',
-    '创业指南',
-    '在线业务',
-    'Next.js',
-    'React',
-  ],
+  keywords: {
+    zh: [
+      'AI工具',
+      '个人成长',
+      '一人企业',
+      '写作技巧',
+      '营销策略',
+      '自动化',
+      '创业指南',
+      '在线业务',
+    ],
+    en: [
+      'AI Tools',
+      'Personal Growth',
+      'Solo Business',
+      'Writing',
+      'Marketing',
+      'Automation',
+      'Startup Guide',
+      'Online Business',
+    ],
+  },
 };
 
 /**
  * 生成默认 metadata（多语言支持）
  */
 export function generateDefaultMetadata(locale: string = 'en'): Metadata {
+  const lang = locale === 'zh' ? 'zh' : 'en';
+  const title = siteConfig.title[lang];
+  const description = siteConfig.description[lang];
+  const keywords = siteConfig.keywords[lang];
+
   return {
     metadataBase: new URL(siteConfig.url),
     title: {
-      default: siteConfig.title,
+      default: title,
       template: `%s | ${siteConfig.name}`,
     },
-    description: siteConfig.description,
-    keywords: siteConfig.keywords,
+    description,
+    keywords,
     authors: [{ name: siteConfig.author.name, url: siteConfig.author.url }],
     creator: siteConfig.author.name,
     publisher: siteConfig.name,
@@ -50,10 +71,10 @@ export function generateDefaultMetadata(locale: string = 'en'): Metadata {
     // Open Graph
     openGraph: {
       type: 'website',
-      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
+      locale: lang === 'zh' ? 'zh_CN' : 'en_US',
       url: siteConfig.url,
-      title: siteConfig.title,
-      description: siteConfig.description,
+      title,
+      description,
       siteName: siteConfig.name,
       images: [
         {
@@ -68,8 +89,8 @@ export function generateDefaultMetadata(locale: string = 'en'): Metadata {
     // Twitter Card
     twitter: {
       card: 'summary_large_image',
-      title: siteConfig.title,
-      description: siteConfig.description,
+      title,
+      description,
       creator: siteConfig.twitterHandle,
       images: [siteConfig.ogImage],
     },
@@ -136,23 +157,24 @@ export function generateArticleMetadata({
   slug: string;
   locale?: string;
 }): Metadata {
+  const lang = locale === 'zh' ? 'zh' : 'en';
   const url = `${siteConfig.url}/article/${slug}`;
   const zhUrl = `${siteConfig.url}/zh/article/${slug}`;
   const ogImage = imageUrl || siteConfig.ogImage;
 
   return {
     title,
-    description: description || siteConfig.description,
-    keywords: tags || siteConfig.keywords,
+    description: description || siteConfig.description[lang],
+    keywords: tags || siteConfig.keywords[lang],
     authors: [{ name: author }],
 
     // Open Graph
     openGraph: {
       type: 'article',
-      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
-      url: locale === 'zh' ? zhUrl : url,
+      locale: lang === 'zh' ? 'zh_CN' : 'en_US',
+      url: lang === 'zh' ? zhUrl : url,
       title,
-      description: description || siteConfig.description,
+      description: description || siteConfig.description[lang],
       siteName: siteConfig.name,
       publishedTime: publishedAt,
       modifiedTime: modifiedAt || publishedAt,
@@ -172,7 +194,7 @@ export function generateArticleMetadata({
     twitter: {
       card: 'summary_large_image',
       title,
-      description: description || siteConfig.description,
+      description: description || siteConfig.description[lang],
       creator: siteConfig.twitterHandle,
       images: [ogImage],
     },
@@ -268,7 +290,7 @@ export function generateArticleJsonLd({
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: title,
-    description: description || siteConfig.description,
+    description: description || siteConfig.description.zh,
     image: imageUrl || siteConfig.ogImage,
     datePublished: publishedAt,
     dateModified: modifiedAt || publishedAt,
@@ -300,7 +322,7 @@ export function generateWebsiteJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: siteConfig.name,
-    description: siteConfig.description,
+    description: siteConfig.description.zh,
     url: siteConfig.url,
     potentialAction: {
       '@type': 'SearchAction',

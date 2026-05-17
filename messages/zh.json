@@ -98,7 +98,16 @@
     "contentFormat": "内容形式",
     "tagsLabel": "标签",
     "tocExpand": "展开全部",
-    "tocCollapse": "收起"
+    "tocCollapse": "收起",
+    "feedLabel": "RSS 订阅",
+    "feedAll": "全站",
+    "feedByType": "{type}",
+    "feedByCategory": "{category}",
+    "copyFeedUrl": "复制订阅地址",
+    "filterAll": "全部",
+    "filterArticle": "文章",
+    "filterPodcast": "播客",
+    "filterSlides": "PPT"
   },
   "share": {
     "copyLink": "复制链接",
@@ -147,7 +156,10 @@
   },
   "category": {
     "articles": "篇文章",
-    "allCategories": "全部分类"
+    "allCategories": "全部分类",
+    "articleCount": "{count} 篇文章",
+    "noArticles": "该分类下暂无文章",
+    "checkBack": "敬请期待新内容！"
   },
   "tag": {
     "tags": "标签",

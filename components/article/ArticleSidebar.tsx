@@ -6,6 +6,8 @@ import { extractHeadings, type Heading } from '@/lib/utils/heading';
 import { ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { Article } from '@/types/index';
+import FeedSubscription from './FeedSubscription';
+import { getContentType } from '@/lib/rss';
 
 interface ArticleSidebarProps {
   article: Article;
@@ -221,6 +223,13 @@ export default function ArticleSidebar({
           </div>
         </div>
       )}
+
+      {/* RSS 订阅 */}
+      <FeedSubscription
+        contentType={getContentType(article)}
+        categorySlug={article.category?.slug || ''}
+        categoryName={article.category?.name || ''}
+      />
     </div>
   );
 }

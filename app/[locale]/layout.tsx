@@ -64,7 +64,7 @@ export default async function LocaleLayout({
   const websiteJsonLd = generateWebsiteJsonLd();
 
   return (
-    <html lang={locale} className="dark">
+    <html lang={locale} className="dark" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"

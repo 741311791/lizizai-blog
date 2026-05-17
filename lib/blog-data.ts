@@ -4,6 +4,7 @@
  * 替代原来的 lib/content.ts，从 Cloudflare R2 获取文章数据
  */
 
+import { cache } from 'react';
 import type { Article, Category, ContentTypes, SlideData, Chapter } from '@/types/index';
 import { getLikes, getBatchViews } from '@/lib/services';
 import { config } from '@/lib/env';
@@ -32,9 +33,9 @@ async function getBatchCommentCounts(slugs: string[]): Promise<Map<string, numbe
 }
 
 /**
- * 获取所有文章
+ * 获取所有文章（同一请求内缓存，避免重复调用）
  */
-export async function getAllArticles(): Promise<Article[]> {
+export const getAllArticles = cache(async (): Promise<Article[]> => {
   const res = await fetch(`${R2_BASE}/blog-data/articles.json`, {
     next: { revalidate: 3600 },
   });
@@ -53,7 +54,7 @@ export async function getAllArticles(): Promise<Article[]> {
     slug: item.slug,
     content: '',
     excerpt: item.excerpt,
-    featuredImage: undefined, // 封面图统一使用 picsum.photos，不从文章内容提取
+    featuredImage: item.coverThumbnail || item.coverImage || undefined,
     publishedAt: item.publishedAt,
     likes: 0,
     views: undefined,
@@ -68,7 +69,6 @@ export async function getAllArticles(): Promise<Article[]> {
     audioDuration: item.audioDuration,
     chapters: item.chapters,
     slideCount: item.slideCount,
-    // 新架构：多内容类型
     contentTypes: item.contentTypes as ContentTypes | undefined,
     slidesBaseUrl: item.contentTypes?.slides
       ? `${R2_BASE}/blog-data/articles/${item.category?.slug || 'uncategorized'}/${item.slug}/slides`
@@ -80,7 +80,7 @@ export async function getAllArticles(): Promise<Article[]> {
     const ids = articles.map(a => a.id);
     const slugs = articles.map(a => a.slug);
 
-    // 点赞逐个获取（emaction 无批量 API）
+    // emaction 无批量 API，逐个获取
     const likesResults = await Promise.all(
       ids.map(async (id) => ({ id, likes: await getLikes(id) }))
     );
@@ -105,12 +105,12 @@ export async function getAllArticles(): Promise<Article[]> {
   }
 
   return articles;
-}
+});
 
 /**
- * 获取分类列表
+ * 获取分类列表（同一请求内缓存）
  */
-export async function getCategories(): Promise<Category[]> {
+export const getCategories = cache(async (): Promise<Category[]> => {
   const res = await fetch(`${R2_BASE}/blog-data/categories.json`, {
     next: { revalidate: 3600 },
   });
@@ -124,8 +124,7 @@ export async function getCategories(): Promise<Category[]> {
     slug: c.slug,
     description: c.description,
   }));
-}
-
+});
 /**
  * 获取文章内容（Markdown）
  */
@@ -182,34 +181,42 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 
   const contentType = article.contentType || 'article';
   const categorySlug = article.category.slug;
+  const ct = article.contentTypes;
 
-  // 获取主内容
-  const content = await getArticleContent(categorySlug, slug);
+  // 判断需要哪些额外数据获取
+  const needsPodcastScript = ct
+    ? !!ct.podcast?.hasScript
+    : contentType === 'podcast';
+  const needsSlidesJson = !ct?.slides && contentType === 'slides';
+
+  // 并行获取所有需要的数据
+  const [content, scriptContent, slidesData] = await Promise.all([
+    getArticleContent(categorySlug, slug),
+    needsPodcastScript ? getPodcastScript(categorySlug, slug) : Promise.resolve(''),
+    needsSlidesJson ? getSlidesData(categorySlug, slug) : Promise.resolve([] as SlideData[]),
+  ]);
+
   const result: Article = {
     ...article,
     content: content || '',
   };
 
-  // 新架构：根据 contentTypes 加载多内容类型数据
-  const ct = article.contentTypes;
-
+  // 播客数据处理
   if (ct?.podcast) {
     result.audioUrl = getPodcastAudioUrl(categorySlug, slug, ct.podcast.audioFile);
     if (ct.podcast.hasScript) {
-      result.scriptContent = await getPodcastScript(categorySlug, slug);
+      result.scriptContent = scriptContent;
     }
   } else if (contentType === 'podcast') {
-    // 旧架构兼容
     result.audioUrl = getPodcastAudioUrl(categorySlug, slug);
-    result.scriptContent = await getPodcastScript(categorySlug, slug);
+    result.scriptContent = scriptContent;
   }
 
+  // 幻灯片数据处理
   if (ct?.slides) {
-    // HTML 幻灯片：构造 URL，不需要预加载数据
     result.slidesBaseUrl = `${R2_BASE}/blog-data/articles/${categorySlug}/${slug}/slides`;
     result.slideCount = ct.slides.slideCount;
   } else if (contentType === 'slides') {
-    // 旧架构兼容：Markdown 幻灯片
     if (content.includes('\n---\n')) {
       const slides = content.split('\n---\n').filter(Boolean);
       result.slidesData = slides.map((md, index) => ({
@@ -219,8 +226,8 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       }));
       result.slideCount = result.slidesData.length;
     } else {
-      result.slidesData = await getSlidesData(categorySlug, slug);
-      result.slideCount = result.slidesData.length;
+      result.slidesData = slidesData as SlideData[];
+      result.slideCount = (slidesData as SlideData[]).length;
     }
   }
 

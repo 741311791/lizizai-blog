@@ -2,6 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import type { Article } from '@/types/index';
+import FeedSubscription from './FeedSubscription';
+import { getContentType } from '@/lib/rss';
 
 interface SidebarStatsProps {
   article: Article;
@@ -51,6 +53,13 @@ export default function SidebarStats({ article }: SidebarStatsProps) {
           </div>
         </div>
       )}
+
+      {/* RSS 订阅 */}
+      <FeedSubscription
+        contentType={getContentType(article)}
+        categorySlug={article.category?.slug || ''}
+        categoryName={article.category?.name || ''}
+      />
     </>
   );
 }

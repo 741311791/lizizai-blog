@@ -11,6 +11,8 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Clock, LayoutGrid, List } from 'lucide-react';
 import ArticleListItem from '@/components/article/ArticleListItem';
+import ContentTypeBadge from '@/components/article/ContentTypeBadge';
+import { getTimeLabel } from '@/lib/content-utils';
 import { getArticleImageUrl } from '@/lib/utils/image';
 import type { Article } from '@/types/index';
 
@@ -115,22 +117,7 @@ function GridCard({ article }: { article: Article }) {
       )
     : '';
   const contentType = article.contentType || 'article';
-
-  // 根据内容类型返回不同的时间描述
-  const timeLabel =
-    contentType === 'podcast'
-      ? t('listenTime', { count: article.readingTime || 0 })
-      : contentType === 'slides'
-      ? t('slideCount', { count: article.slideCount || 0 })
-      : t('readingTime', { count: article.readingTime || 0 });
-
-  // 封面图上的标签：优先显示内容类型，其次分类
-  const badgeContent =
-    contentType === 'podcast'
-      ? `🎙️ ${t('podcast')}`
-      : contentType === 'slides'
-      ? `📊 ${t('slides')}`
-      : article.category?.name;
+  const timeLabel = getTimeLabel(t, article.contentType, article.readingTime || 0, article.slideCount);
 
   return (
     <Link href={`/article/${article.slug}`}>
@@ -141,15 +128,19 @@ function GridCard({ article }: { article: Article }) {
             src={imageUrl}
             alt={article.title}
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             unoptimized={imageUrl.includes('picsum.photos')}
           />
           {/* 类型/分类标签 */}
-          {badgeContent && (
-            <span className="absolute top-2.5 left-2.5 text-xs font-medium px-2 py-0.5 rounded-full bg-primary/90 text-primary-foreground backdrop-blur-sm">
-              {badgeContent}
-            </span>
-          )}
+          <div className="absolute top-2.5 left-2.5">
+            <ContentTypeBadge
+              article={article}
+              categoryName={article.category?.name}
+              compact
+              className="bg-primary/90 text-primary-foreground backdrop-blur-sm"
+            />
+          </div>
         </div>
 
         {/* 内容 */}

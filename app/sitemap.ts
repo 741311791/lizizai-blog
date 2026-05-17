@@ -57,10 +57,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  // RSS Feed
-  const feedPage: MetadataRoute.Sitemap = [
+  // RSS Feeds — 全量 + contentType + category + 组合
+  const feedPages: MetadataRoute.Sitemap = [
     { url: `${baseUrl}/feed.xml`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.6 },
+    { url: `${baseUrl}/feed/article.xml`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.5 },
+    { url: `${baseUrl}/feed/podcast.xml`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.5 },
+    ...categories.map((category) => ({
+      url: `${baseUrl}/feed/category/${category.slug}.xml`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.4,
+    })),
+    // contentType + category 组合
+    ...categories.flatMap((category) =>
+      (['article', 'podcast'] as const).map((type) => ({
+        url: `${baseUrl}/feed/${type}/${category.slug}.xml`,
+        lastModified: new Date(),
+        changeFrequency: 'daily' as const,
+        priority: 0.3,
+      }))
+    ),
   ];
 
-  return [...staticPages, ...articlePages, ...categoryPages, ...tagPages, ...feedPage];
+  return [...staticPages, ...articlePages, ...categoryPages, ...tagPages, ...feedPages];
 }

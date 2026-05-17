@@ -7,6 +7,12 @@ on:
 
   # 手动触发
   workflow_dispatch:
+    inputs:
+      force_sync:
+        description: '强制全量同步'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   sync:
@@ -41,7 +47,7 @@ jobs:
           R2_BUCKET_NAME: lizizai-blog
           R2_BASE_PATH: blog-data
           R2_PUBLIC_URL: https://pub-7fc5ed7acc9844ab99297fa6b47f55e6.r2.dev
-        run: npx tsx src/cli.ts
+        run: npx tsx src/cli.ts ${{ inputs.force_sync == 'true' && '--force' || '' }}
         working-directory: workers/feishu-blog-sync
 
       - name: 同步结果通知（失败时）

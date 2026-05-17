@@ -3,6 +3,7 @@ import CategoryArticlesSection from '@/components/article/CategoryArticlesSectio
 import { getCategories, getArticlesByCategory, getAllCategorySlugs } from '@/lib/blog-data';
 import { notFound } from 'next/navigation';
 import { generateCategoryMetadata } from '@/lib/seo';
+import { getTranslations, getLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600; // ISR: 每小时重新验证
@@ -40,6 +41,8 @@ export default async function CategoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const t = await getTranslations('category');
+  const locale = await getLocale();
 
   const categories = await getCategories();
   const category = categories.find(c => c.slug === slug);
@@ -56,7 +59,7 @@ export default async function CategoryPage({
       {/* Category Header */}
       <header className="mb-12 text-center space-y-4">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <Badge variant="secondary">{articleCount} Articles</Badge>
+          <Badge variant="secondary">{t('articleCount', { count: articleCount })}</Badge>
         </div>
         <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
           {category.name}
@@ -72,10 +75,10 @@ export default async function CategoryPage({
       ) : (
         <div className="text-center py-12">
           <p className="text-muted-foreground text-lg">
-            No articles found in this category yet.
+            {t('noArticles')}
           </p>
           <p className="text-sm text-muted-foreground mt-2">
-            Check back soon for new content!
+            {t('checkBack')}
           </p>
         </div>
       )}

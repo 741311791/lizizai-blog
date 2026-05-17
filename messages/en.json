@@ -98,7 +98,16 @@
     "contentFormat": "Content Format",
     "tagsLabel": "Tags",
     "tocExpand": "Show all",
-    "tocCollapse": "Collapse"
+    "tocCollapse": "Collapse",
+    "feedLabel": "RSS Feeds",
+    "feedAll": "All Posts",
+    "feedByType": "{type}",
+    "feedByCategory": "{category}",
+    "copyFeedUrl": "Copy feed URL",
+    "filterAll": "All",
+    "filterArticle": "Articles",
+    "filterPodcast": "Podcast",
+    "filterSlides": "Slides"
   },
   "share": {
     "copyLink": "Copy link",
@@ -147,7 +156,10 @@
   },
   "category": {
     "articles": "articles",
-    "allCategories": "All Categories"
+    "allCategories": "All Categories",
+    "articleCount": "{count} Articles",
+    "noArticles": "No articles found in this category yet.",
+    "checkBack": "Check back soon for new content!"
   },
   "tag": {
     "tags": "Tags",

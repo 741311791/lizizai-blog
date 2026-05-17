@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Clock, ArrowRight, Mail } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { getArticleImageUrl } from '@/lib/utils/image';
+import { getTimeLabel, getBadgeContent, shouldShowTimeLabel } from '@/lib/content-utils';
 import type { Article } from '@/types/index';
 
 interface HeroProps {
@@ -29,25 +30,8 @@ export default async function Hero({ article, locale }: HeroProps) {
       ).toUpperCase()
     : '';
 
-  const contentType = article.contentType || 'article';
-
-  // 根据内容类型返回不同的时间描述
-  const timeLabel =
-    contentType === 'podcast'
-      ? tArticle('listenTime', { count: article.readingTime || 0 })
-      : contentType === 'slides'
-      ? tArticle('slideCount', { count: article.slideCount || 0 })
-      : locale === 'zh'
-      ? `${article.readingTime || 0} 分钟`
-      : `${article.readingTime || 0} min`;
-
-  // 封面图上的标签：优先显示内容类型，其次分类
-  const badgeContent =
-    contentType === 'podcast'
-      ? `🎙️ ${tArticle('podcast')}`
-      : contentType === 'slides'
-      ? `📊 ${tArticle('slides')}`
-      : article.category?.name;
+  const timeLabel = getTimeLabel(tArticle, article.contentType, article.readingTime || 0, article.slideCount);
+  const badgeContent = getBadgeContent(tArticle, article.contentType, article.category?.name, article.slideCount);
 
   return (
     <section className="relative py-8 lg:py-12">
@@ -61,6 +45,9 @@ export default async function Hero({ article, locale }: HeroProps) {
                   src={imageUrl}
                   alt={article.title}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                  placeholder="blur"
+                  blurDataURL={`data:image/svg+xml;charset=utf-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500"><rect width="100%" height="100%" fill="%231a1a2e"/></svg>')}`}
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   priority
                   unoptimized={imageUrl.includes('picsum.photos')}
@@ -109,7 +96,7 @@ export default async function Hero({ article, locale }: HeroProps) {
               </span>
               <span>·</span>
               <span>{date}</span>
-              {(article.readingTime || contentType === 'slides') && (
+              {shouldShowTimeLabel(article.contentType, article.readingTime) && (
                 <>
                   <span>·</span>
                   <div className="flex items-center gap-1">

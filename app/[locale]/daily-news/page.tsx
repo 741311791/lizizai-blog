@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import CategoryArticlesSection from '@/components/article/CategoryArticlesSection';
 import { getCategories, getArticlesByCategory } from '@/lib/blog-data';
 import { generateCategoryMetadata } from '@/lib/seo';
+import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600;
@@ -35,6 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DailyNewsPage() {
+  const t = await getTranslations('category');
   const categories = await getCategories();
   const category = categories.find(c => c.slug === CATEGORY_SLUG);
   const articles = await getArticlesByCategory(CATEGORY_SLUG);
@@ -48,7 +50,7 @@ export default async function DailyNewsPage() {
       {/* 分类头部 */}
       <header className="mb-12 text-center space-y-4">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <Badge variant="secondary">{articleCount} Articles</Badge>
+          <Badge variant="secondary">{t('articleCount', { count: articleCount })}</Badge>
         </div>
         <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
           {categoryName}
@@ -66,10 +68,10 @@ export default async function DailyNewsPage() {
       ) : (
         <div className="text-center py-12">
           <p className="text-muted-foreground text-lg">
-            No articles found yet.
+            {t('noArticles')}
           </p>
           <p className="text-sm text-muted-foreground mt-2">
-            Check back soon for new content!
+            {t('checkBack')}
           </p>
         </div>
       )}
