@@ -441,7 +441,15 @@ async function syncDocument(
   const imageBaseUrl = `${r2PublicUrl}/${r2BasePath}/articles/${category.slug}/{slug}/images`;
   const { markdown, images, frontmatter } = convertBlocksToMarkdown(blocks, imageBaseUrl);
 
-  const slug = frontmatter?.slug || slugify(docInfo.title);
+  let slug = frontmatter?.slug || slugify(docInfo.title);
+
+  // daily-news 分类强制统一 slug 格式：ai-fast-learning-YYYY-MM-DD
+  if (category.slug === 'daily-news' && !frontmatter?.slug) {
+    const dateMatch = docInfo.title.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (dateMatch) {
+      slug = `ai-fast-learning-${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+    }
+  }
 
   // 下载图片
   const imageDir = `${r2BasePath}/articles/${category.slug}/${slug}/images`;
