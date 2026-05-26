@@ -100,6 +100,10 @@ pnpm lint         # ESLint
 - 不要主动执行 git commit/push，除非用户明确要求
 - ISR revalidate：文章列表/分类 3600s，浏览量 300s，点赞 60s
 
+## Skills
+
+- `/lizizai-html` — 生成与博客设计系统一致的独立 HTML 文件（iframe 嵌入用）。主题 CSS 已部署到 R2 CDN
+
 ## Design System
 Always read DESIGN.md before making any visual or UI decisions.
 All font choices, colors, spacing, and aesthetic direction are defined there.

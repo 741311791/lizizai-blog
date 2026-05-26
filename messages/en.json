@@ -107,7 +107,13 @@
     "filterAll": "All",
     "filterArticle": "Articles",
     "filterPodcast": "Podcast",
-    "filterSlides": "Slides"
+    "filterSlides": "Slides",
+    "html": "HTML",
+    "htmlLoading": "Loading HTML content...",
+    "htmlError": "Failed to load HTML content",
+    "htmlOpenInNewTab": "Open in new tab",
+    "htmlRetry": "Retry",
+    "filterHtml": "HTML"
   },
   "share": {
     "copyLink": "Copy link",

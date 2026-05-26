@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, Mic, Presentation } from 'lucide-react';
+import { BookOpen, Mic, Presentation, Code2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { ContentTypes } from '@/types/index';
 
@@ -23,6 +23,7 @@ export default function ContentTypeSwitcher({ contentTypes, activeType, onTypeCh
     { key: 'article', label: t('articleType'), Icon: BookOpen },
     { key: 'podcast', label: t('podcast'), Icon: Mic },
     { key: 'slides', label: t('slides'), Icon: Presentation },
+    { key: 'html', label: t('html'), Icon: Code2 },
   ];
 
   // 根据 contentTypes 过滤可用选项
@@ -31,6 +32,7 @@ export default function ContentTypeSwitcher({ contentTypes, activeType, onTypeCh
         if (opt.key === 'article') return true;
         if (opt.key === 'podcast') return !!contentTypes.podcast;
         if (opt.key === 'slides') return !!contentTypes.slides;
+        if (opt.key === 'html') return !!contentTypes.html;
         return true;
       })
     : allOptions;

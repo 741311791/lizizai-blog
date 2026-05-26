@@ -18,6 +18,7 @@ function hasContentType(article: Article, type: ContentType): boolean {
   const ct = article.contentTypes;
   if (type === 'podcast') return ct ? !!ct.podcast : article.contentType === 'podcast';
   if (type === 'slides') return ct ? !!ct.slides : article.contentType === 'slides';
+  if (type === 'html') return ct ? !!ct.html : article.contentType === 'html';
   // article: 所有文章都是可阅读的文章
   return true;
 }
@@ -27,9 +28,11 @@ function getTypeTags(article: Article): ContentType[] {
   const ct = article.contentTypes;
   const hasPodcast = ct ? !!ct.podcast : article.contentType === 'podcast';
   const hasSlides = ct ? !!ct.slides : article.contentType === 'slides';
+  const hasHtml = ct ? !!ct.html : article.contentType === 'html';
   const result: ContentType[] = ['article'];
   if (hasPodcast) result.push('podcast');
   if (hasSlides) result.push('slides');
+  if (hasHtml) result.push('html');
   return result;
 }
 
@@ -41,7 +44,7 @@ export default function CategoryArticlesSection({
 
   // 按内容类型计数（一篇文章可归属多个类型）
   const counts = useMemo(() => {
-    const result: Record<FilterValue, number> = { all: articles.length, article: 0, podcast: 0, slides: 0 };
+    const result: Record<FilterValue, number> = { all: articles.length, article: 0, podcast: 0, slides: 0, html: 0 };
     for (const article of articles) {
       for (const tag of getTypeTags(article)) {
         result[tag]++;

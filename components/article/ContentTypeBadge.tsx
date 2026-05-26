@@ -1,7 +1,7 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Mic, Presentation } from 'lucide-react';
+import { BookOpen, Mic, Presentation, Code2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { Article } from '@/types/index';
 
@@ -35,6 +35,7 @@ export default function ContentTypeBadge({
   if (article?.contentTypes) {
     if (article.contentTypes.podcast) types.add('podcast');
     if (article.contentTypes.slides) types.add('slides');
+    if (article.contentTypes.html) types.add('html');
     if (article.contentTypes.article) types.add('article');
   }
   // 兼容旧调用和旧数据
@@ -63,8 +64,17 @@ export default function ContentTypeBadge({
     );
   }
 
+  if (types.has('html')) {
+    badges.push(
+      <Badge key="html" variant="secondary" className={`gap-1 ${className || ''}`}>
+        <Code2 className="size-3" />
+        {t('html')}
+      </Badge>
+    );
+  }
+
   // article 类型：仅在非 compact 或有 categoryName 时显示
-  if (types.has('article') && !types.has('podcast') && !types.has('slides')) {
+  if (types.has('article') && !types.has('podcast') && !types.has('slides') && !types.has('html')) {
     if (categoryName) {
       badges.push(
         <Badge key="article" variant="secondary" className={`gap-1 ${className || ''}`}>
@@ -83,8 +93,8 @@ export default function ContentTypeBadge({
     return badges.length > 0 ? <>{badges}</> : null;
   }
 
-  // 如果 article 类型与 podcast/slides 共存，不显示 article badge
-  if (types.has('article') && (types.has('podcast') || types.has('slides')) && categoryName) {
+  // 如果 article 类型与 podcast/slides/html 共存，不显示 article badge
+  if (types.has('article') && (types.has('podcast') || types.has('slides') || types.has('html')) && categoryName) {
     badges.push(
       <Badge key="category" variant="secondary" className={`gap-1 ${className || ''}`}>
         <BookOpen className="size-3" />

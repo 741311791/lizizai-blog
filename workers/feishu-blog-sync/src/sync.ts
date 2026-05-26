@@ -11,12 +11,13 @@ import sharp from 'sharp';
 
 // ─── 类型定义 ───
 
-export interface PodcastMeta {
+export interface PodcastItemMeta {
+  name: string;
+  slug: string;
   audioFile: string;
+  coverFile?: string;
+  scriptFile?: string;
   audioSize: number;
-  hasScript: boolean;
-  chapters?: { id: string; title: string; startTime: number }[];
-  audioDuration?: number;
 }
 
 export interface SlidesMeta {
@@ -41,7 +42,7 @@ export interface ArticleMeta {
   blogFolderToken?: string;
   contentTypes?: {
     article: true;
-    podcast?: PodcastMeta;
+    podcast?: { items: PodcastItemMeta[] };
     slides?: SlidesMeta;
   };
   contentType?: 'article' | 'podcast' | 'slides';
@@ -141,6 +142,42 @@ async function blogFolderNeedsSync(
 }
 
 // ─── 工具函数 ───
+
+/**
+ * 按文件名前缀分组（去掉扩展名），排除子文件夹
+ * 纯函数，便于单元测试
+ */
+export function groupFilesByBaseName(files: FeishuFile[]): Map<string, FeishuFile[]> {
+  const groups = new Map<string, FeishuFile[]>();
+  for (const item of files) {
+    if (item.type === 'folder') continue;
+    const baseName = item.name.replace(/\.[^.]+$/, '');
+    if (!groups.has(baseName)) groups.set(baseName, []);
+    groups.get(baseName)!.push(item);
+  }
+  return groups;
+}
+
+/** 播客文件匹配结果 */
+export interface PodcastFileMatch {
+  audioFile: FeishuFile;
+  coverFile?: FeishuFile;
+  scriptFile?: FeishuFile;
+  scriptDoc?: FeishuFile;
+}
+
+/**
+ * 从一组同名文件中匹配播客所需的音频/封面/文字稿文件
+ * 纯函数，便于单元测试
+ */
+export function matchPodcastFiles(files: FeishuFile[]): PodcastFileMatch | null {
+  const audioFile = files.find(f => /\.(mp3|wav|m4a|aac)$/i.test(f.name));
+  if (!audioFile) return null;
+  const coverFile = files.find(f => /\.(png|jpe?g|webp)$/i.test(f.name));
+  const scriptFile = files.find(f => f.type === 'file' && /\.(md|txt)$/i.test(f.name));
+  const scriptDoc = files.find(f => f.type === 'docx');
+  return { audioFile, coverFile, scriptFile, scriptDoc };
+}
 
 function calculateReadingTime(content: string): number {
   const chineseChars = (content.match(/[\u4e00-\u9fff]/g) || []).length;
@@ -372,12 +409,12 @@ async function syncBlogFolder(
   }
 
   // 2. 同步播客（可选，失败不阻塞）
-  let podcastMeta: PodcastMeta | undefined;
+  let podcastItemsMeta: { items: PodcastItemMeta[] } | undefined;
   if (podcastFolder) {
     try {
-      podcastMeta = await syncPodcastFolder(client, podcastFolder, baseMeta.slug, category, env.R2, env.R2_BASE_PATH);
-      if (podcastMeta) {
-        console.log(`  播客同步完成: ${baseMeta.slug}`);
+      podcastItemsMeta = await syncPodcastFolder(client, podcastFolder, baseMeta.slug, category, env.R2, env.R2_BASE_PATH);
+      if (podcastItemsMeta) {
+        console.log(`  播客同步完成: ${baseMeta.slug}, ${podcastItemsMeta.items.length} 个播客`);
       }
     } catch (err) {
       console.error(`  播客同步失败（不影响文章）:`, err);
@@ -401,12 +438,11 @@ async function syncBlogFolder(
   const fullMeta: ArticleMeta = {
     ...baseMeta,
     blogFolderToken: blogFolder.token,
-    contentTypes: { article: true as const, podcast: podcastMeta, slides: slidesMeta },
+    contentTypes: { article: true as const, podcast: podcastItemsMeta, slides: slidesMeta },
   };
 
-  if (podcastMeta) {
+  if (podcastItemsMeta) {
     fullMeta.contentType = 'podcast';
-    fullMeta.audioDuration = podcastMeta.audioDuration;
   }
   if (slidesMeta) {
     fullMeta.contentType = 'slides';
@@ -555,53 +591,89 @@ async function syncPodcastFolder(
   category: CategoryInfo,
   r2: R2Bucket,
   r2BasePath: string,
-): Promise<PodcastMeta | undefined> {
+): Promise<{ items: PodcastItemMeta[] } | undefined> {
   const items = await client.listFiles(folder.token);
-  const audioFile = items.find(f => /\.(mp3|wav|m4a|aac)$/i.test(f.name));
-  const scriptDoc = items.find(f => f.type === 'docx' && !/\.(mp3|wav|m4a|aac)$/i.test(f.name));
-  const scriptFile = items.find(f => f.type === 'file' && /\.(md|txt)$/i.test(f.name));
 
-  if (!audioFile) {
-    console.log(`  播客文件夹无音频文件，跳过`);
+  const groups = groupFilesByBaseName(items);
+
+  if (groups.size === 0) {
+    console.log(`  播客文件夹无文件，跳过`);
     return undefined;
   }
 
-  console.log(`  同步播客音频: ${audioFile.name}`);
-  const audioData = await client.downloadDriveFile(audioFile.token);
-  const audioExt = audioFile.name.split('.').pop()?.toLowerCase() || 'mp3';
-  const contentTypeMap: Record<string, string> = {
-    mp3: 'audio/mpeg', wav: 'audio/wav', m4a: 'audio/mp4', aac: 'audio/aac',
-  };
+  const podcastItems: PodcastItemMeta[] = [];
+  const r2Prefix = `${r2BasePath}/articles/${category.slug}/${slug}/podcast`;
 
-  await r2.put(`${r2BasePath}/articles/${category.slug}/${slug}/podcast/audio.${audioExt}`, audioData, {
-    httpMetadata: { contentType: contentTypeMap[audioExt] || 'audio/mpeg' },
-  });
+  for (const [name, files] of groups) {
+    const match = matchPodcastFiles(files);
+    if (!match) {
+      console.log(`  跳过 "${name}"：无音频文件`);
+      continue;
+    }
 
-  let hasScript = false;
-  if (scriptDoc) {
-    try {
-      const blocks = await client.getDocumentBlocks(scriptDoc.token);
-      const { markdown } = convertBlocksToMarkdown(blocks, '');
-      await r2.put(`${r2BasePath}/articles/${category.slug}/${slug}/podcast/script.md`, markdown, {
-        httpMetadata: { contentType: 'text/markdown' },
-      });
-      hasScript = true;
-    } catch (err) {
-      console.error(`  逐字稿(docx)同步失败: ${err}`);
+    const { audioFile, coverFile, scriptFile, scriptDoc } = match;
+
+    console.log(`  同步播客: ${name} (${audioFile.name})`);
+
+    // 上传音频
+    const audioData = await client.downloadDriveFile(audioFile.token);
+    await r2.put(`${r2Prefix}/${audioFile.name}`, audioData, {
+      httpMetadata: { contentType: getContentType(audioFile.name) },
+    });
+
+    // 上传封面
+    if (coverFile) {
+      try {
+        const coverData = await client.downloadDriveFile(coverFile.token);
+        await r2.put(`${r2Prefix}/${coverFile.name}`, coverData, {
+          httpMetadata: { contentType: getContentType(coverFile.name) },
+        });
+      } catch (err) {
+        console.error(`  封面同步失败 (${coverFile.name}):`, err);
+      }
     }
-  } else if (scriptFile) {
-    try {
-      const scriptData = await client.downloadDriveFile(scriptFile.token);
-      await r2.put(`${r2BasePath}/articles/${category.slug}/${slug}/podcast/script.md`, scriptData, {
-        httpMetadata: { contentType: 'text/markdown' },
-      });
-      hasScript = true;
-    } catch (err) {
-      console.error(`  逐字稿(file)同步失败: ${err}`);
+
+    // 上传文字稿
+    let scriptFileName: string | undefined;
+    if (scriptDoc) {
+      try {
+        const blocks = await client.getDocumentBlocks(scriptDoc.token);
+        const { markdown } = convertBlocksToMarkdown(blocks, '');
+        await r2.put(`${r2Prefix}/${name}.md`, markdown, {
+          httpMetadata: { contentType: 'text/markdown' },
+        });
+        scriptFileName = `${name}.md`;
+      } catch (err) {
+        console.error(`  逐字稿(docx)同步失败 (${name}):`, err);
+      }
+    } else if (scriptFile) {
+      try {
+        const scriptData = await client.downloadDriveFile(scriptFile.token);
+        await r2.put(`${r2Prefix}/${name}.md`, scriptData, {
+          httpMetadata: { contentType: 'text/markdown' },
+        });
+        scriptFileName = `${name}.md`;
+      } catch (err) {
+        console.error(`  逐字稿(file)同步失败 (${name}):`, err);
+      }
     }
+
+    podcastItems.push({
+      name,
+      slug: slugify(name),
+      audioFile: audioFile.name,
+      coverFile: coverFile?.name,
+      scriptFile: scriptFileName,
+      audioSize: audioData.byteLength,
+    });
   }
 
-  return { audioFile: audioFile.name, audioSize: audioData.byteLength, hasScript };
+  if (podcastItems.length === 0) {
+    console.log(`  播客文件夹无有效播客，跳过`);
+    return undefined;
+  }
+
+  return { items: podcastItems };
 }
 
 async function syncSlidesFolder(

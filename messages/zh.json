@@ -107,7 +107,13 @@
     "filterAll": "全部",
     "filterArticle": "文章",
     "filterPodcast": "播客",
-    "filterSlides": "PPT"
+    "filterSlides": "PPT",
+    "html": "HTML",
+    "htmlLoading": "加载 HTML 内容...",
+    "htmlError": "HTML 内容加载失败",
+    "htmlOpenInNewTab": "在新标签页打开",
+    "htmlRetry": "重试",
+    "filterHtml": "HTML"
   },
   "share": {
     "copyLink": "复制链接",

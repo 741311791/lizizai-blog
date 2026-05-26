@@ -20,8 +20,16 @@ const AudioPlayer = dynamic(() => import('./AudioPlayer'), {
   loading: () => <div className="h-20 rounded-lg bg-muted animate-pulse mb-8" />,
 });
 
+const PodcastList = dynamic(() => import('./PodcastList'), {
+  loading: () => <div className="h-40 rounded-lg bg-muted animate-pulse mb-8" />,
+});
+
 const SlideViewer = dynamic(() => import('./SlideViewer'), {
   loading: () => <div className="aspect-video rounded-lg bg-muted animate-pulse" />,
+});
+
+const HtmlViewer = dynamic(() => import('./HtmlViewer'), {
+  loading: () => <div className="h-[500px] rounded-lg bg-muted animate-pulse" />,
 });
 
 const sidebarLoading = () => <div className="h-64 rounded-lg bg-muted animate-pulse" />;
@@ -95,19 +103,29 @@ export default function ArticleDetailClient({
   const hasSlidesData = ct
     ? !!ct.slides
     : (realContentType === 'slides' && !!article.slidesData && article.slidesData.length > 0);
+  const hasHtmlData = ct
+    ? !!ct.html
+    : (realContentType === 'html' && !!article.htmlUrl);
 
   // 判断幻灯片是否为 HTML 模式
   const isHtmlSlides = ct?.slides?.source === 'html_slides';
+
+  // HTML 内容 URL
+  const htmlUrl = ct?.html?.htmlUrl || article.htmlUrl || '';
 
   // 切换内容类型
   const handleTypeChange = useCallback((type: string) => {
     setActiveContentType(type);
   }, []);
 
-  // 是否显示兜底页：用户切到了 podcast/slides 但实际没有数据
+  // 是否显示兜底页：用户切到了 podcast/slides/html 但实际没有数据
   const showComingSoon =
     (activeContentType === 'podcast' && !hasPodcastData) ||
-    (activeContentType === 'slides' && !hasSlidesData);
+    (activeContentType === 'slides' && !hasSlidesData) ||
+    (activeContentType === 'html' && !hasHtmlData);
+
+  // HTML 模式下主内容区不限制宽度
+  const isFullWidth = activeContentType === 'html' && hasHtmlData;
 
   // 渲染主内容区
   const renderMainContent = () => {
@@ -118,6 +136,16 @@ export default function ArticleDetailClient({
 
     switch (activeContentType) {
       case 'podcast':
+        // 多播客列表（新格式）
+        if (article.podcasts && article.podcasts.length > 0) {
+          return (
+            <PodcastList
+              podcasts={article.podcasts}
+              articleTitle={article.title}
+            />
+          );
+        }
+        // 单播客回退（旧格式）
         return (
           <>
             <AudioPlayer
@@ -161,6 +189,9 @@ export default function ArticleDetailClient({
           </>
         );
 
+      case 'html':
+        return <HtmlViewer htmlUrl={htmlUrl} />;
+
       default:
         return (
           <>
@@ -189,6 +220,17 @@ export default function ArticleDetailClient({
 
     switch (activeContentType) {
       case 'podcast':
+        // 多播客列表：简化侧边栏，仅显示数据统计
+        if (article.podcasts && article.podcasts.length > 0) {
+          return (
+            <ArticleSidebar
+              article={article}
+              likes={likes}
+              views={views}
+              content={article.content}
+            />
+          );
+        }
         return (
           <PodcastSidebar
             article={article}
@@ -219,6 +261,16 @@ export default function ArticleDetailClient({
           />
         );
 
+      case 'html':
+        return (
+          <ArticleSidebar
+            article={article}
+            likes={likes}
+            views={views}
+            content={article.content}
+          />
+        );
+
       default:
         return (
           <ArticleSidebar
@@ -231,6 +283,12 @@ export default function ArticleDetailClient({
     }
   };
 
+  // 移动端类型切换条（仅在有多类型时显示）
+  const ctOptions = ct
+    ? ['article', ct.podcast && 'podcast', ct.slides && 'slides', ct.html && 'html'].filter(Boolean)
+    : undefined;
+  const showMobileSwitcher = ctOptions ? ctOptions.length > 1 : false;
+
   return (
     <>
       <ReadingProgress />
@@ -238,7 +296,11 @@ export default function ArticleDetailClient({
       <div className="container mx-auto max-w-7xl px-4 py-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_280px]">
           {/* 左栏：头部 + 内容 */}
-          <article className="max-w-3xl">
+          <article
+            className={`transition-[max-width] duration-200 ${
+              isFullWidth ? 'max-w-none' : 'max-w-3xl'
+            }`}
+          >
             {/* 文章头部（所有类型共用） */}
             <header className="mb-8 space-y-4">
               <ContentTypeBadge
@@ -264,6 +326,17 @@ export default function ArticleDetailClient({
                   views={views}
                 />
               </div>
+
+              {/* 移动端类型切换条 */}
+              {showMobileSwitcher && (
+                <div className="lg:hidden pt-2">
+                  <ContentTypeSwitcher
+                    contentTypes={ct}
+                    activeType={activeContentType}
+                    onTypeChange={handleTypeChange}
+                  />
+                </div>
+              )}
             </header>
 
             {/* 内容区（根据类型渲染） */}

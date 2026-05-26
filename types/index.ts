@@ -5,23 +5,33 @@
  */
 
 /** 内容类型 */
-export type ContentType = 'article' | 'podcast' | 'slides';
+export type ContentType = 'article' | 'podcast' | 'slides' | 'html';
+
+/** 单个播客条目 */
+export interface PodcastItem {
+  name: string;
+  slug: string;
+  audioFile: string;
+  coverFile?: string;
+  scriptFile?: string;
+  audioSize?: number;
+}
 
 /** 文章可用的内容类型描述（来自 R2 meta.json contentTypes 字段） */
 export interface ContentTypes {
   article: true;
   podcast?: {
-    audioFile: string;
-    audioSize: number;
-    hasScript: boolean;
-    chapters?: Chapter[];
-    audioDuration?: number;
+    items: PodcastItem[];
   };
   slides?: {
     slideCount: number;
     source: 'html_slides';
     hasScreenshots: boolean;
     manifest?: { file: string; label: string }[];
+  };
+  html?: {
+    htmlUrl: string;
+    fileSize?: number;
   };
 }
 
@@ -72,12 +82,16 @@ export interface Article {
   audioDuration?: number;
   chapters?: Chapter[];
   scriptContent?: string;
+  // 播客列表（多播客支持，填充完整 R2 URL）
+  podcasts?: PodcastItem[];
   slidesData?: SlideData[];
   slideCount?: number;
   // 新架构：多内容类型可用性描述
   contentTypes?: ContentTypes;
   // HTML 幻灯片基础 URL（前端拼接 iframe src）
   slidesBaseUrl?: string;
+  // HTML 内容类型 URL（独立 HTML 文件）
+  htmlUrl?: string;
 }
 
 export interface Category {

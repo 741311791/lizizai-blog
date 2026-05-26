@@ -5,7 +5,7 @@
  */
 
 import { cache } from 'react';
-import type { Article, Category, ContentTypes, SlideData, Chapter } from '@/types/index';
+import type { Article, Category, ContentTypes, SlideData, PodcastItem } from '@/types/index';
 import { getLikes, getBatchViews } from '@/lib/services';
 import { config } from '@/lib/env';
 
@@ -138,24 +138,20 @@ async function getArticleContent(categorySlug: string, articleSlug: string): Pro
 }
 
 /**
- * 获取播客音频 URL
- * 从 contentTypes.podcast.audioFile 推断扩展名，兜底 .mp3
+ * 解析播客列表：将 contentTypes.podcast.items 中的文件名转为完整 R2 URL
  */
-function getPodcastAudioUrl(categorySlug: string, articleSlug: string, audioFile?: string): string {
-  const ext = audioFile?.split('.').pop()?.toLowerCase() || 'mp3';
-  return `${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/podcast/audio.${ext}`;
-}
+function resolvePodcastUrls(categorySlug: string, articleSlug: string, items?: { name: string; slug: string; audioFile: string; coverFile?: string; scriptFile?: string; audioSize?: number }[]): PodcastItem[] {
+  if (!items || items.length === 0) return [];
+  const base = `${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/podcast`;
 
-/**
- * 获取播客脚本（Markdown）
- */
-async function getPodcastScript(categorySlug: string, articleSlug: string): Promise<string> {
-  const res = await fetch(`${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/podcast/script.md`, {
-    next: { revalidate: 3600 },
-  });
-
-  if (!res.ok) return '';
-  return res.text();
+  return items.map(item => ({
+    name: item.name,
+    slug: item.slug,
+    audioFile: `${base}/${item.audioFile}`,
+    coverFile: item.coverFile ? `${base}/${item.coverFile}` : undefined,
+    scriptFile: item.scriptFile ? `${base}/${item.scriptFile}` : undefined,
+    audioSize: item.audioSize,
+  }));
 }
 
 /**
@@ -183,16 +179,12 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
   const categorySlug = article.category.slug;
   const ct = article.contentTypes;
 
-  // 判断需要哪些额外数据获取
-  const needsPodcastScript = ct
-    ? !!ct.podcast?.hasScript
-    : contentType === 'podcast';
+  // 判断需要哪些额外数据获取（播客使用新列表格式，无需单独获取脚本）
   const needsSlidesJson = !ct?.slides && contentType === 'slides';
 
   // 并行获取所有需要的数据
-  const [content, scriptContent, slidesData] = await Promise.all([
+  const [content, slidesData] = await Promise.all([
     getArticleContent(categorySlug, slug),
-    needsPodcastScript ? getPodcastScript(categorySlug, slug) : Promise.resolve(''),
     needsSlidesJson ? getSlidesData(categorySlug, slug) : Promise.resolve([] as SlideData[]),
   ]);
 
@@ -201,15 +193,19 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
     content: content || '',
   };
 
-  // 播客数据处理
-  if (ct?.podcast) {
-    result.audioUrl = getPodcastAudioUrl(categorySlug, slug, ct.podcast.audioFile);
-    if (ct.podcast.hasScript) {
-      result.scriptContent = scriptContent;
+  // 播客数据处理：解析播客列表，填充完整 R2 URL
+  if (ct?.podcast?.items) {
+    // 新格式：多播客列表
+    result.podcasts = resolvePodcastUrls(categorySlug, slug, ct.podcast.items);
+    // 兼容旧 AudioPlayer：首个播客的音频 URL
+    if (result.podcasts.length > 0) {
+      result.audioUrl = result.podcasts[0].audioFile;
     }
-  } else if (contentType === 'podcast') {
-    result.audioUrl = getPodcastAudioUrl(categorySlug, slug);
-    result.scriptContent = scriptContent;
+  } else if (ct?.podcast || contentType === 'podcast') {
+    // 旧格式兼容：ct.podcast 存在但无 items（如 { audioFile, audioSize, hasScript }），
+    // 或 contentType='podcast' 无 contentTypes 元数据
+    // 旧同步代码固定以 audio.mp3 保存到 R2
+    result.audioUrl = `${R2_BASE}/blog-data/articles/${categorySlug}/${slug}/podcast/audio.mp3`;
   }
 
   // 幻灯片数据处理
@@ -229,6 +225,15 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       result.slidesData = slidesData as SlideData[];
       result.slideCount = (slidesData as SlideData[]).length;
     }
+  }
+
+  // HTML 内容类型：构造 R2 URL
+  if (ct?.html) {
+    result.htmlUrl = ct.html.htmlUrl.startsWith('http')
+      ? ct.html.htmlUrl
+      : `${R2_BASE}/blog-data/articles/${categorySlug}/${slug}/html/index.html`;
+  } else if (contentType === 'html') {
+    result.htmlUrl = `${R2_BASE}/blog-data/articles/${categorySlug}/${slug}/html/index.html`;
   }
 
   return result;

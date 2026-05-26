@@ -1,6 +1,6 @@
 'use client';
 
-import { Mic, Presentation, FileText } from 'lucide-react';
+import { Mic, Presentation, FileText, Code2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import type { ContentType } from '@/types/index';
@@ -18,6 +18,7 @@ const FILTER_OPTIONS: { value: ContentTypeFilter; icon: typeof FileText; labelKe
   { value: 'article', icon: FileText, labelKey: 'filterArticle' },
   { value: 'podcast', icon: Mic, labelKey: 'filterPodcast' },
   { value: 'slides', icon: Presentation, labelKey: 'filterSlides' },
+  { value: 'html', icon: Code2, labelKey: 'filterHtml' },
 ];
 
 export default function ContentTypeFilter({
