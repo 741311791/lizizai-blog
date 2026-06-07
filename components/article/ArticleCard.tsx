@@ -6,8 +6,7 @@ import Image from 'next/image';
 import { Heart, Share2, MessageCircle, Clock } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { getArticleImageUrl } from '@/lib/utils/image';
+import { getCardImageUrl, shouldSkipImageOptimization } from '@/lib/utils/image';
 import dynamic from 'next/dynamic';
 const ShareMenu = dynamic(() => import('@/components/share/ShareMenu'), { ssr: false });
 import { config } from '@/lib/env';
@@ -27,6 +26,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
     excerpt,
     slug,
     featuredImage,
+    thumbnailImage,
     author,
     publishedAt,
     likes,
@@ -39,7 +39,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 
   const [shares, setShares] = useState(sharesCount);
   const description = subtitle || excerpt;
-  const imageUrl = getArticleImageUrl(featuredImage, id);
+  const imageUrl = getCardImageUrl(thumbnailImage, featuredImage, id);
   const contentType = article.contentType || 'article';
 
   return (
@@ -53,32 +53,9 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
-            unoptimized={imageUrl.includes('picsum.photos')}
+            unoptimized={shouldSkipImageOptimization(imageUrl)}
           />
 
-          {/* 内容类型 / 分类标签 */}
-          {contentType === 'podcast' ? (
-            <Badge
-              variant="secondary"
-              className="absolute top-3 left-3 text-xs bg-accent/80 text-accent-foreground backdrop-blur-sm hover:bg-accent/80"
-            >
-              🎙️ {t('podcast')}
-            </Badge>
-          ) : contentType === 'slides' ? (
-            <Badge
-              variant="secondary"
-              className="absolute top-3 left-3 text-xs bg-accent/80 text-accent-foreground backdrop-blur-sm hover:bg-accent/80"
-            >
-              📊 {t('slides')}
-            </Badge>
-          ) : category ? (
-            <Badge
-              variant="secondary"
-              className="absolute top-3 left-3 text-xs bg-accent/80 text-accent-foreground backdrop-blur-sm hover:bg-accent/80"
-            >
-              {category.name}
-            </Badge>
-          ) : null}
 
           {/* Hover 覆盖层 - 桌面端显示 */}
           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex items-center justify-center gap-6">

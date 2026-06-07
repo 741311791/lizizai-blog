@@ -11,9 +11,8 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Clock, LayoutGrid, List } from 'lucide-react';
 import ArticleListItem from '@/components/article/ArticleListItem';
-import ContentTypeBadge from '@/components/article/ContentTypeBadge';
 import { getTimeLabel } from '@/lib/content-utils';
-import { getArticleImageUrl } from '@/lib/utils/image';
+import { getCardImageUrl, shouldSkipImageOptimization } from '@/lib/utils/image';
 import type { Article } from '@/types/index';
 
 interface ArticlesSectionProps {
@@ -109,7 +108,7 @@ function ArticleGrid({ articles }: { articles: Article[] }) {
 function GridCard({ article }: { article: Article }) {
   const locale = useLocale();
   const t = useTranslations('article');
-  const imageUrl = getArticleImageUrl(article.featuredImage, article.id);
+  const imageUrl = getCardImageUrl(article.thumbnailImage, article.featuredImage, article.id);
   const date = article.publishedAt
     ? new Date(article.publishedAt).toLocaleDateString(
         locale === 'zh' ? 'zh-CN' : 'en-US',
@@ -130,17 +129,8 @@ function GridCard({ article }: { article: Article }) {
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
-            unoptimized={imageUrl.includes('picsum.photos')}
+            unoptimized={shouldSkipImageOptimization(imageUrl)}
           />
-          {/* 类型/分类标签 */}
-          <div className="absolute top-2.5 left-2.5">
-            <ContentTypeBadge
-              article={article}
-              categoryName={article.category?.name}
-              compact
-              className="bg-primary/90 text-primary-foreground backdrop-blur-sm"
-            />
-          </div>
         </div>
 
         {/* 内容 */}

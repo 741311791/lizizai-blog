@@ -3,7 +3,7 @@ import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Lock } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { getArticleImageUrl } from '@/lib/utils/image';
+import { getCardImageUrl, shouldSkipImageOptimization } from '@/lib/utils/image';
 import type { Article } from '@/types/index';
 
 interface PopularArticlesProps {
@@ -38,7 +38,7 @@ export default async function PopularArticles({ articles, locale = 'en' }: Popul
               ? new Date(article.publishedAt).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { month: 'short', day: '2-digit' }).toUpperCase()
               : '';
             const isPremium = article.tags?.some(t => t.name === '课程');
-            const imageUrl = getArticleImageUrl(article.featuredImage, article.id);
+            const imageUrl = getCardImageUrl(article.thumbnailImage, article.featuredImage, article.id);
 
             return (
               <Link key={article.slug} href={`/article/${article.slug}`}>
@@ -50,7 +50,7 @@ export default async function PopularArticles({ articles, locale = 'en' }: Popul
                       alt={article.title}
                       fill
                       className="object-cover"
-                      unoptimized={imageUrl.includes('picsum.photos')}
+                      unoptimized={shouldSkipImageOptimization(imageUrl)}
                     />
                   </div>
 

@@ -8,16 +8,16 @@
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Clock, ChevronRight } from 'lucide-react';
-import { getArticlesByCategory } from '@/lib/blog-data';
-import { getBadgeContent, type TranslateFn } from '@/lib/content-utils';
 import { getTranslations, getLocale } from 'next-intl/server';
 import type { Article } from '@/types/index';
 
-export default async function DailyNews() {
+interface DailyNewsProps {
+  articles: Article[];
+}
+
+export default async function DailyNews({ articles }: DailyNewsProps) {
   const t = await getTranslations('aiNews');
-  const tArticle = await getTranslations('article');
   const locale = await getLocale();
-  const articles = await getArticlesByCategory('daily-news');
 
   // 无文章时整体隐藏
   if (articles.length === 0) return null;
@@ -48,7 +48,7 @@ export default async function DailyNews() {
       <div className="relative -mx-4 px-4">
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
           {articles.slice(0, 8).map((article: Article) => (
-            <NewsCard key={article.id} article={article} locale={locale} tArticle={tArticle} />
+            <NewsCard key={article.id} article={article} locale={locale} />
           ))}
         </div>
         {/* 右侧渐隐遮罩 */}
@@ -58,8 +58,7 @@ export default async function DailyNews() {
   );
 }
 
-function NewsCard({ article, locale, tArticle }: { article: Article; locale: string; tArticle: TranslateFn }) {
-  const badgeContent = getBadgeContent(tArticle, article.contentType, article.category?.name, article.slideCount);
+function NewsCard({ article, locale }: { article: Article; locale: string }) {
   const date = article.publishedAt
     ? new Date(article.publishedAt).toLocaleDateString(
         locale === 'zh' ? 'zh-CN' : 'en-US',
@@ -70,17 +69,17 @@ function NewsCard({ article, locale, tArticle }: { article: Article; locale: str
   return (
     <Link href={`/article/${article.slug}`} className="flex-shrink-0 snap-start">
       <div className="group w-72 md:w-80 p-4 rounded-lg border border-border bg-card hover:bg-card/80 hover:border-border/80 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
-        {/* 类型/分类标签 */}
-        {badgeContent && (
-          <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full bg-primary/15 text-primary mb-3">
-            {badgeContent}
-          </span>
-        )}
-
         {/* 标题 */}
-        <h3 className="text-sm font-semibold leading-snug mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="text-sm font-semibold leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors">
           {article.title}
         </h3>
+
+        {/* 摘要 */}
+        {article.excerpt && (
+          <p className="text-xs text-muted-foreground leading-relaxed mb-3 line-clamp-3">
+            {article.excerpt}
+          </p>
+        )}
 
         {/* 时间戳 */}
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">

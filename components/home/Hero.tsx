@@ -10,7 +10,7 @@ import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Clock, ArrowRight, Mail } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { getArticleImageUrl } from '@/lib/utils/image';
+import { getArticleImageUrl, shouldSkipImageOptimization } from '@/lib/utils/image';
 import { getTimeLabel, getBadgeContent, shouldShowTimeLabel } from '@/lib/content-utils';
 import type { Article } from '@/types/index';
 
@@ -50,7 +50,7 @@ export default async function Hero({ article, locale }: HeroProps) {
                   blurDataURL={`data:image/svg+xml;charset=utf-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500"><rect width="100%" height="100%" fill="%231a1a2e"/></svg>')}`}
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   priority
-                  unoptimized={imageUrl.includes('picsum.photos')}
+                  unoptimized={shouldSkipImageOptimization(imageUrl)}
                 />
                 {/* 底部渐变遮罩 */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />

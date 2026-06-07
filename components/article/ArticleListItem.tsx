@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { Share2, Clock } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import { getArticleImageUrl } from '@/lib/utils/image';
+import { getCardImageUrl, shouldSkipImageOptimization } from '@/lib/utils/image';
 import ContentTypeBadge from './ContentTypeBadge';
 import { getTimeLabel } from '@/lib/content-utils';
 import { config } from '@/lib/env';
@@ -33,6 +33,7 @@ export default function ArticleListItem({ article }: ArticleListItemProps) {
     excerpt,
     slug,
     featuredImage,
+    thumbnailImage,
     author,
     publishedAt,
     readingTime,
@@ -43,7 +44,7 @@ export default function ArticleListItem({ article }: ArticleListItemProps) {
 
   const [shares, setShares] = useState(sharesCount);
   const description = subtitle || excerpt;
-  const imageUrl = getArticleImageUrl(featuredImage, id);
+  const imageUrl = getCardImageUrl(thumbnailImage, featuredImage, id);
   const contentType = article.contentType || 'article';
   const timeLabel = getTimeLabel(t, article.contentType, readingTime || 0, article.slideCount);
 
@@ -129,7 +130,7 @@ export default function ArticleListItem({ article }: ArticleListItemProps) {
             fill
             sizes="(max-width: 640px) 96px, 160px"
             className="object-cover transition-transform group-hover:scale-105"
-            unoptimized={imageUrl.includes('picsum.photos')}
+            unoptimized={shouldSkipImageOptimization(imageUrl)}
           />
         </div>
       </article>

@@ -6,30 +6,24 @@
 
 import { cache } from 'react';
 import type { Article, Category, ContentTypes, SlideData, PodcastItem } from '@/types/index';
-import { getLikes, getBatchViews } from '@/lib/services';
+import { getLikes, getReactions, getViews, getBatchViews } from '@/lib/services';
 import { config } from '@/lib/env';
 
 const R2_BASE = process.env.R2_PUBLIC_URL || 'https://lizizai-blog.lihehua.xyz';
+const isDev = process.env.NODE_ENV === 'development';
 
-/** 批量获取评论数 */
-async function getBatchCommentCounts(slugs: string[]): Promise<Map<string, number>> {
-  const map = new Map<string, number>();
+/** 获取单篇文章评论数 */
+async function getCommentCount(slug: string): Promise<number> {
   const url = config.cfCommentUrl;
-  if (!url || slugs.length === 0) return map;
-
-  const results = await Promise.allSettled(
-    slugs.map(async (slug) => {
-      const res = await fetch(`${url}/area/${slug}/comments`);
-      if (!res.ok) return { slug, count: 0 };
-      const data = await res.json();
-      return { slug, count: (data as any[]).filter((c: any) => c.hidden !== 1).length };
-    })
-  );
-
-  for (const r of results) {
-    if (r.status === 'fulfilled') map.set(r.value.slug, r.value.count);
+  if (!url) return 0;
+  try {
+    const res = await fetch(`${url}/area/${slug}/comments`);
+    if (!res.ok) return 0;
+    const data = await res.json();
+    return (data as any[]).filter((c: any) => c.hidden !== 1).length;
+  } catch {
+    return 0;
   }
-  return map;
 }
 
 /**
@@ -54,7 +48,8 @@ export const getAllArticles = cache(async (): Promise<Article[]> => {
     slug: item.slug,
     content: '',
     excerpt: item.excerpt,
-    featuredImage: item.coverThumbnail || item.coverImage || undefined,
+    featuredImage: item.coverImage || item.coverThumbnail || undefined,
+    thumbnailImage: item.coverThumbnail || undefined,
     publishedAt: item.publishedAt,
     likes: 0,
     views: undefined,
@@ -75,33 +70,18 @@ export const getAllArticles = cache(async (): Promise<Article[]> => {
       : undefined,
   }));
 
-  // 批量获取点赞、浏览和评论数据
-  try {
-    const ids = articles.map(a => a.id);
-    const slugs = articles.map(a => a.slug);
-
-    // emaction 无批量 API，逐个获取
-    const likesResults = await Promise.all(
-      ids.map(async (id) => ({ id, likes: await getLikes(id) }))
-    );
-
-    // 浏览量批量获取（1 次请求替代 N 次）
-    const viewsData = await getBatchViews(ids);
-    const viewsMap = new Map(Object.entries(viewsData));
-
-    // 评论数批量获取
-    const commentsMap = await getBatchCommentCounts(slugs);
-
-    // 用 Map 合并结果
-    const likesMap = new Map(likesResults.map(r => [r.id, r.likes]));
-
-    for (const article of articles) {
-      article.likes = likesMap.get(article.id) || 0;
-      article.views = viewsMap.get(article.id) || 0;
-      article.commentsCount = commentsMap.get(article.slug) || 0;
+  // 仅获取浏览量（1 次批量请求），开发模式跳过
+  if (!isDev) {
+    try {
+      const ids = articles.map(a => a.id);
+      const viewsData = await getBatchViews(ids);
+      const viewsMap = new Map(Object.entries(viewsData));
+      for (const article of articles) {
+        article.views = viewsMap.get(article.id) || 0;
+      }
+    } catch {
+      // 浏览量获取失败不影响文章列表
     }
-  } catch {
-    // 获取动态数据失败不影响文章列表
   }
 
   return articles;
@@ -192,6 +172,22 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
     ...article,
     content: content || '',
   };
+
+  // 获取单篇文章的动态数据（likes/views/comments），开发模式跳过
+  if (!isDev) {
+    try {
+      const [reactions, views, commentsCount] = await Promise.all([
+        getReactions(result.id),
+        getViews(result.id),
+        getCommentCount(slug),
+      ]);
+      result.likes = reactions.reduce((sum, r) => sum + r.count, 0);
+      result.views = views;
+      result.commentsCount = commentsCount;
+    } catch {
+      // 动态数据获取失败不影响文章详情
+    }
+  }
 
   // 播客数据处理：解析播客列表，填充完整 R2 URL
   if (ct?.podcast?.items) {

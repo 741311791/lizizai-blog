@@ -58,6 +58,7 @@ export interface Article {
   content: string;
   excerpt?: string;
   featuredImage?: string;
+  thumbnailImage?: string; // WebP 缩略图（卡片列表等小图场景优先使用）
   publishedAt: string;
   likes: number;
   views?: number;
