@@ -23,6 +23,9 @@ export default async function Home({
   // Hero 精选文章：取第一篇
   const featuredArticle = allArticles[0];
 
+  // 每日资讯文章（预筛选，避免 DailyNews 重复调用 getAllArticles）
+  const dailyNewsArticles = allArticles.filter(a => a.category.slug === 'daily-news');
+
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8 space-y-6">
       {/* Hero 编辑精选 */}
@@ -31,7 +34,7 @@ export default async function Home({
       )}
 
       {/* 每日资讯 — 水平滚动卡片 */}
-      <DailyNews />
+      <DailyNews articles={dailyNewsArticles} />
 
       {/* 文章区块 — 精选大卡 + 最新/热门 */}
       <ArticlesSection
