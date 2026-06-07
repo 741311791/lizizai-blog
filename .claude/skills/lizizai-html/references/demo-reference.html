@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>lizizai-html Skill 参考示例</title>
+
+  <!-- [必须] 字体预连接 + 加载 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700;900&family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- [必须] 主题样式 -->
+  <link rel="stylesheet" href="https://pub-7fc5ed7acc9844ab99297fa6b47f55e6.r2.dev/themes/lizizai-blog-theme.css">
+
+  <!-- [可选] 页面自定义样式 — 使用 CSS 变量 -->
+  <style>
+    .hero-stat {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      text-align: center;
+    }
+    .hero-stat .number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      font-family: var(--font-body-en);
+    }
+    .hero-stat .label {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-top: var(--space-2xs);
+    }
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+    img {
+      max-width: 100%;
+      border-radius: var(--radius-md);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       第一部分：标准文章内容 (.prose 容器)
+       格题 h2/h3 会被 TOC 脚本自动提取
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="prose">
+
+    <p>这是一篇完整的参考示例，展示 <code>lizizai-html</code> Skill 生成的 HTML 文件的所有功能。当你使用这个 Skill 时，生成的文件将嵌入到博客文章页的 iframe 中，右侧边栏会自动显示 HTML 内容的目录结构。</p>
+
+    <h2>设计系统一致性</h2>
+
+    <p>每份 HTML 文件必须引用博客的主题 CSS 和字体，确保视觉风格与主站完全一致。主题 CSS 提供了所有基础排版样式——标题、段落、代码块、引用等——无需手动编写。</p>
+
+    <p>支持的容器宽度有三个：</p>
+
+    <ul>
+      <li><strong>.prose</strong>（默认）— 680px 居中，适合文字阅读</li>
+      <li><strong>.prose-wide</strong> — 960px，适合数据图表</li>
+      <li><strong>.prose-full</strong> — 100% 宽度，适合全宽展示</li>
+    </ul>
+
+    <h3>颜色体系</h3>
+
+    <p>所有颜色使用 CSS 变量定义。自定义样式时<strong>必须</strong>使用变量而非硬编码值：</p>
+
+    <blockquote>
+      <p>正确：<code>var(--color-primary)</code>　错误：<code>#d97706</code><br>
+      正确：<code>var(--color-surface)</code>　错误：<code>#18181b</code></p>
+    </blockquote>
+
+    <h2>主题组件示例</h2>
+
+    <p>以下展示 Skill 提供的所有组件类的实际效果：</p>
+
+    <h3>提示框 (Callout)</h3>
+
+    <div class="callout--info">
+      <strong>ℹ️ 信息提示</strong> — 用于补充说明或重要背景信息。主题自动处理背景色和左侧边框。
+    </div>
+
+    <div class="callout--warning">
+      <strong>⚠️ 注意事项</strong> — 用于可能出错或需要特别关注的地方。
+    </div>
+
+    <div class="callout--success">
+      <strong>✅ 最佳实践</strong> — 用于推荐的做法或成功案例。
+    </div>
+
+    <h3>数据表格</h3>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>属性</th>
+          <th>值</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>主题色</td>
+          <td><code>--color-primary</code></td>
+          <td>琥珀金，用于链接和高亮</td>
+        </tr>
+        <tr>
+          <td>背景色</td>
+          <td><code>--color-background</code></td>
+          <td>深色底色 #09090b</td>
+        </tr>
+        <tr>
+          <td>正文字体</td>
+          <td>Noto Sans SC</td>
+          <td>中文正文，400/500/600/700</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>标签与卡片</h3>
+
+    <p>
+      <span class="badge">React</span>
+      <span class="badge">TypeScript</span>
+      <span class="badge--primary">Next.js</span>
+    </p>
+
+    <div class="card">
+      <h3 style="margin-top: 0;">卡片组件</h3>
+      <p>卡片使用 <code>.card</code> 类，自带边框和内边距。适合展示并列信息块、引用内容或独立的功能区域。</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top: 0;">另一个卡片</h3>
+      <p>多个卡片并排或堆叠使用时，保持视觉一致性。标题间距通过内联 <code>margin-top: 0</code> 覆盖 prose 容器的默认值。</p>
+    </div>
+
+    <h3>代码块</h3>
+
+    <p>行内代码使用 <code>&lt;code&gt;</code> 标签。多行代码使用 <code>&lt;pre&gt;&lt;code&gt;</code>：</p>
+
+    <pre><code>// postMessage 协议示例
+window.parent.postMessage({
+  type: 'html-toc',
+  headings: [
+    { id: 'heading-设计系统', text: '设计系统', level: 2, top: 320 }
+  ]
+}, '*');</code></pre>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       第二部分：宽容器内容 (.prose-wide)
+       需要更多水平空间时使用
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="prose-wide">
+
+    <h2>宽容器中的数据展示</h2>
+
+    <p>当内容需要更多水平空间——比如统计数据、对比图表——切换到 <code>.prose-wide</code> 容器（960px）。</p>
+
+    <div class="comparison-grid">
+      <div class="hero-stat">
+        <div class="number">4</div>
+        <div class="label">必须包含的脚本</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">3</div>
+        <div class="label">容器宽度选项</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">10+</div>
+        <div class="label">可用组件类</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">0</div>
+        <div class="label">外部 JS 依赖</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 回到标准宽度 -->
+  <div class="prose">
+
+    <h2>功能边界</h2>
+
+    <p>使用此 Skill 时，需要明确它<strong>做什么</strong>和<strong>不做什么</strong>：</p>
+
+    <h3>✅ Skill 职责范围</h3>
+
+    <ul>
+      <li>生成与博客设计系统视觉一致的独立 HTML 文件</li>
+      <li>确保主题 CSS、字体、postMessage 脚本正确嵌入</li>
+      <li>自动提取标题结构，通过 postMessage 发送给父页面</li>
+      <li>提供组件类（card、callout、badge 等）供内容编排</li>
+      <li>文件自包含，可直接上传 R2</li>
+    </ul>
+
+    <h3>❌ 不属于 Skill 职责</h3>
+
+    <ul>
+      <li><strong>父页面布局</strong> — 侧边栏渲染、TOC 高亮、滚动追踪由前端组件处理</li>
+      <li><strong>文件上传部署</strong> — 上传到 R2 是部署流程，非 Skill 生成逻辑</li>
+      <li><strong>响应式适配</strong> — iframe 宽度由父页面控制，HTML 内容自身不处理</li>
+      <li><strong>SEO / 元数据</strong> — 由 Next.js 页面层处理，iframe 内容无 SEO 价值</li>
+      <li><strong>用户交互</strong> — 评论、点赞、分享等由父页面组件处理</li>
+      <li><strong>内容路由</strong> — 文章数据管理、URL 路由由 Next.js App Router 处理</li>
+    </ul>
+
+    <h3>🔗 协作边界</h3>
+
+    <p>Skill 生成的 HTML 与父页面通过 <strong>postMessage 协议</strong>通信：</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>消息</th>
+          <th>方向</th>
+          <th>用途</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>html-content-height</code></td>
+          <td>iframe → 父</td>
+          <td>动态调整 iframe 高度</td>
+        </tr>
+        <tr>
+          <td><code>html-toc</code></td>
+          <td>iframe → 父</td>
+          <td>标题结构 + 位置信息</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>父页面负责：渲染侧边栏目录、计算活跃标题、处理点击跳转。Skill 只管生成正确的 HTML 和发送正确的消息。</p>
+
+    <div class="callout--info">
+      <strong>关于标题 ID</strong> — Skill 的 TOC 脚本会自动为没有 id 的标题生成 id。如果你手动指定了 id，脚本会保留。id 生成规则：<code>heading-{text-slug}</code>，重复时追加 <code>-2</code>、<code>-3</code> 等后缀。
+    </div>
+
+    <h2>编写最佳实践</h2>
+
+    <h3>结构建议</h3>
+
+    <p>一篇好的 HTML 内容应该：</p>
+
+    <ol>
+      <li>使用 <strong>h2 作为章节标题</strong>，h3 作为子节——这决定了侧边栏的目录层级</li>
+      <li>避免使用 h1——文章标题由父页面渲染</li>
+      <li>章节之间保持足够的间距（主题 CSS 自动处理）</li>
+      <li>合理使用 callout 突出重点，不要过度使用</li>
+    </ol>
+
+    <h3>性能注意</h3>
+
+    <ul>
+      <li>不要引入外部 JS 库（jQuery、Chart.js 等）—— 保持零依赖</li>
+      <li>图片使用标准 <code>&lt;img&gt;</code> 标签，高度同步脚本会自动处理</li>
+      <li>如果内容很长（超过 2 倍视口高度），iframe 高度会被父页面限制</li>
+    </ul>
+
+    <div class="divider">以上为参考示例</div>
+
+  </div>
+
+  <!-- [必须] postMessage 高度同步脚本 -->
+  <script>
+  (function() {
+    function sendHeight() {
+      var h = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+      window.parent.postMessage({ type: 'html-content-height', height: h }, '*');
+    }
+    var timer = null;
+    function throttledSend() {
+      if (timer) return;
+      timer = setTimeout(function() { timer = null; sendHeight(); }, 100);
+    }
+    new MutationObserver(throttledSend)
+      .observe(document.documentElement, { childList: true, subtree: true, attributes: true });
+    new ResizeObserver(throttledSend)
+      .observe(document.body);
+    document.addEventListener('load', function(e) {
+      if (e.target.tagName === 'IMG') throttledSend();
+    }, true);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(sendHeight, 50); });
+    } else {
+      setTimeout(sendHeight, 50);
+    }
+    window.addEventListener('load', function() { setTimeout(sendHeight, 100); });
+  })();
+  </script>
+
+  <!-- [必须] postMessage TOC 同步脚本 -->
+  <script>
+  (function() {
+    var lastTocJson = '';
+    function getOffsetTop(el) {
+      var top = 0;
+      while (el) { top += el.offsetTop; el = el.offsetParent; }
+      return top;
+    }
+    function sendToc() {
+      var headings = [];
+      var counter = {};
+      document.querySelectorAll('.prose, .prose-wide, .prose-full').forEach(function(c) {
+        c.querySelectorAll('h1, h2, h3').forEach(function(el) {
+          if (!el.id) {
+            var text = (el.textContent || '').trim();
+            var base = 'heading-' + text.toLowerCase().replace(/[^a-z0-9一-鿿]+/g, '-').replace(/^-+|-+$/g, '') || 'untitled';
+            var count = counter[base] || 0;
+            counter[base] = count + 1;
+            el.id = count === 0 ? base : base + '-' + count;
+          }
+          headings.push({ id: el.id, text: (el.textContent || '').trim(), level: parseInt(el.tagName.charAt(1)), top: getOffsetTop(el) });
+        });
+      });
+      var json = JSON.stringify(headings);
+      if (json !== lastTocJson) { lastTocJson = json; window.parent.postMessage({ type: 'html-toc', headings: headings }, '*'); }
+    }
+    var tocTimer = null;
+    function throttledSendToc() {
+      if (tocTimer) return;
+      tocTimer = setTimeout(function() { tocTimer = null; sendToc(); }, 200);
+    }
+    new MutationObserver(throttledSendToc).observe(document.documentElement, { childList: true, subtree: true });
+    new ResizeObserver(throttledSendToc).observe(document.body);
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function() { setTimeout(sendToc, 100); }); } else { setTimeout(sendToc, 100); }
+    window.addEventListener('load', function() { setTimeout(sendToc, 300); });
+  })();
+  </script>
+</body>
+</html>

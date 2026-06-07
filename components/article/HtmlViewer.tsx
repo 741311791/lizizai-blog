@@ -1,23 +1,57 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { useTranslations } from 'next-intl';
 import { ExternalLink, RefreshCw } from 'lucide-react';
 
+export interface HtmlHeading {
+  id: string;
+  text: string;
+  level: number;
+  top: number;
+}
+
+export interface HtmlViewerHandle {
+  scrollToHeading: (top: number) => void;
+  getIframeRect: () => DOMRect | null;
+}
+
 interface HtmlViewerProps {
   htmlUrl: string;
+  onTocUpdate?: (headings: HtmlHeading[]) => void;
 }
 
 const TIMEOUT_MS = 5000;
 const MIN_HEIGHT = 200;
 const MAX_HEIGHT_MULTIPLIER = 2;
 
-export default function HtmlViewer({ htmlUrl }: HtmlViewerProps) {
+const HtmlViewer = forwardRef<HtmlViewerHandle, HtmlViewerProps>(function HtmlViewer({ htmlUrl, onTocUpdate }, ref) {
   const t = useTranslations('article');
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [iframeHeight, setIframeHeight] = useState(500);
   const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+
+  // 用 ref 稳定回调，避免 postMessage 监听器频繁重建
+  const onTocUpdateRef = useRef(onTocUpdate);
+  onTocUpdateRef.current = onTocUpdate;
+
+  // 暴露方法给父组件
+  useImperativeHandle(ref, () => ({
+    scrollToHeading(top: number) {
+      const iframe = iframeRef.current;
+      if (!iframe) return;
+      const iframeRect = iframe.getBoundingClientRect();
+      const headerOffset = 100;
+      window.scrollTo({
+        top: iframeRect.top + window.scrollY + top - headerOffset,
+        behavior: 'smooth',
+      });
+    },
+    getIframeRect() {
+      return iframeRef.current?.getBoundingClientRect() ?? null;
+    },
+  }));
 
   const r2Origin = useMemo(() => {
     try { return new URL(htmlUrl).origin; } catch { return ''; }
@@ -38,15 +72,21 @@ export default function HtmlViewer({ htmlUrl }: HtmlViewerProps) {
     setIframeHeight(clampHeight(height));
   }, [clampHeight]);
 
-  // 监听 postMessage
+  // 监听 postMessage（高度 + TOC）
   useEffect(() => {
     const handler = (e: MessageEvent) => {
-      // sandbox="allow-scripts" 会使 iframe origin 变为 "null"，需同时接受
       if (r2Origin && e.origin !== r2Origin && e.origin !== 'null') return;
+
+      // 高度同步
       if (e.data?.type === 'html-content-height' && typeof e.data.height === 'number') {
         throttledSetHeight(e.data.height);
         setStatus('loaded');
         if (timerRef.current) clearTimeout(timerRef.current);
+      }
+
+      // TOC 同步
+      if (e.data?.type === 'html-toc' && Array.isArray(e.data.headings)) {
+        onTocUpdateRef.current?.(e.data.headings);
       }
     };
     window.addEventListener('message', handler);
@@ -63,7 +103,7 @@ export default function HtmlViewer({ htmlUrl }: HtmlViewerProps) {
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [htmlUrl, status]);
 
-  // iframe 加载完成（无论是否收到 postMessage）
+  // iframe 加载完成
   const handleLoad = useCallback(() => {
     if (status === 'loading') {
       setStatus('loaded');
@@ -133,4 +173,6 @@ export default function HtmlViewer({ htmlUrl }: HtmlViewerProps) {
       )}
     </div>
   );
-}
+});
+
+export default HtmlViewer;
