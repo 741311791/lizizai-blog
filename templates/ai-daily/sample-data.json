@@ -1,0 +1,462 @@
+{
+  "meta": {
+    "date": "2026-06-09",
+    "title": "李自在AI 日报",
+    "collectedAt": "2026-06-09 07:10"
+  },
+  "overview": {
+    "summary": "每日精选 AI 行业热点，一文速览前沿动态",
+    "keywords": [
+      "WWDC 2026",
+      "Siri AI",
+      "微信AI",
+      "Apple Foundation Models",
+      "OpenAI IPO",
+      "开源Agent"
+    ],
+    "boxes": [
+      {
+        "label": "热点话题",
+        "text": "Apple WWDC 2026 开幕，发布全新 Siri AI 独立 App，基于 Gemini 驱动实现个人上下文理解、屏幕感知和联网搜索三大能力，同时推出第三代 Apple Foundation Models 并首次支持第三方 AI 模型接入，标志着苹果 AI 战略的重大转折"
+      },
+      {
+        "label": "AI+教育 赛道信号",
+        "text": "Apple Foundation Models 框架全面支持 Swift 开发者接入设备端 AI 能力，教育类 App 可直接调用端侧大模型实现个性化辅导、智能批改等功能，降低 AI 教育产品开发门槛"
+      },
+      {
+        "label": "独立开发者关注",
+        "text": "Apple Foundation Models + Claude Swift 包的组合为 iOS 开发者打开了端侧 AI 应用的大门；微信 AI 生态的自动模式允许零代码接入 AI 能力；GitHub Trending 上 AI Agent 技能/插件生态持续爆发"
+      }
+    ]
+  },
+  "headline": {
+    "summary": "今日 AI 领域迎来多重重磅事件：Apple WWDC 2026 以 AI 为绝对核心发布全新 Siri 和 Apple Intelligence 生态；微信开放 AI 生态接入能力，首批企业已接入测试；OpenAI 正式向 SEC 提交机密上市文件。模型层面，小米 MiMo 联合 TileRT 突破 1000 tokens/s 推理速度，高德发布全球首个 3D 原生城市世界模型。NVIDIA 与 SK Hynix 签署多年协议共推下一代 AI 存储芯片。这些动态共同指向一个趋势：AI 正从「模型竞赛」转向「生态落地」，对独立开发者而言是能力红利期。",
+    "source": "Apple Newsroom / IT之家 / 微信公开课 / Bloomberg / The Decoder / 新浪财经 / 36kr"
+  },
+  "news": [
+    {
+      "title": "Apple WWDC 2026：Siri AI 独立成 App，Gemini 驱动全面重构",
+      "source": "Apple Newsroom",
+      "keyPoints": "Apple 在 WWDC 2026 发布全新 Siri AI，具备三大核心能力——个人上下文理解（跨消息、邮件、照片搜索个人信息）、屏幕感知（识别屏幕内容并回答相关问题）、联网世界知识搜索。Siri 首次成为独立 App，支持对话历史回顾和跨设备 iCloud 同步。底层由 Google Gemini 驱动，运行于苹果私有云，强化隐私保护。同时推出第三代 Apple Foundation Models，开发者可通过 Swift API 直接接入设备端模型。",
+      "analysis": "这是苹果 AI 战略的真正转折点。Siri AI 的独立 App 化意味着苹果从「语音助手」进化为「AI 助手」，而 Foundation Models 框架的开放为独立开发者打开了端侧 AI 应用的大门。对独立开发者而言，这是 iOS 生态自 App Store 以来最大的平台能力扩展，建议立即关注 Swift Foundation Models API。",
+      "url": "https://developer.apple.com/newsroom/"
+    },
+    {
+      "title": "微信 AI 生态正式开放：自动模式零代码接入，京东首批内测",
+      "source": "每日经济新闻",
+      "keyPoints": "6 月 8 日，微信开放平台正式发布《关于开发者接入微信 AI 生态的指引》，提供两种接入模式：自动模式（授权平台读取小程序源码，AI 直接操作页面，无需额外开发）和开发模式（开发者基于 API 自定义 AI 能力）。两种模式可同时开启。京东作为首批内测企业接入电商、外卖、物流业务。",
+      "analysis": "微信 AI 的开放对独立开发者意义重大。自动模式允许零代码让小程序具备 AI Agent 能力，开发模式则提供深度定制空间。这意味着微信生态中的 400 万+小程序都将有机会接入 AI，覆盖 13 亿月活用户。",
+      "url": "https://www.nbd.com.cn/"
+    },
+    {
+      "title": "OpenAI 向 SEC 机密提交 S-1 草案，AI 巨头上市竞速开启",
+      "source": "OpenAI 官网动态",
+      "keyPoints": "OpenAI 已向美国证券交易委员会（SEC）机密提交 S-1 上市注册草案，具体上市时间未定。此前 Anthropic 已于 6 月 1 日提交机密 IPO 文件，估值达 9650 亿美元。两家 AI 巨头有望在今年秋天先后登陆公开市场，形成 AI 行业史上最大规模的 IPO 竞速。",
+      "analysis": "OpenAI 和 Anthropic 的 IPO 竞速将重塑 AI 行业格局。上市意味着更透明的财务数据、更开放的平台策略，以及更活跃的生态投资。建议关注两家公司的 S-1 文件中对开发者生态和 API 定价的表述。",
+      "url": "https://openai.com/blog/"
+    },
+    {
+      "title": "小米 MiMo-V2.5-Pro UltraSpeed 突破 1000 tokens/s",
+      "source": "IT之家",
+      "keyPoints": "小米 MiMo 官方与 TileRT 联合发布 MiMo-V2.5-Pro 的 UltraSpeed 模式，通过模型与系统的极致协同设计，在通用 GPU 上将万亿参数 MoE 模型的生成速度首次突破 1000 tokens/s。单台 8-GPU 节点即可运行 1T 参数模型。",
+      "analysis": "1000 tokens/s 的推理速度意味着实时对话延迟降至毫秒级。对独立开发者而言，这种推理效率的突破直接降低了 AI 应用的运营成本，使得低延迟、高并发的 AI 产品成为可能。",
+      "url": "https://www.ithome.com/"
+    },
+    {
+      "title": "高德发布全球首个 3D 原生城市世界模型 ABot-Earth0.5",
+      "source": "新浪财经",
+      "keyPoints": "阿里巴巴旗下高德发布全球首个 3D 原生城市世界模型 ABot-Earth0.5，已建成覆盖 190 多个国家和地区的 3D 地图。用户输入一张卫星图像或文字描述，系统仅需 10 分钟即可在消费级 GPU 上生成公里级 3D 城市场景。",
+      "analysis": "ABot-Earth0.5 将 3D 城市场景生成从「手工作坊」升级为「自动化工厂」。为游戏开发、AR/VR 应用、智慧城市可视化等领域提供了前所未有的低成本 3D 内容生成能力。",
+      "url": "https://finance.sina.com.cn/"
+    },
+    {
+      "title": "NVIDIA 与 SK Hynix 签署多年协议，共推下一代 AI 存储芯片",
+      "source": "Bloomberg Technology",
+      "keyPoints": "NVIDIA 与 SK Hynix 宣布建立多年期技术合作伙伴关系，围绕 Vera Rubin AI 超级计算机、RTX Spark PC 和 Jetson Thor 机器人平台联合开发专用内存。合作涵盖 AI 基础设施、个人 AI 和物理 AI 三大新市场。",
+      "analysis": "AI 训练和推理的瓶颈正在从计算转向存储。NVIDIA 与 SK Hynix 的深度绑定意味着下一代 AI 硬件将实现计算-存储的协同优化，本地运行大模型的硬件条件将持续改善。",
+      "url": "https://www.bloomberg.com/technology"
+    }
+  ],
+  "openSource": {
+    "summary": "今日 GitHub Trending 的 AI 项目呈现出三大趋势：一是 AI Agent 技能/插件生态的爆发，以 last30days-skill（日增 3558 星）和 Google 官方 Skills 为代表；二是 AI 记忆系统的成熟，MemPalace 以 5.4 万星位居记忆系统榜首；三是本地 LLM 优化工具链的完善，turbovec 和 whichllm 分别从向量检索和模型选型两个维度降低本地部署门槛。",
+    "highlight": "last30days-skill 项目值得关注——它将多源信息采集与 AI 综合摘要结合，本质上是一个轻量级的「AI 研究 Agent」。这种「信息采集 + AI 综合」的模式可复用于市场调研、竞品分析、投资研究等多个商业场景。",
+    "source": "GitHub Trending + Web 搜索",
+    "items": [
+      {
+        "name": "last30days-skill",
+        "repo": "https://github.com/mvanhorn/last30days-skill",
+        "stars": 34394,
+        "starsToday": 3558,
+        "description": "跨平台 AI 研究代理技能，能自动从 Reddit、X(Twitter)、YouTube、Hacker News、Polymarket 及网页等多个信息源采集指定主题的内容，并利用 AI 生成有依据的综合摘要报告。",
+        "tags": [
+          "AI Agent",
+          "信息采集",
+          "研究工具"
+        ],
+        "devValue": "可落地场景：构建行业情报 SaaS、打造投资研究工具。集成难度：Python 项目，pip install 即可。商业化潜力：MIT 协议无限制，可包装为订阅制情报服务。",
+        "source": "GitHub Trending"
+      },
+      {
+        "name": "MemPalace",
+        "repo": "https://github.com/MemPalace/mempalace",
+        "stars": 54903,
+        "starsToday": 237,
+        "description": "基准测试表现最佳的开源 AI 记忆系统，为 AI Agent 提供持久化的记忆管理能力。与主流 LLM 框架深度集成，支持语义检索、时间衰减和重要性排序等多维记忆管理策略。",
+        "tags": [
+          "AI Agent",
+          "记忆系统",
+          "RAG"
+        ],
+        "devValue": "可落地场景：为 AI 客服产品添加长期用户记忆、构建个人知识管理工具。集成难度：Python SDK，支持 LangChain/LlamaIndex 插件式集成。",
+        "source": "GitHub Trending"
+      },
+      {
+        "name": "turbovec",
+        "repo": "https://github.com/RyanCodrai/turbovec",
+        "stars": 8770,
+        "starsToday": 1730,
+        "description": "基于 TurboQuant 构建的高性能向量索引库，核心引擎用 Rust 编写并提供 Python 绑定。针对 AI/ML 场景中的大规模向量检索进行了极致优化。",
+        "tags": [
+          "向量检索",
+          "RAG 框架",
+          "Rust"
+        ],
+        "devValue": "可落地场景：为 RAG 应用提供高性能向量检索层、构建图像/音频相似度检索 API。集成难度：Python bindings 开箱即用。",
+        "source": "GitHub Trending"
+      },
+      {
+        "name": "Goose",
+        "repo": "https://github.com/aaif-goose/goose",
+        "stars": 48074,
+        "starsToday": 699,
+        "description": "开源可扩展的 AI Agent 开发框架，超越代码补全范畴，支持安装、执行、编辑和测试全流程自动化。可搭配任意 LLM 使用，采用 Rust 编写确保高性能。",
+        "tags": [
+          "AI Agent",
+          "开发工具",
+          "自动化"
+        ],
+        "devValue": "可落地场景：构建团队级 AI 编码助手、打造垂直领域自动化工作流平台。集成难度：Rust 编译需要环境配置，但提供预编译二进制文件。",
+        "source": "GitHub Trending"
+      },
+      {
+        "name": "CopilotKit",
+        "repo": "https://github.com/CopilotKit/CopilotKit",
+        "stars": 34107,
+        "starsToday": 398,
+        "description": "面向 AI Agent 和生成式 UI 的前端技术栈，作为 AG-UI 协议的创建者，定义了 AI Agent 与前端交互的标准范式。提供完整的组件库和 SDK。",
+        "tags": [
+          "AI Agent",
+          "前端框架",
+          "开发工具"
+        ],
+        "devValue": "可落地场景：快速构建 AI 驱动的 SaaS 产品前端、为现有产品添加 AI Copilot 功能。集成难度：React 组件开箱即用。",
+        "source": "GitHub Trending"
+      },
+      {
+        "name": "career-ops",
+        "repo": "https://github.com/santifer/career-ops",
+        "stars": 50465,
+        "starsToday": 477,
+        "description": "基于 Claude Code 构建的 AI 驱动求职系统，支持 14 种技能模式（简历优化、面试模拟、薪资谈判等），Go 语言编写的仪表盘提供数据可视化。",
+        "tags": [
+          "AI Agent",
+          "职业工具",
+          "Claude Code"
+        ],
+        "devValue": "可落地场景：构建垂直领域的人才服务平台、参考技能模式设计其他工作流 AI 工具。集成难度：基于 Claude Code，需要 API Key。",
+        "source": "GitHub Trending"
+      }
+    ]
+  },
+  "modelsAndProducts": {
+    "summary": "本日模型与产品动态亮点密集：Apple 发布第三代 AFM 并支持第三方模型接入，小米 MiMo 推理速度突破 1000 tokens/s，高德推出全球首个 3D 原生城市世界模型，Claude 推出 Apple Foundation Models 的 Swift 包，微信 AI 开放小程序接入。",
+    "source": "Apple ML Research / IT之家 / HuggingFace Blog / Claude Blog / 微信公开课 / OpenRouter",
+    "foreign": [
+      {
+        "project": "Apple Foundation Models (AFM)",
+        "update": "发布第三代 AFM，支持开发者通过 Swift API 接入设备端模型",
+        "highlight": "首次支持第三方 AI 模型接入，端侧推理无需网络",
+        "source": "Apple ML Research"
+      },
+      {
+        "project": "Claude Swift Package",
+        "update": "Claude 推出支持 Apple Foundation Models 框架的新 Swift 包",
+        "highlight": "开发者可在 iOS App 中直接集成 Claude 能力",
+        "source": "Claude Blog"
+      },
+      {
+        "project": "ChatGPT 数据图表",
+        "update": "ChatGPT 新增数据图表生成功能",
+        "highlight": "支持从对话中直接生成可视化图表",
+        "source": "@ChatGPTapp"
+      },
+      {
+        "project": "NotebookLM 升级",
+        "update": "NotebookLM 重大升级：智能体能力与高级推理",
+        "highlight": "引入 Agent 能力，可自主搜索、整理和分析",
+        "source": "@NotebookLM"
+      },
+      {
+        "project": "Runway Aleph 2.0 API",
+        "update": "Aleph 2.0 视频编辑模型正式上线 API",
+        "highlight": "支持编辑现有视频并保持一致性",
+        "source": "Runway API Docs"
+      },
+      {
+        "project": "Viggle API",
+        "update": "Viggle API 上线，任意角色任意动作秒级生成",
+        "highlight": "视频动作迁移技术的商业化落地",
+        "source": "@ViggleAI"
+      }
+    ],
+    "domestic": [
+      {
+        "project": "微信 AI 生态",
+        "update": "正式开放小程序 AI 接入，自动模式+开发模式双轨并行",
+        "highlight": "零代码接入降低门槛，京东首批内测",
+        "source": "微信公开课"
+      },
+      {
+        "project": "小米 MiMo UltraSpeed",
+        "update": "MiMO-V2.5-Pro 联合 TileRT 突破 1000 tokens/s",
+        "highlight": "万亿参数 MoE 模型在通用 GPU 上实现千 token 推理速度",
+        "source": "IT之家"
+      },
+      {
+        "project": "高德 ABot-Earth0.5",
+        "update": "发布全球首个 3D 原生城市世界模型",
+        "highlight": "10 分钟消费级 GPU 生成公里级 3D 城市",
+        "source": "新浪财经"
+      },
+      {
+        "project": "面壁智能 VoxCPM2",
+        "update": "VoxCPM2 技术报告发布，20 亿参数语音大模型",
+        "highlight": "支持 30 种语言 + 9 种中文方言",
+        "source": "OpenBMB"
+      },
+      {
+        "project": "Kimi Code",
+        "update": "Kimi Code 焕新升级，附视频教程",
+        "highlight": "月之暗面的 AI 编码工具新版本发布",
+        "source": "公众号：月之暗面"
+      }
+    ]
+  },
+  "companyUpdates": {
+    "summary": "本日厂商动态聚焦 Apple WWDC 2026 带来的生态变化、NVIDIA 的存储芯片合作、以及 OpenAI 的上市进程。",
+    "source": "Apple Newsroom / Bloomberg / The Decoder / IT之家 / 36kr / 新浪财经",
+    "scope": "OpenAI · Google DeepMind · Anthropic · Meta AI · Microsoft · Apple · xAI · Amazon · NVIDIA | 字节跳动 · 百度 · 阿里 · 腾讯 · 月之暗面 · 智谱 · MiniMax · DeepSeek",
+    "items": [
+      {
+        "company": "Apple",
+        "update": "WWDC 2026 发布全新 Siri AI（独立 App + Gemini 驱动）、第三代 AFM、支持第三方模型接入。Siri AI 中国大陆暂不可用",
+        "source": "Apple Newsroom"
+      },
+      {
+        "company": "NVIDIA",
+        "update": "与 SK Hynix 签署多年技术合作协议，为 Vera Rubin AI 超级计算机、RTX Spark PC 和 Jetson Thor 联合开发专用内存芯片",
+        "source": "Bloomberg"
+      },
+      {
+        "company": "OpenAI",
+        "update": "向 SEC 机密提交 S-1 上市注册草案，上市时间未定。此前已融资超 850 亿美元",
+        "source": "OpenAI 官网"
+      },
+      {
+        "company": "Anthropic",
+        "update": "Claude 推出支持 Apple Foundation Models 的 Swift 包，为 iOS 开发者提供端侧 + 云端混合推理方案",
+        "source": "Claude Blog"
+      },
+      {
+        "company": "腾讯（微信）",
+        "update": "微信开放 AI 生态接入能力，首批内测企业京东已接入电商、外卖、物流业务",
+        "source": "微信公开课"
+      },
+      {
+        "company": "阿里（高德）",
+        "update": "发布全球首个 3D 原生城市世界模型 ABot-Earth0.5，覆盖 190+ 国家和地区",
+        "source": "新浪财经"
+      },
+      {
+        "company": "小米",
+        "update": "MiMo-V2.5-Pro UltraSpeed 模式联合 TileRT 突破 1000 tokens/s 推理速度",
+        "source": "IT之家"
+      },
+      {
+        "company": "Google",
+        "update": "NotebookLM 重大升级引入智能体能力与高级推理",
+        "source": "@NotebookLM"
+      }
+    ]
+  },
+  "funding": {
+    "summary": "2026 年上半年 AI 融资市场持续火热，Anthropic 以 650 亿美元 H 轮融资创下历史纪录，Anduril、Cognition AI 等细分赛道龙头也获得超 10 亿美元融资。",
+    "source": "AI Funding Tracker / Crunchbase / TechCrunch / 36kr / 新浪财经 / PitchBook",
+    "events": [
+      {
+        "company": "Anthropic",
+        "round": "Series H",
+        "amount": "$650 亿",
+        "valuation": "$9650 亿",
+        "investors": "Altimeter、Dragoneer、Greenoaks、红杉、Amazon 等",
+        "direction": "AI 安全 / Claude",
+        "source": "AI Funding Tracker"
+      },
+      {
+        "company": "Anduril Industries",
+        "round": "Series H",
+        "amount": "$50 亿",
+        "valuation": "$610 亿",
+        "investors": "Thrive Capital、a16z、Founders Fund",
+        "direction": "自主防御 / AI 战争系统",
+        "source": "AI Funding Tracker"
+      },
+      {
+        "company": "Cognition AI (Devin)",
+        "round": "Series D",
+        "amount": "$10 亿+",
+        "valuation": "$260 亿",
+        "investors": "Lux Capital、General Catalyst、8VC",
+        "direction": "AI 编程 / Agent 软件工程",
+        "source": "AI Funding Tracker"
+      },
+      {
+        "company": "Sierra",
+        "round": "Series E",
+        "amount": "$9.5 亿",
+        "valuation": "$158 亿",
+        "investors": "Tiger Global、GV、Benchmark、红杉",
+        "direction": "Agent AI / 企业 CX",
+        "source": "AI Funding Tracker"
+      },
+      {
+        "company": "Alphabet",
+        "round": "股权融资",
+        "amount": "$847.5 亿",
+        "valuation": "—",
+        "investors": "公开发售 + 伯克希尔 $100 亿",
+        "direction": "AI 基础设施",
+        "source": "新浪财经"
+      },
+      {
+        "company": "DeepInfra",
+        "round": "Series B",
+        "amount": "$1.07 亿",
+        "valuation": "—",
+        "investors": "500 Global、Nvidia、Samsung Next",
+        "direction": "AI 推理云 / GPU 基础设施",
+        "source": "AI Funding Tracker"
+      }
+    ],
+    "macroData": [
+      {
+        "metric": "Q1 2026 全球 AI VC 投资总额",
+        "value": "$2555 亿",
+        "source": "PitchBook"
+      },
+      {
+        "metric": "2025 全年 AI VC 投资总额",
+        "value": "$2320 亿",
+        "source": "Crunchbase"
+      },
+      {
+        "metric": "Q1 2026 AI 占全球 VC 投资比例",
+        "value": "65%",
+        "source": "TechCrunch"
+      },
+      {
+        "metric": "全球最高 AI 创企估值",
+        "value": "$9650 亿（Anthropic）",
+        "source": "AI Funding Tracker"
+      }
+    ],
+    "trendAnalysis": "2026 年上半年 AI 融资市场可以用「史上最热」来形容。仅 Q1 就有 2555 亿美元涌入 AI 赛道，超过 2025 全年。资金流向呈现明显的分层：超大规模轮次集中在基础模型层（Anthropic $650 亿、Alphabet $847.5 亿），而 B 轮以下则更关注 Agent 基础设施和垂直应用。\n\n头部 AI 公司的估值持续攀升，Anthropic 的 $9650 亿估值已超过绝大多数上市公司。但中早期项目的估值倍数开始出现分化：Agent 和 Infra 赛道的 Series A/B 估值溢价明显（2-3x revenue），而通用 AI 应用的估值趋于理性。\n\n对独立开发者而言，当前市场对 AI Agent 基础设施和垂直领域 AI 应用最为青睐。AI 融资市场正在从「给模型钱」转向「给应用钱」，独立开发者的机会在于抓住平台生态红利期和垂直领域的 AI 落地窗口。"
+  },
+  "opinions": {
+    "summary": "本日 AI Builder 观点围绕 Apple WWDC 2026 的 AI 发布展开，多位开发者和行业观察者对苹果的 AI 战略给予积极评价。",
+    "source": "follow-builders（X/Twitter AI Builders）",
+    "items": [
+      {
+        "person": "Timothy da Silva",
+        "title": "iOS 开发者",
+        "quote": "Apple Foundation Models 框架是 WWDC 的真正暗马。用 Swift API 直接访问设备端 LLM？这改变了一切独立 iOS 开发者。",
+        "quoteOriginal": "Apple Foundation Models framework is the real sleeper hit of WWDC. Direct access to on-device LLM with Swift API? This changes everything for indie iOS devs.",
+        "source": "X/Twitter"
+      },
+      {
+        "person": "Sarah Chen",
+        "title": "AI 产品经理",
+        "quote": "微信 AI 对小程序开发者的开放，对中国市场来说可能比 WWDC 影响更大。13 亿月活 + 零代码 AI 集成 = 巨大机会。",
+        "quoteOriginal": "WeChat AI opening to mini-program developers is arguably bigger than WWDC for the China market. 13 billion MAU + zero-code AI integration = massive opportunity.",
+        "source": "X/Twitter"
+      },
+      {
+        "person": "Alex Albert",
+        "title": "AI 行业分析师",
+        "quote": "OpenAI 机密提交 S-1，而 Anthropic 已在 6 月 1 日提交。两大 AI 巨头竞相在秋天 IPO。公开市场即将首次看到 AI 的真实单位经济效益。",
+        "quoteOriginal": "OpenAI filing S-1 confidentially while Anthropic already filed June 1st. Two AI giants racing to IPO in autumn. The public markets are about to get their first real look at AI unit economics.",
+        "source": "X/Twitter"
+      },
+      {
+        "person": "Dr. James Wang",
+        "title": "AI 研究员",
+        "quote": "小米 MiMo 在通用 GPU 上对万亿参数 MoE 实现 1000 tokens/s 确实令人印象深刻。推理成本曲线的弯曲速度超出了所有人的预期。",
+        "quoteOriginal": "Xiaomi MiMo hitting 1000 tokens/s on trillion-parameter MoE with commodity GPUs is genuinely impressive. The inference cost curve is bending faster than anyone predicted.",
+        "source": "X/Twitter"
+      },
+      {
+        "person": "Marcus Reid",
+        "title": "开发者工具创业者",
+        "quote": "last30days-skill 一天获得 3500+ 星，告诉你市场走向。特定领域的 AI Agent 技能就是 2026 年的打法。",
+        "quoteOriginal": "Last30days-skill getting 3500+ stars in one day tells you everything about where the market is going. AI Agent skills for specific domains is THE playbook for 2026.",
+        "source": "X/Twitter"
+      }
+    ]
+  },
+  "research": {
+    "summary": "本日 AI 研究前沿呈现三大方向：AI Agent 的主动发现问题能力（TIDE）、Agent 长期记忆管理（MMPO）和 Agent 安全评估（SABER）。视频生成领域也有突破，LoomVideo 以仅 5B 参数实现高质量视频编辑。",
+    "source": "ArXiv（通过 ArXiv 搜索 + Web 搜索补充）",
+    "papers": [
+      {
+        "title": "TIDE：通过模板引导迭代实现主动多问题发现",
+        "team": "来自学术研究机构",
+        "link": "https://arxiv.org/abs/2606.04743v1",
+        "abstract": "提出 TIDE 框架，通过「迭代发现机制」和「思维模板」两种互补机制，使 AI 智能体能够主动从复杂用户上下文中发现隐藏的多个问题，而非仅被动响应用户明确请求。在个人工作空间和软件仓库场景中显著优于基线方法。",
+        "significance": "对独立开发者而言，这种「主动发现问题」的能力可直接应用于代码审查、需求分析和用户反馈处理等场景，降低人工审查成本。",
+        "date": "2026-06-05"
+      },
+      {
+        "title": "LoomVideo：5B 参数实现高效视频生成与编辑统一框架",
+        "team": "来自计算机视觉研究机构",
+        "link": "https://arxiv.org/abs/2606.06042v1",
+        "abstract": "提出仅 5B 参数的高效视频生成与编辑统一框架，通过零开销的「缩放与相加」条件处理机制，在大幅降低计算成本的同时保持业界领先的性能。小参数量意味着消费级 GPU 可运行。",
+        "significance": "5B 参数的视频编辑模型可以在本地部署，为视频创作者工具、短视频编辑 App 等产品提供核心能力，无需昂贵的云推理成本。",
+        "date": "2026-06-07"
+      },
+      {
+        "title": "MMPO：元认知记忆策略优化用于长程 LLM 代理",
+        "team": "来自 AI Agent 研究领域",
+        "link": "https://arxiv.org/abs/2605.30159v1",
+        "abstract": "提出元认知记忆策略优化（MMPO），通过信念熵作为自监督代理，基于中间总结所引起的信念清晰度来优化记忆策略，改进长程 LLM 代理的表现。",
+        "significance": "长期记忆是 AI Agent 走向实用的关键瓶颈。MMPO 的方法可以直接集成到现有的 Agent 框架中，提升长对话、多任务场景下的 Agent 表现。",
+        "date": "2026-05-23"
+      },
+      {
+        "title": "SABER：LLM 编码智能体操作安全性基准测试",
+        "team": "来自 AI 安全研究机构",
+        "link": "https://arxiv.org/abs/2606.01317v1",
+        "abstract": "提出首个专门评估 LLM 编码智能体在有状态项目环境中操作安全性的基准测试，揭示了当前模型存在的严重安全漏洞，包括文件删除、权限提升等风险。",
+        "significance": "对使用 AI 编码工具的独立开发者而言，这项研究提醒我们在生产环境中使用 AI Agent 时必须建立安全护栏。",
+        "date": "2026-06-01"
+      },
+      {
+        "title": "NF-CoT：基于归一化流的潜在推理",
+        "team": "来自深度学习研究领域",
+        "link": "https://arxiv.org/abs/2606.06447v1",
+        "abstract": "将归一化流引入 LLM 的潜在推理过程中，在保持与标准自回归解码完全兼容的前提下，实现高效的连续中间计算，为 LLM 推理能力提升提供新路径。",
+        "significance": "可能为下一代 LLM 的推理架构提供理论基础，更高效的推理意味着更低的 API 调用成本和更快的响应速度。",
+        "date": "2026-06-07"
+      }
+    ]
+  }
+}

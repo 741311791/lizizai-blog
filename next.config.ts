@@ -17,15 +17,16 @@ const nextConfig: NextConfig = {
         hostname: 'pub-7fc5ed7acc9844ab99297fa6b47f55e6.r2.dev',
         pathname: '/**',
       },
-      // 兼容旧数据中残留的 Worker 域名（重新同步后可移除）
+      // Worker 同步域名（兼容旧数据中残留的图片 URL）
       {
         protocol: 'https',
         hostname: 'feishu-blog-sync.lihehua.xyz',
         pathname: '/**',
       },
+      // R2 自定义域名（已在 Cloudflare Dashboard 修复）
       {
         protocol: 'https',
-        hostname: 'cdn.lizizai.xyz',
+        hostname: 'lizizai-blog.lihehua.xyz',
         pathname: '/**',
       },
     ],

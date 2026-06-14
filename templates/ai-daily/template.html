@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 日报模板</title>
+  <!-- 字体预连接 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700;900&family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- 主题样式 -->
+  <link rel="stylesheet" href="https://pub-7fc5ed7acc9844ab99297fa6b47f55e6.r2.dev/themes/lizizai-blog-theme.css">
+  <style>
+    /* ============================
+       AI 日报模板 — Editorial Flow
+       统一宽度版
+       ============================ */
+
+    /* --- 全局 --- */
+    body {
+      background: var(--color-background);
+      color: var(--color-text-secondary);
+      font-family: var(--font-body), var(--font-body-en), sans-serif;
+      font-size: 17px;
+      line-height: 1.8;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* --- 统一容器宽度 --- */
+    .daily-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    /* --- 日期头部 --- */
+    .daily-header {
+      text-align: center;
+      padding: var(--space-xl) 0 var(--space-lg);
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-xl);
+    }
+    .daily-header__date {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--color-text-muted);
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-xs);
+    }
+    .daily-header__title {
+      font-family: var(--font-title);
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--color-text-primary);
+      line-height: 1.35;
+      margin: 0 0 var(--space-sm);
+    }
+    .daily-header__subtitle {
+      font-size: 15px;
+      color: var(--color-text-muted);
+      margin: 0;
+    }
+
+    /* --- 板块标题 --- */
+    .section-title {
+      font-family: var(--font-title);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+      margin: var(--space-2xl) 0 var(--space-md);
+      padding-bottom: var(--space-sm);
+      border-bottom: 2px solid var(--color-primary);
+      display: inline-block;
+    }
+    .section-title:first-child {
+      margin-top: 0;
+    }
+    /* 板块摘要 */
+    .section-summary {
+      font-size: 15px;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-lg);
+      padding-left: var(--space-md);
+      border-left: 2px solid var(--color-border);
+    }
+    /* 信息源 */
+    .section-source {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-md);
+      font-style: italic;
+    }
+    .section-source::before {
+      content: '信息源：';
+      font-style: normal;
+      color: var(--color-text-muted);
+    }
+
+    /* --- 今日概览 --- */
+    .overview-box {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      margin: var(--space-lg) 0;
+    }
+    .overview-box__label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-sm);
+    }
+    .overview-box__text {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      line-height: 1.75;
+      margin: 0 0 var(--space-md);
+    }
+    .overview-box__text:last-child {
+      margin-bottom: 0;
+    }
+    .overview-box__text strong {
+      color: var(--color-text-primary);
+      font-weight: 600;
+    }
+
+    /* --- 关键词标签 --- */
+    .keyword-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin: var(--space-md) 0;
+    }
+    .keyword-tags__label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      align-self: center;
+      margin-right: var(--space-2xs);
+    }
+    .keyword-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-primary);
+      background: rgba(217, 119, 6, 0.1);
+      border: 1px solid rgba(217, 119, 6, 0.2);
+      border-radius: 9999px;
+      padding: 2px 10px;
+    }
+
+    /* --- 新闻条目 --- */
+    .news-item {
+      margin-bottom: var(--space-xl);
+      padding-bottom: var(--space-xl);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .news-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .news-item__title {
+      font-family: var(--font-title);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+      margin: 0 0 var(--space-sm);
+    }
+    .news-item__title a {
+      color: var(--color-text-primary);
+      text-decoration: none;
+    }
+    .news-item__title a:hover {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+    .news-item__source {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 9999px;
+      padding: 2px 8px;
+      margin-bottom: var(--space-sm);
+    }
+    .news-item__source::before {
+      content: '来源：';
+    }
+    .news-item__points {
+      margin: var(--space-sm) 0;
+      padding-left: var(--space-md);
+      border-left: 3px solid var(--color-primary);
+    }
+    .news-item__points-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+    .news-item__points p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+    .news-item__analysis {
+      margin: var(--space-sm) 0 0;
+      padding: var(--space-md);
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      line-height: 1.75;
+    }
+    .news-item__analysis::before {
+      content: '解读';
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+
+    /* --- 开源项目 --- */
+    .oss-highlight {
+      background: rgba(217, 119, 6, 0.06);
+      border: 1px solid rgba(217, 119, 6, 0.15);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-lg);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .oss-highlight::before {
+      content: '重点关注';
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: var(--space-xs);
+    }
+    .oss-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-md);
+      transition: border-color 0.2s;
+    }
+    .oss-card:hover {
+      border-color: var(--color-border-hover);
+    }
+    .oss-card__header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: var(--space-xs);
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+    .oss-card__name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin: 0;
+    }
+    .oss-card__name a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+    .oss-card__name a:hover {
+      color: var(--color-primary-hover);
+      text-decoration: underline;
+    }
+    .oss-card__stars {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--color-text-muted);
+      white-space: nowrap;
+    }
+    .oss-card__stars em {
+      font-style: normal;
+      color: var(--color-primary);
+      font-weight: 500;
+    }
+    .oss-card__desc {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      margin: var(--space-sm) 0;
+    }
+    .oss-card__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2xs);
+      margin: var(--space-sm) 0;
+    }
+    .oss-card__tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      background: var(--color-surface-elevated);
+      border-radius: 9999px;
+      padding: 2px 8px;
+    }
+    .oss-card__value {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--color-text-muted);
+      margin-top: var(--space-sm);
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--color-border);
+    }
+    .oss-card__value::before {
+      content: '独立开发者价值：';
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+
+    /* --- 数据表格 --- */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: var(--space-md) 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .data-table th {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-align: left;
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 2px solid var(--color-border);
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+    .data-table td:first-child {
+      font-weight: 600;
+      color: var(--color-text-primary);
+      white-space: nowrap;
+    }
+    .data-table__highlight {
+      color: var(--color-primary);
+      font-weight: 500;
+    }
+    /* 融资表格 */
+    .data-table .amount {
+      font-family: var(--font-mono);
+      color: var(--color-primary);
+      font-weight: 500;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    /* --- 宏观数据卡片 --- */
+    .macro-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+      margin: var(--space-lg) 0;
+    }
+    .macro-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      text-align: center;
+    }
+    .macro-card__value {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-primary);
+      line-height: 1.3;
+      margin-bottom: var(--space-2xs);
+    }
+    .macro-card__metric {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+    .macro-card__source {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      margin-top: var(--space-2xs);
+      opacity: 0.7;
+    }
+
+    /* --- 趋势分析 --- */
+    .trend-analysis {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-left: 3px solid var(--color-primary);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: var(--space-lg);
+      margin: var(--space-lg) 0;
+    }
+    .trend-analysis p {
+      font-size: 15px;
+      line-height: 1.75;
+      margin: 0 0 var(--space-sm);
+    }
+    .trend-analysis p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* --- 观点引用 --- */
+    .opinion-item {
+      margin-bottom: var(--space-lg);
+      padding-left: var(--space-lg);
+      border-left: 3px solid var(--color-border);
+    }
+    .opinion-item__person {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 2px;
+    }
+    .opinion-item__title {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-sm);
+    }
+    .opinion-item__quote {
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--color-text-secondary);
+      margin: 0 0 var(--space-sm);
+      font-style: italic;
+    }
+    .opinion-item__original {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--color-text-muted);
+      margin: 0;
+      font-style: italic;
+    }
+    .opinion-item__source {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-top: var(--space-xs);
+    }
+
+    /* --- 研究论文 --- */
+    .paper-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-md);
+    }
+    .paper-card__title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+      margin: 0 0 var(--space-xs);
+    }
+    .paper-card__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-sm);
+    }
+    .paper-card__meta a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+    .paper-card__meta a:hover {
+      text-decoration: underline;
+    }
+    .paper-card__abstract {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      margin: var(--space-sm) 0;
+    }
+    .paper-card__abstract::before {
+      content: '摘要：';
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+    .paper-card__significance {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--color-text-muted);
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--color-border);
+      margin-top: var(--space-sm);
+    }
+    .paper-card__significance::before {
+      content: '意义：';
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+
+    /* --- 厂商动态 --- */
+    .company-item {
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .company-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .company-item__name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 2px;
+    }
+    .company-item__update {
+      font-size: 15px;
+      line-height: 1.7;
+      margin: var(--space-2xs) 0;
+    }
+    .company-item__source {
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+    .company-item__source::before {
+      content: '— ';
+    }
+    .company-scope {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-md);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      line-height: 1.6;
+    }
+    .company-scope::before {
+      content: '关注范围：';
+      font-weight: 600;
+    }
+
+    /* --- 页脚 --- */
+    .daily-footer {
+      text-align: center;
+      padding: var(--space-xl) 0 var(--space-lg);
+      margin-top: var(--space-2xl);
+      border-top: 1px solid var(--color-border);
+      font-size: 13px;
+      color: var(--color-text-muted);
+      line-height: 1.6;
+    }
+
+    /* --- 子板块标签 --- */
+    .sub-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin: var(--space-lg) 0 var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .sub-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border);
+    }
+
+    /* --- 分隔线 --- */
+    .divider-line {
+      border: none;
+      border-top: 1px solid var(--color-border);
+      margin: var(--space-xl) 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- JSON 数据（替换此内容即可生成新日报） -->
+  <script id="daily-data" type="application/json">
+{}
+  </script>
+
+  <!-- 渲染引擎 -->
+  <script>
+  (function() {
+    'use strict';
+
+    // 读取数据
+    var dataEl = document.getElementById('daily-data');
+    var data = JSON.parse(dataEl.textContent);
+
+    // 工具函数
+    function esc(s) {
+      if (!s) return '';
+      var d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function formatNumber(n) {
+      // 容错：n 为 undefined/null/非数字时返回空字符串
+      if (n === undefined || n === null || n === '') return '';
+      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    // 构建页面 — 统一使用 .daily-container 容器
+    var html = '';
+    var meta = data.meta || {};
+
+    html += '<div class="daily-container">';
+
+    // ---- 日期头部 ----
+    html += '<div class="daily-header">';
+    html += '<div class="daily-header__date">' + esc(meta.date || '') + '</div>';
+    html += '<h2 class="daily-header__title">' + esc((meta.title || 'AI 日报') + ' | ' + (meta.date || '')) + '</h2>';
+    html += '</div>';
+
+    // ---- 今日概览 ----
+    var ov = data.overview;
+    if (ov) {
+      html += '<h3 class="section-title">今日概览</h3>';
+
+      if (ov.boxes && ov.boxes.length) {
+        ov.boxes.forEach(function(box) {
+          html += '<div class="overview-box">';
+          html += '<div class="overview-box__label">' + esc(box.label) + '</div>';
+          html += '<p class="overview-box__text">' + esc(box.text) + '</p>';
+          html += '</div>';
+        });
+      }
+
+      if (ov.keywords && ov.keywords.length) {
+        html += '<div class="keyword-tags">';
+        html += '<span class="keyword-tags__label">关键词：</span>';
+        ov.keywords.forEach(function(kw) {
+          html += '<span class="keyword-tag">' + esc(kw) + '</span>';
+        });
+        html += '</div>';
+      }
+    }
+
+    // ---- 头条聚焦 ----
+    if (data.headline) {
+      html += '<h3 class="section-title">头条聚焦</h3>';
+      if (data.headline.summary) {
+        html += '<p>' + esc(data.headline.summary) + '</p>';
+      }
+      if (data.headline.source) {
+        html += '<p class="section-source">' + esc(data.headline.source) + '</p>';
+      }
+    }
+
+    // ---- 新闻条目（标题可点击） ----
+    if (data.news && data.news.length) {
+      data.news.forEach(function(item) {
+        html += '<div class="news-item">';
+        // 标题：有 url 时渲染为链接
+        if (item.url) {
+          html += '<h3 class="news-item__title"><a href="' + esc(item.url) + '" target="_blank" rel="noopener">' + esc(item.title) + '</a></h3>';
+        } else {
+          html += '<h3 class="news-item__title">' + esc(item.title) + '</h3>';
+        }
+        if (item.source) {
+          html += '<span class="news-item__source">' + esc(item.source) + '</span>';
+        }
+        if (item.keyPoints) {
+          html += '<div class="news-item__points">';
+          html += '<div class="news-item__points-label">要点</div>';
+          html += '<p>' + esc(item.keyPoints) + '</p>';
+          html += '</div>';
+        }
+        if (item.analysis) {
+          html += '<div class="news-item__analysis">' + esc(item.analysis) + '</div>';
+        }
+        html += '</div>';
+      });
+    }
+
+    // ---- 开源速递 ----
+    if (data.openSource) {
+      var oss = data.openSource;
+      html += '<h3 class="section-title">开源速递</h3>';
+      if (oss.source) {
+        html += '<p class="section-source">' + esc(oss.source) + '</p>';
+      }
+      if (oss.summary) {
+        html += '<p>' + esc(oss.summary) + '</p>';
+      }
+      if (oss.highlight) {
+        html += '<div class="oss-highlight">' + esc(oss.highlight) + '</div>';
+      }
+      if (oss.items && oss.items.length) {
+        oss.items.forEach(function(item) {
+          html += '<div class="oss-card">';
+          html += '<div class="oss-card__header">';
+          html += '<h4 class="oss-card__name"><a href="' + esc(item.repo) + '" target="_blank" rel="noopener">' + esc(item.name) + '</a></h4>';
+          html += '<span class="oss-card__stars">';
+          if (item.stars) {
+            html += '⭐ ' + formatNumber(item.stars) + (item.starsToday ? ' <em>(+' + formatNumber(item.starsToday) + ')</em>' : '');
+          } else if (item.starsToday) {
+            // 只有今日增量无总数（如紧凑表格格式的日报）
+            html += '📈 今日 +' + formatNumber(item.starsToday);
+          } else {
+            html += '⭐ —';
+          }
+          html += '</span>';
+          html += '</div>';
+          html += '<p class="oss-card__desc">' + esc(item.description) + '</p>';
+          if (item.tags && item.tags.length) {
+            html += '<div class="oss-card__tags">';
+            item.tags.forEach(function(tag) {
+              html += '<span class="oss-card__tag">' + esc(tag) + '</span>';
+            });
+            html += '</div>';
+          }
+          if (item.devValue) {
+            html += '<div class="oss-card__value">' + esc(item.devValue) + '</div>';
+          }
+          html += '</div>';
+        });
+      }
+    }
+
+    // ---- 模型与产品 ----
+    if (data.modelsAndProducts) {
+      var mp = data.modelsAndProducts;
+      html += '<h3 class="section-title">模型与产品</h3>';
+      if (mp.summary) {
+        html += '<p>' + esc(mp.summary) + '</p>';
+      }
+      if (mp.source) {
+        html += '<p class="section-source">' + esc(mp.source) + '</p>';
+      }
+
+      if (mp.foreign && mp.foreign.length) {
+        html += '<div class="sub-label">国外</div>';
+        html += '<div class="table-wrapper"><table class="data-table">';
+        html += '<thead><tr><th>项目</th><th>动态</th><th>亮点</th><th>来源</th></tr></thead>';
+        html += '<tbody>';
+        mp.foreign.forEach(function(row) {
+          html += '<tr>';
+          html += '<td>' + esc(row.project) + '</td>';
+          html += '<td>' + esc(row.update) + '</td>';
+          html += '<td class="data-table__highlight">' + esc(row.highlight) + '</td>';
+          html += '<td>' + esc(row.source) + '</td>';
+          html += '</tr>';
+        });
+        html += '</tbody></table></div>';
+      }
+
+      if (mp.domestic && mp.domestic.length) {
+        html += '<div class="sub-label">国内</div>';
+        html += '<div class="table-wrapper"><table class="data-table">';
+        html += '<thead><tr><th>项目</th><th>动态</th><th>亮点</th><th>来源</th></tr></thead>';
+        html += '<tbody>';
+        mp.domestic.forEach(function(row) {
+          html += '<tr>';
+          html += '<td>' + esc(row.project) + '</td>';
+          html += '<td>' + esc(row.update) + '</td>';
+          html += '<td class="data-table__highlight">' + esc(row.highlight) + '</td>';
+          html += '<td>' + esc(row.source) + '</td>';
+          html += '</tr>';
+        });
+        html += '</tbody></table></div>';
+      }
+    }
+
+    // ---- 头部厂商动态 ----
+    if (data.companyUpdates) {
+      var cu = data.companyUpdates;
+      html += '<h3 class="section-title">头部厂商动态</h3>';
+      if (cu.summary) {
+        html += '<p>' + esc(cu.summary) + '</p>';
+      }
+      if (cu.source) {
+        html += '<p class="section-source">' + esc(cu.source) + '</p>';
+      }
+      if (cu.scope) {
+        html += '<div class="company-scope">' + esc(cu.scope) + '</div>';
+      }
+      if (cu.items && cu.items.length) {
+        cu.items.forEach(function(item) {
+          html += '<div class="company-item">';
+          html += '<div class="company-item__name">' + esc(item.company) + '</div>';
+          html += '<p class="company-item__update">' + esc(item.update) + '</p>';
+          if (item.source) {
+            html += '<div class="company-item__source">' + esc(item.source) + '</div>';
+          }
+          html += '</div>';
+        });
+      }
+    }
+
+    // ---- 融资与投资 ----
+    if (data.funding) {
+      var fd = data.funding;
+      html += '<h3 class="section-title">融资与投资</h3>';
+      if (fd.summary) {
+        html += '<p>' + esc(fd.summary) + '</p>';
+      }
+      if (fd.source) {
+        html += '<p class="section-source">' + esc(fd.source) + '</p>';
+      }
+
+      if (fd.events && fd.events.length) {
+        html += '<div class="sub-label">近期重大融资事件</div>';
+        html += '<div class="table-wrapper"><table class="data-table">';
+        html += '<thead><tr><th>公司</th><th>轮次</th><th>金额</th><th>估值</th><th>方向</th><th>来源</th></tr></thead>';
+        html += '<tbody>';
+        fd.events.forEach(function(row) {
+          html += '<tr>';
+          html += '<td>' + esc(row.company) + '</td>';
+          html += '<td>' + esc(row.round) + '</td>';
+          html += '<td class="amount">' + esc(row.amount) + '</td>';
+          html += '<td class="amount">' + esc(row.valuation || '—') + '</td>';
+          html += '<td>' + esc(row.direction) + '</td>';
+          html += '<td>' + esc(row.source) + '</td>';
+          html += '</tr>';
+        });
+        html += '</tbody></table></div>';
+      }
+
+      if (fd.macroData && fd.macroData.length) {
+        html += '<div class="sub-label">宏观融资数据</div>';
+        html += '<div class="macro-grid">';
+        fd.macroData.forEach(function(item) {
+          html += '<div class="macro-card">';
+          html += '<div class="macro-card__value">' + esc(item.value) + '</div>';
+          html += '<div class="macro-card__metric">' + esc(item.metric) + '</div>';
+          if (item.source) {
+            html += '<div class="macro-card__source">' + esc(item.source) + '</div>';
+          }
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      if (fd.trendAnalysis) {
+        html += '<div class="sub-label">AI 投融资趋势分析</div>';
+        var paragraphs = fd.trendAnalysis.split('\n\n');
+        html += '<div class="trend-analysis">';
+        paragraphs.forEach(function(p) {
+          if (p.trim()) {
+            html += '<p>' + esc(p.trim()) + '</p>';
+          }
+        });
+        html += '</div>';
+      }
+    }
+
+    // ---- 观点与言论 ----
+    if (data.opinions) {
+      var op = data.opinions;
+      html += '<h3 class="section-title">观点与言论</h3>';
+      if (op.summary) {
+        html += '<p>' + esc(op.summary) + '</p>';
+      }
+      if (op.source) {
+        html += '<p class="section-source">' + esc(op.source) + '</p>';
+      }
+      if (op.items && op.items.length) {
+        op.items.forEach(function(item) {
+          html += '<div class="opinion-item">';
+          html += '<div class="opinion-item__person">' + esc(item.person) + '</div>';
+          html += '<div class="opinion-item__title">' + esc(item.title) + '</div>';
+          html += '<p class="opinion-item__quote">' + esc(item.quote) + '</p>';
+          if (item.quoteOriginal) {
+            html += '<p class="opinion-item__original">' + esc(item.quoteOriginal) + '</p>';
+          }
+          if (item.source) {
+            html += '<div class="opinion-item__source">来源：' + esc(item.source) + '</div>';
+          }
+          html += '</div>';
+        });
+      }
+    }
+
+    // ---- 研究与论文 ----
+    if (data.research) {
+      var rs = data.research;
+      html += '<h3 class="section-title">研究与论文</h3>';
+      if (rs.summary) {
+        html += '<p>' + esc(rs.summary) + '</p>';
+      }
+      if (rs.source) {
+        html += '<p class="section-source">' + esc(rs.source) + '</p>';
+      }
+      if (rs.papers && rs.papers.length) {
+        rs.papers.forEach(function(paper) {
+          html += '<div class="paper-card">';
+          html += '<h4 class="paper-card__title">' + esc(paper.title) + '</h4>';
+          html += '<div class="paper-card__meta">';
+          html += '<span>团队：' + esc(paper.team) + '</span>';
+          if (paper.date) {
+            html += '<span>提交日期：' + esc(paper.date) + '</span>';
+          }
+          if (paper.link) {
+            html += '<span><a href="' + esc(paper.link) + '" target="_blank" rel="noopener">论文链接</a></span>';
+          }
+          html += '</div>';
+          if (paper.abstract) {
+            html += '<p class="paper-card__abstract">' + esc(paper.abstract) + '</p>';
+          }
+          if (paper.significance) {
+            html += '<p class="paper-card__significance">' + esc(paper.significance) + '</p>';
+          }
+          html += '</div>';
+        });
+      }
+    }
+
+    // ---- 页脚 ----
+    html += '<div class="daily-footer">';
+    html += '由 AI 自动采集整理';
+    if (meta.collectedAt) {
+      html += ' · 数据截至 ' + esc(meta.collectedAt);
+    }
+    html += ' · 如有遗漏欢迎补充';
+    html += '</div>';
+
+    html += '</div>'; // 关闭 .daily-container
+
+    // 写入页面
+    document.body.insertAdjacentHTML('beforeend', html);
+
+  })();
+  </script>
+
+  <!-- postMessage 高度同步 -->
+  <script>
+  (function() {
+    function sendHeight() {
+      var h = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+      window.parent.postMessage({ type: 'html-content-height', height: h }, '*');
+    }
+    var timer = null;
+    function throttledSend() {
+      if (timer) return;
+      timer = setTimeout(function() { timer = null; sendHeight(); }, 100);
+    }
+    new MutationObserver(throttledSend)
+      .observe(document.documentElement, { childList: true, subtree: true, attributes: true });
+    new ResizeObserver(throttledSend)
+      .observe(document.body);
+    document.addEventListener('load', function(e) {
+      if (e.target.tagName === 'IMG') throttledSend();
+    }, true);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(sendHeight, 50); });
+    } else {
+      setTimeout(sendHeight, 50);
+    }
+    window.addEventListener('load', function() { setTimeout(sendHeight, 100); });
+  })();
+  </script>
+
+  <!-- postMessage TOC 同步 -->
+  <script>
+  (function() {
+    var lastTocJson = '';
+    function getOffsetTop(el) {
+      var top = 0;
+      while (el) { top += el.offsetTop; el = el.offsetParent; }
+      return top;
+    }
+    function sendToc() {
+      var headings = [];
+      var counter = {};
+      document.querySelectorAll('.daily-container').forEach(function(c) {
+        c.querySelectorAll('h2, h3').forEach(function(el) {
+          if (!el.id) {
+            var text = (el.textContent || '').trim();
+            var base = 'heading-' + text.toLowerCase().replace(/[^a-z0-9一-鿿]+/g, '-').replace(/^-+|-+$/g, '') || 'untitled';
+            var count = counter[base] || 0;
+            counter[base] = count + 1;
+            el.id = count === 0 ? base : base + '-' + count;
+          }
+          headings.push({ id: el.id, text: (el.textContent || '').trim(), level: parseInt(el.tagName.charAt(1)), top: getOffsetTop(el) });
+        });
+      });
+      var json = JSON.stringify(headings);
+      if (json !== lastTocJson) { lastTocJson = json; window.parent.postMessage({ type: 'html-toc', headings: headings }, '*'); }
+    }
+    var tocTimer = null;
+    function throttledSendToc() {
+      if (tocTimer) return;
+      tocTimer = setTimeout(function() { tocTimer = null; sendToc(); }, 200);
+    }
+    new MutationObserver(throttledSendToc).observe(document.documentElement, { childList: true, subtree: true });
+    new ResizeObserver(throttledSendToc).observe(document.body);
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function() { setTimeout(sendToc, 100); }); } else { setTimeout(sendToc, 100); }
+    window.addEventListener('load', function() { setTimeout(sendToc, 300); });
+  })();
+  </script>
+</body>
+</html>

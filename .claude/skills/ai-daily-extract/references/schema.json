@@ -1,0 +1,238 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "李自在AI日报 JSON Schema",
+  "description": "AI 日报数据结构定义。模板读取此 JSON 渲染完整日报页面。",
+  "type": "object",
+  "required": ["meta", "overview"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["date"],
+      "properties": {
+        "date": { "type": "string", "format": "date", "description": "日报日期，如 2026-06-09" },
+        "issue": { "type": "integer", "description": "期号（可选）" },
+        "title": { "type": "string", "default": "李自在AI 日报", "description": "日报标题前缀" },
+        "collectedAt": { "type": "string", "description": "数据采集时间，如 2026-06-09 07:10" }
+      }
+    },
+    "overview": {
+      "type": "object",
+      "required": ["summary"],
+      "description": "今日概览",
+      "properties": {
+        "summary": { "type": "string", "description": "一句话简介" },
+        "boxes": {
+          "type": "array",
+          "description": "概览信息卡片列表，每项渲染为一个带标签的卡片。数量和标签完全由数据驱动，适配不同日期的内容结构",
+          "items": {
+            "type": "object",
+            "required": ["label", "text"],
+            "properties": {
+              "label": { "type": "string", "description": "卡片标签，如「热点话题」「AI+教育 赛道信号」「独立开发者关注」" },
+              "text": { "type": "string", "description": "卡片内容" }
+            }
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "关键词标签列表"
+        }
+      }
+    },
+    "headline": {
+      "type": "object",
+      "description": "头条聚焦（可选，无此字段则跳过）",
+      "properties": {
+        "summary": { "type": "string", "description": "今日综合摘要" },
+        "source": { "type": "string", "description": "信息来源" }
+      }
+    },
+    "news": {
+      "type": "array",
+      "description": "新闻条目列表",
+      "items": {
+        "type": "object",
+        "required": ["title", "keyPoints"],
+        "properties": {
+          "title": { "type": "string", "description": "新闻标题" },
+          "url": { "type": "string", "format": "uri", "description": "新闻原文链接（可选，有值时标题渲染为可点击链接）" },
+          "source": { "type": "string", "description": "来源" },
+          "keyPoints": { "type": "string", "description": "要点" },
+          "analysis": { "type": "string", "description": "解读（可选）" }
+        }
+      }
+    },
+    "openSource": {
+      "type": "object",
+      "description": "开源速递",
+      "properties": {
+        "summary": { "type": "string", "description": "趋势总结" },
+        "highlight": { "type": "string", "description": "重点关注说明" },
+        "source": { "type": "string", "description": "信息来源" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "repo", "stars", "description", "tags", "devValue", "source"],
+            "properties": {
+              "name": { "type": "string", "description": "项目名称" },
+              "repo": { "type": "string", "format": "uri", "description": "仓库地址" },
+              "stars": { "type": "integer", "description": "总 Star 数" },
+              "starsToday": { "type": "integer", "description": "今日新增 Star" },
+              "description": { "type": "string", "description": "项目简介" },
+              "tags": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "标签"
+              },
+              "devValue": { "type": "string", "description": "独立开发者价值分析（含场景/难度/潜力/建议）" },
+              "source": { "type": "string", "description": "来源" }
+            }
+          }
+        }
+      }
+    },
+    "modelsAndProducts": {
+      "type": "object",
+      "description": "模型与产品动态",
+      "properties": {
+        "summary": { "type": "string", "description": "板块摘要" },
+        "source": { "type": "string", "description": "信息来源" },
+        "foreign": {
+          "type": "array",
+          "description": "国外动态",
+          "items": {
+            "type": "object",
+            "required": ["project", "update", "highlight"],
+            "properties": {
+              "project": { "type": "string" },
+              "update": { "type": "string" },
+              "highlight": { "type": "string" },
+              "source": { "type": "string" }
+            }
+          }
+        },
+        "domestic": {
+          "type": "array",
+          "description": "国内动态",
+          "items": {
+            "type": "object",
+            "required": ["project", "update", "highlight"],
+            "properties": {
+              "project": { "type": "string" },
+              "update": { "type": "string" },
+              "highlight": { "type": "string" },
+              "source": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "companyUpdates": {
+      "type": "object",
+      "description": "头部厂商动态",
+      "properties": {
+        "summary": { "type": "string" },
+        "source": { "type": "string" },
+        "scope": { "type": "string", "description": "关注范围" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["company", "update"],
+            "properties": {
+              "company": { "type": "string" },
+              "update": { "type": "string" },
+              "source": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "funding": {
+      "type": "object",
+      "description": "融资与投资",
+      "properties": {
+        "summary": { "type": "string" },
+        "source": { "type": "string" },
+        "events": {
+          "type": "array",
+          "description": "融资事件表",
+          "items": {
+            "type": "object",
+            "required": ["company", "round", "amount", "direction"],
+            "properties": {
+              "company": { "type": "string" },
+              "round": { "type": "string" },
+              "amount": { "type": "string" },
+              "valuation": { "type": "string" },
+              "investors": { "type": "string" },
+              "direction": { "type": "string" },
+              "source": { "type": "string" }
+            }
+          }
+        },
+        "macroData": {
+          "type": "array",
+          "description": "宏观数据",
+          "items": {
+            "type": "object",
+            "required": ["metric", "value"],
+            "properties": {
+              "metric": { "type": "string" },
+              "value": { "type": "string" },
+              "source": { "type": "string" }
+            }
+          }
+        },
+        "trendAnalysis": { "type": "string", "description": "趋势分析全文" }
+      }
+    },
+    "opinions": {
+      "type": "object",
+      "description": "观点与言论",
+      "properties": {
+        "summary": { "type": "string" },
+        "source": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["person", "title", "quote", "source"],
+            "properties": {
+              "person": { "type": "string", "description": "发言人" },
+              "title": { "type": "string", "description": "身份/头衔" },
+              "quote": { "type": "string", "description": "中文引言" },
+              "quoteOriginal": { "type": "string", "description": "原文引言（如有）" },
+              "source": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "research": {
+      "type": "object",
+      "description": "研究与论文",
+      "properties": {
+        "summary": { "type": "string" },
+        "source": { "type": "string" },
+        "papers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "team", "link", "abstract", "significance"],
+            "properties": {
+              "title": { "type": "string" },
+              "team": { "type": "string" },
+              "link": { "type": "string", "format": "uri" },
+              "abstract": { "type": "string" },
+              "significance": { "type": "string" },
+              "date": { "type": "string", "format": "date" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

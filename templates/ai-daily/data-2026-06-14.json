@@ -1,0 +1,267 @@
+{
+  "meta": {
+    "date": "2026-06-14",
+    "title": "李自在AI 日报",
+    "collectedAt": "2026-06-14"
+  },
+  "overview": {
+    "summary": "每日精选全球 AI 行业最值得关注的动态，面向独立开发者，关注 AI+教育赛道。"
+  },
+  "headline": {
+    "summary": "今天的 AI 世界发生了罕见的三重冲击：\n\n1. 监管铁拳：美国政府首次以「模型过于强大」为由封禁商用模型（Fable 5/Mythos 5），亚马逊 CEO 的会谈成为导火索。这不再是安全讨论，而是实质性的访问限制。\n\n2. 资本狂热：Anthropic 以 9650 亿美元估值秘密申请 IPO，即使其最强大模型刚被政府封禁。资本在押注 AI 的长期未来，哪怕当下政治风险高企。\n\n3. 国内开源反攻：智谱、MiniMax、Kimi、蚂蚁密集发布开源模型，在 Fable 被禁的真空期抢占开发者心智。当海外顶级模型受限，国产开源迎来窗口期。\n\n对独立开发者而言：拥抱开源、关注合规，是这个时代的双重必修课。",
+    "source": "AIHOT、HuggingFace Daily Papers、GitHub Trending、follow-builders、Web 综合"
+  },
+  "news": [
+    {
+      "title": "美国政府封禁 Anthropic Fable 5 / Mythos 5：亚马逊 CEO 会谈触发 AI 治理风暴",
+      "source": "WSJ / TechCrunch",
+      "url": "https://www.wsj.com/tech/ai/amazon-ceos-talks-with-u-s-officials-triggered-crackdown-on-anthropic-models-dcc90578",
+      "keyPoints": "美国政府下令暂停 Anthropic 最强大模型 Fable 5 和 Mythos 5 的对外服务，起因是亚马逊 CEO 与美国官员的会谈引发了高层对 AI 安全的警觉。政府认定部分模型「过于强大」，限制向「在美境内的外国人」提供服务。",
+      "analysis": "这是 AI 监管的重大转折点——政府首次以「模型过于强大」为由直接限制商用模型访问。Aaron Levie 评价：「这为未来一系列可能的管控措施开创了先例。」Replit CEO Amjad Masad 表示「看来我们不得不关闭 Fable 的访问」。"
+    },
+    {
+      "title": "Anthropic 秘密申请上市，估值 9650 亿美元",
+      "source": "Bloomberg",
+      "url": "https://www.bloomberg.com/news/articles/2026-06-13/global-capitalism-bets-it-all-on-ai-future-that-alarms-voters",
+      "keyPoints": "彭博社披露 Anthropic 已秘密提交 IPO 申请，估值高达 9650 亿美元（约合 6.9 万亿人民币），标志着 AI 公司资本化的又一里程碑。"
+    },
+    {
+      "title": "OpenAI 遭多州总检察长联合调查",
+      "source": "Bloomberg",
+      "url": "https://www.bloomberg.com/news/articles/2026-06-13/openai-probed-by-coalition-of-state-attorneys-general",
+      "keyPoints": "OpenAI 面临美国多个州总检察长组成的联盟调查，监管压力持续升级。"
+    },
+    {
+      "title": "扎克伯格承认 Meta AI 转型「脱轨」：裁员 10%、转岗 7000 人",
+      "source": "IT之家",
+      "url": "https://www.ithome.com/0/963/858.htm",
+      "keyPoints": "扎克伯格罕见承认 Meta 的 AI 转型「脱轨」，宣布裁员 10%、将 7000 人转岗后承认组织调整过快。"
+    },
+    {
+      "title": "谷歌 Android 安全负责人因反对军事 AI 合作辞职",
+      "source": "IT之家",
+      "url": "https://www.ithome.com/0/963/888.htm",
+      "keyPoints": "谷歌 Android 安全负责人因反对公司与军方的 AI 合作而辞职，凸显科技巨头内部在 AI 伦理上的分歧。"
+    }
+  ],
+  "openSource": {
+    "summary": "本周 GitHub Trending 的 AI 项目以 Agent 技能生态和开发者工具为主。huggingface/open-r1（DeepSeek-R1 的开源实现）登上 Hacker News 热门，值得关注。",
+    "highlight": "huggingface/open-r1 —— DeepSeek-R1 的开源实现，登上 Hacker News 热门。在国内开源反攻的大背景下，open-r1 这类复刻顶级闭源模型的开源项目正在获得更多关注。",
+    "source": "GitHub Trending + Hacker News",
+    "items": [
+      {
+        "name": "agent-skills",
+        "repo": "https://github.com/addyosmani/agent-skills",
+        "starsToday": 650,
+        "description": "Agent 技能集合，提供可复用的 AI Agent 技能模块。",
+        "source": "GitHub Trending"
+      },
+      {
+        "name": "sia",
+        "repo": "https://github.com/hexo-ai/sia",
+        "starsToday": 809,
+        "description": "SIA - AI 驱动的工具。",
+        "source": "GitHub Trending"
+      },
+      {
+        "name": "system-prompts-and-models-of-ai-tools",
+        "repo": "https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools",
+        "description": "收集各类 AI 工具的系统提示词，研究 AI 产品 prompt 设计的参考资源。",
+        "source": "GitHub Trending"
+      },
+      {
+        "name": "learn-claude-code",
+        "repo": "https://github.com/shareAI-lab/learn-claude-code",
+        "starsToday": 6,
+        "description": "Claude Code 学习资源。",
+        "source": "GitHub Trending"
+      },
+      {
+        "name": "ai",
+        "repo": "https://github.com/vercel/ai",
+        "starsToday": 26,
+        "description": "Vercel AI SDK，构建 AI 应用的前端工具链。",
+        "source": "GitHub Trending"
+      },
+      {
+        "name": "open-r1",
+        "repo": "https://github.com/huggingface/open-r1",
+        "description": "DeepSeek-R1 的开源实现，登上 Hacker News 热门。复刻顶级推理模型的开源项目。",
+        "source": "Hacker News"
+      }
+    ]
+  },
+  "modelsAndProducts": {
+    "summary": "本周国内厂商集体发力开源——智谱 GLM-5.2（1M 上下文）、MiniMax M3、Kimi-K2.7-Code 三款重磅模型相继开源，加上蚂蚁 inclusionAI 的 VISTA-4B，国产开源模型在长上下文、代码、GUI 定位等垂直场景持续突破。海外方面，Google Gemini Omni Flash 在视频任务达 SOTA，Midjourney V8.1 成为默认模型。",
+    "source": "智谱 / MiniMax / Kimi / 蚂蚁 / Google / Midjourney 官方渠道",
+    "foreign": [
+      {
+        "project": "Gemini Omni Flash",
+        "update": "视频任务达 SOTA",
+        "highlight": "Google 在视频理解任务上的新突破",
+        "source": "Google (X)"
+      },
+      {
+        "project": "Midjourney V8.1",
+        "update": "已成为默认模型",
+        "highlight": "图像生成质量进一步提升，替代旧版成为默认选项",
+        "source": "Midjourney Updates"
+      }
+    ],
+    "domestic": [
+      {
+        "project": "GLM-5.2",
+        "update": "全量开放，支持 1M 上下文，下周开源",
+        "highlight": "智谱发布长上下文旗舰模型并承诺开源",
+        "source": "智谱（微信公众号）"
+      },
+      {
+        "project": "MiniMax M3",
+        "update": "开源权重模型，已上架 HuggingFace",
+        "highlight": "MiniMax 正式加入开源阵营",
+        "source": "MiniMax (X)"
+      },
+      {
+        "project": "Kimi-K2.7-Code",
+        "update": "发布并开源最新代码模型",
+        "highlight": "月之暗面在代码生成领域的开源新作",
+        "source": "Kimi (X)"
+      },
+      {
+        "project": "VISTA-4B",
+        "update": "GUI 定位视觉语言模型",
+        "highlight": "蚂蚁 inclusionAI 在 GUI 自动化方向的探索",
+        "source": "inclusionAI (HuggingFace)"
+      }
+    ]
+  },
+  "companyUpdates": {
+    "summary": "产品动态覆盖开发者工具、平台 API、消费级应用三大方向。OpenAI Codex 连续推出浏览器开发者模式和速率重置攒存功能，Replit Agent 升级自定义指令与技能。消费级应用方面，字节豆包上线任务模式，苹果 iOS 27 健康 App 大改。",
+    "source": "OpenAI / Replit / Perplexity / OpenRouter / AllenAI / 字节 / 苹果 / Suno 官方渠道",
+    "items": [
+      { "company": "Codex", "update": "推出浏览器开发者模式", "source": "OpenAI Devs (X)" },
+      { "company": "OpenAI Codex", "update": "推出速率重置攒存功能：用户可选择何时应用重置，不再无预警刷新", "source": "OpenAI (X)" },
+      { "company": "Replit Agent", "update": "新增自定义指令与技能功能", "source": "Replit (X)" },
+      { "company": "Replit", "update": "与 Databricks 集成升级，公开预览开放", "source": "Replit (X)" },
+      { "company": "Perplexity Computer", "update": "集成 Deep Research", "source": "Perplexity (X)" },
+      { "company": "OpenRouter Fusion API", "update": "半价达 Fable 级智能，以更低成本提供顶级模型能力", "source": "OpenRouter (X)" },
+      { "company": "OpenRouter", "update": "发布基准探索器，含 10 项帕累托曲线对比", "source": "OpenRouter (X)" },
+      { "company": "olmo-eval", "update": "AllenAI 推出面向模型开发循环的评估工作台", "source": "AllenAI (HF Blog)" },
+      { "company": "字节豆包", "update": "上线任务模式：支持定时执行与文件生成，「思考模式」升级为「专家模式」", "source": "IT之家" },
+      { "company": "苹果 iOS 27 健康 App", "update": "大改：卡片布局、营养识别、围绝经期追踪", "source": "IT之家" },
+      { "company": "Suno", "update": "音轨分离：从零生成更纯净音轨", "source": "Suno (X)" }
+    ]
+  },
+  "opinions": {
+    "summary": "今日 AI Builder 观点围绕 Git 未来、AI 监管、Agent 抽象层、Fable 5 推理能力等话题展开。Swyx 提出「Git 可能需要消亡」引发讨论，多位开发者对 Claude Fable 5 的推理链表示震撼。",
+    "source": "follow-builders（X/Twitter AI Builders）",
+    "items": [
+      {
+        "person": "Swyx",
+        "title": "AI 行业观察者",
+        "quote": "在 PR 消亡、Code Review 消亡之后，我在认真思考 Git 是否需要消亡。大约 20-40% 的代码开销只是管理和更新合并冲突。",
+        "source": "X/Twitter (@swyx)"
+      },
+      {
+        "person": "Aaron Levie",
+        "title": "Box CEO",
+        "quote": "这是 AI 监管的一个重大转折点。政府开始认定某些模型过于强大而不适用于特定用途，这为未来一系列可能的管控措施开创了先例。",
+        "source": "X/Twitter (@levie)"
+      },
+      {
+        "person": "Guillermo Rauch",
+        "title": "Vercel CEO",
+        "quote": "我们刚刚发布了 DarnessAgent——一个统一抽象层，用于编排和集成任何 Agent 的「大脑」到你的应用中。@aisdk 现在让你摆脱模型和 Agent 锁定。",
+        "source": "X/Twitter (@rauchg)"
+      },
+      {
+        "person": "Garry Tan",
+        "title": "Y Combinator 总裁",
+        "quote": "我刚发现了 forceBlockStreamingForReasoning，坦率说我太喜欢了。看到我的 claw 在 Claude Fable 5 上的推理链，是一种震撼心灵的体验。",
+        "source": "X/Twitter (@garrytan)"
+      },
+      {
+        "person": "Alex Albert",
+        "title": "Anthropic 开发者关系",
+        "quote": "Fable 在处理长 Agent 对话时近乎超能力，有时我都跟不上它在说什么。",
+        "source": "X/Twitter (@alexalbert__)"
+      }
+    ]
+  },
+  "research": {
+    "summary": "今日 HuggingFace Daily Papers 共收录 19 篇，精选 10 篇覆盖 Agent 与多智能体、推理与验证、多模态与世界模型三大方向。Agent 通信与约束遵循是当前研究热点。",
+    "source": "HuggingFace Daily Papers",
+    "papers": [
+      {
+        "title": "See What I See, Know What I Think：异构智能体间的密集潜空间通信",
+        "team": "未标注",
+        "link": "https://arxiv.org/abs/2606.13594",
+        "abstract": "突破多智能体系统文本通信的瓶颈，提出异构智能体间的密集潜空间通信方法。",
+        "significance": "为多 Agent 协作场景提供更高效的通信范式，降低 token 消耗。"
+      },
+      {
+        "title": "Getting Better at Working With You：将用户纠正编译为运行时强制约束",
+        "team": "未标注",
+        "link": "https://arxiv.org/abs/2606.13174",
+        "abstract": "让编码 Agent 更可靠地遵循用户意图，将用户纠正编译为运行时强制约束。",
+        "significance": "提升 AI 编码助手在实际开发中的可控性，减少重复犯错。"
+      },
+      {
+        "title": "EurekAgent：通过 Agent 环境工程实现自主科学发现",
+        "team": "未标注",
+        "link": "https://arxiv.org/abs/2606.13662",
+        "abstract": "通过 Agent 环境工程实现自主科学发现。",
+        "significance": "AI 驱动的科研自动化方向的重要探索。"
+      },
+      {
+        "title": "EvoArena：追踪记忆演化提升动态环境中 LLM Agent 鲁棒性",
+        "team": "未标注",
+        "link": "https://arxiv.org/abs/2606.13681",
+        "abstract": "通过追踪记忆演化，提升动态环境中 LLM Agent 的鲁棒性。",
+        "significance": "解决长程 Agent 任务中的记忆管理问题。"
+      },
+      {
+        "title": "MaxProof：通过生成式验证器 RL 和种群级测试扩展数学证明",
+        "team": "未标注",
+        "link": "https://arxiv.org/abs/2606.13473",
+        "abstract": "通过生成式验证器强化学习和种群级测试扩展数学证明能力。",
+        "significance": "提升 LLM 在严谨推理任务上的可靠性。"
+      },
+      {
+        "title": "Demystifying Hidden-State Recurrence：可切换潜空间推理",
+        "team": "未标注",
+        "link": "https://arxiv.org/abs/2606.13106",
+        "abstract": "可切换潜空间推理 + 在策略强化学习。",
+        "significance": "为 LLM 推理架构提供新思路。"
+      },
+      {
+        "title": "HYDRA-X：原生统一多模态模型 + 整体视觉分词器",
+        "team": "未标注",
+        "link": "https://arxiv.org/abs/2606.13289",
+        "abstract": "原生统一多模态模型 + 整体视觉分词器。",
+        "significance": "多模态模型架构创新。"
+      },
+      {
+        "title": "MiniMax Sparse Attention：稀疏注意力机制",
+        "team": "MiniMax",
+        "link": "https://arxiv.org/abs/2606.13392",
+        "abstract": "稀疏注意力机制，来自 MiniMax。",
+        "significance": "降低长序列注意力的计算成本。"
+      },
+      {
+        "title": "WEAVER：更优更快更长的机器人操作世界模型",
+        "team": "未标注",
+        "link": "https://arxiv.org/abs/2606.13672",
+        "abstract": "更优、更快、更长的机器人操作世界模型。",
+        "significance": "具身智能与机器人操作方向的重要进展。"
+      },
+      {
+        "title": "RepWAM：基于表征的视觉-动作分词器世界动作建模",
+        "team": "未标注",
+        "link": "https://arxiv.org/abs/2606.13674",
+        "abstract": "基于表征的视觉-动作分词器世界动作建模。",
+        "significance": "世界模型在机器人动作建模上的新方法。"
+      }
+    ]
+  }
+}
