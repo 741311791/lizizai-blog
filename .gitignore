@@ -46,3 +46,8 @@ next-env.d.ts
 public/pagefind/
 .playwright-mcp/
 .gstack/
+
+# 本地工具状态（不入库）
+.wrangler/
+.design-preview/
+nimbalyst-local/

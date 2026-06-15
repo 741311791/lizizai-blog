@@ -86,6 +86,8 @@
     "currentSlide": "第 {current} / {total} 页",
     "slideNotes": "页面笔记",
     "slideNav": "幻灯片导航",
+    "slideFullscreen": "全屏预览",
+    "slideExitFullscreen": "退出全屏",
     "remaining": "剩余 ~{minutes} 分钟",
     "play": "播放",
     "pause": "暂停",
@@ -236,6 +238,10 @@
     "pageNotFoundDesc": "你访问的页面不存在或已被移动。试试从首页或归档页找到你想要的内容。",
     "backToHome": "返回首页",
     "browseArchive": "浏览归档"
+  },
+  "breadcrumb": {
+    "label": "面包屑导航",
+    "home": "首页"
   },
   "aiNews": {
     "dailyTitle": "每日资讯",

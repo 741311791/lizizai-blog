@@ -86,6 +86,8 @@
     "currentSlide": "Slide {current} / {total}",
     "slideNotes": "Slide Notes",
     "slideNav": "Slide Navigation",
+    "slideFullscreen": "Fullscreen",
+    "slideExitFullscreen": "Exit fullscreen",
     "remaining": "~{minutes} min remaining",
     "play": "Play",
     "pause": "Pause",
@@ -236,6 +238,10 @@
     "pageNotFoundDesc": "The page you visited does not exist or has been moved. Try finding what you need from the homepage or archive.",
     "backToHome": "Back to Home",
     "browseArchive": "Browse Archive"
+  },
+  "breadcrumb": {
+    "label": "Breadcrumb",
+    "home": "Home"
   },
   "aiNews": {
     "dailyTitle": "Daily News",

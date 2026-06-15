@@ -232,6 +232,20 @@ async function loadExistingIndex(r2: R2Bucket, r2BasePath: string): Promise<Arti
   } catch { return []; }
 }
 
+// ─── 变更追踪 ───
+
+function createTrackedR2(inner: R2Bucket, changes: string[]): R2Bucket {
+  return {
+    get: (key) => inner.get(key),
+    put: (key, value, options) => {
+      changes.push(key);
+      return inner.put(key, value, options);
+    },
+    list: (opts) => inner.list(opts),
+    delete: (key) => inner.delete(key),
+  };
+}
+
 // ─── 主流程 ───
 
 /**
@@ -255,7 +269,7 @@ export async function performSync(env: SyncEnv, forceSync = false): Promise<Sync
   console.log(`[sync] ${categories.length} 个分类, ${rootDocFiles.length} 个根目录文档 (${forceSync ? '全量' : '增量'})`);
 
   // 2. 保存分类
-  await env.R2.put(`${env.R2_BASE_PATH}/categories.json`, JSON.stringify(categories, null, 2), {
+  await trackedR2.put(`${env.R2_BASE_PATH}/categories.json`, JSON.stringify(categories, null, 2), {
     httpMetadata: { contentType: 'application/json' },
   });
 
@@ -263,6 +277,11 @@ export async function performSync(env: SyncEnv, forceSync = false): Promise<Sync
   const existingIndex = await loadExistingIndex(env.R2, env.R2_BASE_PATH);
   const existingMap = new Map(existingIndex.map(a => [a.feishuDocToken, a]));
   console.log(`[sync] 已缓存 ${existingMap.size} 篇`);
+
+  // 变更追踪
+  const fileChanges: string[] = [];
+  const trackedR2 = createTrackedR2(env.R2, fileChanges);
+  const trackedEnv = { ...env, R2: trackedR2 };
 
   // 4. 顺序处理每篇文章（含增量判断）
   const allArticles: ArticleMeta[] = [];
@@ -296,7 +315,7 @@ export async function performSync(env: SyncEnv, forceSync = false): Promise<Sync
           const hasArticleFolder = subItems.some(s => s.type === 'folder' && isSubFolder(s.name, FOLDER_NAMES.article));
 
           if (hasArticleFolder) {
-            const article = await syncBlogFolder(client, item, category, env);
+            const article = await syncBlogFolder(client, item, category, trackedEnv);
             if (article) {
               allArticles.push(article);
               allFolderTokens.push(item.token);
@@ -316,7 +335,7 @@ export async function performSync(env: SyncEnv, forceSync = false): Promise<Sync
             }
           }
 
-          const article = await syncDocument(client, item, category, env.R2, env.R2_BASE_PATH, env.R2_PUBLIC_URL);
+          const article = await syncDocument(client, item, category, trackedR2, env.R2_BASE_PATH, env.R2_PUBLIC_URL);
           allArticles.push(article);
           allDocTokens.push(item.token);
           synced++;
@@ -328,7 +347,7 @@ export async function performSync(env: SyncEnv, forceSync = false): Promise<Sync
   }
 
   // 5. 写入索引
-  await env.R2.put(`${env.R2_BASE_PATH}/articles.json`, JSON.stringify(allArticles, null, 2), {
+  await trackedR2.put(`${env.R2_BASE_PATH}/articles.json`, JSON.stringify(allArticles, null, 2), {
     httpMetadata: { contentType: 'application/json' },
   });
 
@@ -340,6 +359,32 @@ export async function performSync(env: SyncEnv, forceSync = false): Promise<Sync
   }
 
   console.log(`[sync] 同步完成: ${allArticles.length} 篇文章 (同步: ${synced}, 跳过: ${skipped})`);
+
+  // 输出文件变更详情
+  if (fileChanges.length > 0) {
+    console.log('\n[sync] 文件变更详情:');
+    const articleChanges = new Map<string, string[]>();
+    const indexChanges: string[] = [];
+    for (const key of fileChanges) {
+      const match = key.match(/articles\/([^/]+\/[^/]+)\/(.+)$/);
+      if (match) {
+        if (!articleChanges.has(match[1])) articleChanges.set(match[1], []);
+        articleChanges.get(match[1])!.push(match[2]);
+      } else {
+        indexChanges.push(key.replace(`${env.R2_BASE_PATH}/`, ''));
+      }
+    }
+    for (const f of indexChanges) {
+      console.log(`  + ${f}`);
+    }
+    for (const [articleId, files] of articleChanges) {
+      console.log(`  ${articleId}:`);
+      for (const f of files) {
+        console.log(`    + ${f}`);
+      }
+    }
+  }
+
   return { articleCount: allArticles.length, synced, skipped };
 }
 
