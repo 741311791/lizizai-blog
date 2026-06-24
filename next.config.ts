@@ -30,6 +30,15 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    // 启用 AVIF（优先）+ WebP（兜底）图片优化，提升首屏图片加载性能
+    formats: ['image/avif', 'image/webp'],
+  },
+  // 隐藏 X-Powered-By 响应头（安全卫生项）
+  poweredByHeader: false,
+  // 优化 barrel imports：让 webpack 对 lucide-react/date-fns 按需打包，
+  // 避免整个 barrel 文件进入构建 trace（vercel-react-best-practices: bundle-barrel-imports）
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'date-fns'],
   },
 };
 

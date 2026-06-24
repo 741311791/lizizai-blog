@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Mic, Play, Pause, FileText, ChevronDown, ChevronUp } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import ArticleContent from './ArticleContent';
+import MarkdownContent from './MarkdownContent';
 import type { PodcastItem } from '@/types/index';
 
 const AudioPlayer = dynamic(() => import('./AudioPlayer'), {
@@ -141,7 +141,7 @@ export default function PodcastList({ podcasts, articleTitle }: PodcastListProps
               </button>
               {showTranscript && transcriptContent && (
                 <div className="mt-4 pt-4 border-t border-border">
-                  <ArticleContent content={transcriptContent} />
+                  <MarkdownContent content={transcriptContent} />
                 </div>
               )}
             </div>

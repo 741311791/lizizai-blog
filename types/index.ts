@@ -4,6 +4,8 @@
  * 前端显示类型，由 lib/content.ts 提供
  */
 
+import type { Heading } from '@/lib/utils/heading';
+
 /** 内容类型 */
 export type ContentType = 'article' | 'podcast' | 'slides' | 'html';
 
@@ -56,6 +58,10 @@ export interface Article {
   subtitle?: string;
   slug: string;
   content: string;
+  /** 服务端预渲染的 HTML（lib/markdown.ts 产出），供 ArticleContent 直接渲染 */
+  renderedContent?: string;
+  /** 从 markdown 提取的标题目录（服务端 extractHeadings 产出），供 TOC 组件使用，避免原始 md 下传 client */
+  headings?: Heading[];
   excerpt?: string;
   featuredImage?: string;
   thumbnailImage?: string; // WebP 缩略图（卡片列表等小图场景优先使用）

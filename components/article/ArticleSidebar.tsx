@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { extractHeadings, type Heading } from '@/lib/utils/heading';
+import { type Heading } from '@/lib/utils/heading';
 import { ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { Article } from '@/types/index';
@@ -13,7 +13,8 @@ interface ArticleSidebarProps {
   article: Article;
   likes: number;
   views: number;
-  content: string;
+  // markdown 模式：服务端预提取的标题目录
+  headings?: Heading[];
   // HTML 模式下的外部 TOC 数据
   externalHeadings?: Array<{ id: string; text: string; level: number }>;
   externalActiveId?: string;
@@ -58,7 +59,7 @@ export default function ArticleSidebar({
   article,
   likes,
   views,
-  content,
+  headings,
   externalHeadings,
   externalActiveId,
   onExternalHeadingClick,
@@ -67,12 +68,12 @@ export default function ArticleSidebar({
   const [activeId, setActiveId] = useState<string>('');
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
-  // 使用外部 headings 或从 markdown 提取
+  // 使用外部 headings（HTML 模式）或服务端预提取的 headings（markdown 模式）
   const isExternalMode = !!externalHeadings;
   const groups = useMemo(() => {
-    const headings = isExternalMode ? externalHeadings! : extractHeadings(content);
-    return groupHeadings(headings);
-  }, [content, isExternalMode, externalHeadings]);
+    const hs = isExternalMode ? externalHeadings! : (headings ?? []);
+    return groupHeadings(hs);
+  }, [headings, isExternalMode, externalHeadings]);
 
   // 滚动监听：仅 markdown 模式使用 IntersectionObserver
   useEffect(() => {

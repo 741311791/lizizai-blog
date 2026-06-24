@@ -3,6 +3,7 @@ import AboutMe from '@/components/home/AboutMe';
 import ArticlesSection from '@/components/article/ArticlesSection';
 import DailyNews from '@/components/home/DailyNews';
 import { getAllArticles } from '@/lib/blog-data';
+import { setRequestLocale } from 'next-intl/server';
 
 export const revalidate = 3600; // ISR: 每小时重新验证
 
@@ -12,6 +13,7 @@ export default async function Home({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const allArticles = await getAllArticles();
 
   // 最新文章（已按日期降序排列）

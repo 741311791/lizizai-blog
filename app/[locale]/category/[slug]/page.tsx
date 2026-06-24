@@ -3,7 +3,7 @@ import CategoryArticlesSection from '@/components/article/CategoryArticlesSectio
 import { getCategories, getArticlesByCategory, getAllCategorySlugs } from '@/lib/blog-data';
 import { notFound } from 'next/navigation';
 import { generateCategoryMetadata } from '@/lib/seo';
-import { getTranslations, getLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600; // ISR: 每小时重新验证
@@ -38,11 +38,11 @@ export async function generateMetadata({
 export default async function CategoryPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations('category');
-  const locale = await getLocale();
 
   const categories = await getCategories();
   const category = categories.find(c => c.slug === slug);

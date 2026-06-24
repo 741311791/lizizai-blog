@@ -213,9 +213,6 @@ export default function ArticleDetailClient({
               onChapterChange={handleChapterChange}
               chapters={article.chapters}
             />
-            {article.scriptContent && (
-              <ArticleContent content={article.scriptContent} />
-            )}
             <div className="mt-8">
               <MobileChapterList
                 chapters={article.chapters || []}
@@ -253,9 +250,9 @@ export default function ArticleDetailClient({
       default:
         return (
           <>
-            <ArticleContent content={article.content} />
+            <ArticleContent html={article.renderedContent || ''} />
             <div className="mt-8">
-              <MobileToc content={article.content} />
+              <MobileToc headings={article.headings ?? []} />
             </div>
           </>
         );
@@ -271,7 +268,7 @@ export default function ArticleDetailClient({
           article={article}
           likes={likes}
           views={views}
-          content={article.content}
+          headings={article.headings ?? []}
         />
       );
     }
@@ -285,7 +282,7 @@ export default function ArticleDetailClient({
               article={article}
               likes={likes}
               views={views}
-              content={article.content}
+              headings={article.headings ?? []}
             />
           );
         }
@@ -314,7 +311,7 @@ export default function ArticleDetailClient({
             article={article}
             likes={likes}
             views={views}
-            content={article.content}
+            headings={article.headings ?? []}
             externalHeadings={htmlHeadings.length > 0 ? htmlHeadings : undefined}
             externalActiveId={htmlActiveId || undefined}
             onExternalHeadingClick={htmlHeadings.length > 0 ? handleHtmlHeadingClick : undefined}
@@ -327,7 +324,7 @@ export default function ArticleDetailClient({
             article={article}
             likes={likes}
             views={views}
-            content={article.content}
+            headings={article.headings ?? []}
           />
         );
     }

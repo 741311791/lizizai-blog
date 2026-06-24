@@ -3,10 +3,17 @@ import ArchiveContent from '@/components/archive/ArchiveContent';
 import { getAllArticles } from '@/lib/blog-data';
 import { groupArticlesByYearMonth } from '@/lib/utils/archive';
 import { Badge } from '@/components/ui/badge';
+import { setRequestLocale } from 'next-intl/server';
 
 export const revalidate = 3600; // ISR: 每小时重新验证
 
-export default async function ArchivePage() {
+export default async function ArchivePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const articles = await getAllArticles();
   const archiveData = groupArticlesByYearMonth(articles);
   const totalArticles = articles.length;

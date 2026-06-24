@@ -6,7 +6,7 @@ import { Heart, Share2, Eye } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { postReaction, postVisit, isEmactionEnabled, isWebvisoEnabled } from '@/lib/services';
+import { getReactions, getViews, postReaction, postVisit, isEmactionEnabled, isWebvisoEnabled } from '@/lib/services';
 
 interface ArticleActionsProps {
   articleId: string;
@@ -28,6 +28,22 @@ export default function ArticleActions({ articleId, likes, shares, views }: Arti
   useEffect(() => {
     const likedArticles = JSON.parse(localStorage.getItem(LIKED_ARTICLES_KEY) || '[]');
     setIsLiked(likedArticles.includes(articleId));
+  }, [articleId]);
+
+  // 客户端获取点赞数/浏览量（避免服务端短 revalidate 拉低文章页 ISR）
+  useEffect(() => {
+    let cancelled = false;
+    async function loadStats() {
+      const [reactions, v] = await Promise.all([
+        isEmactionEnabled() ? getReactions(articleId) : Promise.resolve([]),
+        isWebvisoEnabled() ? getViews(articleId) : Promise.resolve(0),
+      ]);
+      if (cancelled) return;
+      setCurrentLikes(reactions.reduce((sum, r) => sum + r.count, 0));
+      setCurrentViews(v);
+    }
+    loadStats();
+    return () => { cancelled = true; };
   }, [articleId]);
 
   // 记录页面访问（Webviso）

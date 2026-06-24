@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import CategoryArticlesSection from '@/components/article/CategoryArticlesSection';
 import { getCategories, getArticlesByCategory } from '@/lib/blog-data';
 import { generateCategoryMetadata } from '@/lib/seo';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600;
@@ -35,7 +35,13 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function DailyNewsPage() {
+export default async function DailyNewsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations('category');
   const categories = await getCategories();
   const category = categories.find(c => c.slug === CATEGORY_SLUG);

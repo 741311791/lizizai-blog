@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Noto_Serif_SC, Noto_Sans_SC, Instrument_Sans } from 'next/font/google';
 import { GeistMono } from 'geist/font/mono';
@@ -59,6 +59,9 @@ export default async function LocaleLayout({
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
+
+  // 启用静态渲染：必须在任何 next-intl 函数（如 getMessages）之前调用
+  setRequestLocale(locale);
 
   const messages = await getMessages();
   const websiteJsonLd = generateWebsiteJsonLd();

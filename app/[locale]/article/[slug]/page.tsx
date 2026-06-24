@@ -2,6 +2,7 @@ import { getArticleBySlug, getRelatedArticles, getAllArticleSlugs } from '@/lib/
 import { notFound } from 'next/navigation';
 import { generateArticleMetadata, generateArticleJsonLd } from '@/lib/seo';
 import ArticleDetailClient from '@/components/article/ArticleDetailClient';
+import { setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600; // ISR: 每小时重新验证
@@ -40,9 +41,10 @@ export async function generateMetadata({
 export default async function ArticlePage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
 
   const article = await getArticleBySlug(slug);
 

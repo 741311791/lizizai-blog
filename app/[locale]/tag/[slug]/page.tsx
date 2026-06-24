@@ -3,6 +3,7 @@ import { getArticlesByTag, getAllTagSlugs, getAllTags } from '@/lib/blog-data';
 import ArticleGrid from '@/components/article/ArticleGrid';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
+import { setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600;
@@ -29,9 +30,10 @@ export async function generateMetadata({
 export default async function TagPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
   const [articles, allTags] = await Promise.all([
     getArticlesByTag(slug),
     getAllTags(),

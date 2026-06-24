@@ -6,25 +6,10 @@
 
 import { cache } from 'react';
 import type { Article, Category, ContentTypes, SlideData, PodcastItem } from '@/types/index';
-import { getLikes, getReactions, getViews, getBatchViews } from '@/lib/services';
-import { config } from '@/lib/env';
+import { renderMarkdown } from '@/lib/markdown';
+import { extractHeadings } from '@/lib/utils/heading';
 
 const R2_BASE = process.env.R2_PUBLIC_URL || 'https://lizizai-blog.lihehua.xyz';
-const isDev = process.env.NODE_ENV === 'development';
-
-/** 获取单篇文章评论数 */
-async function getCommentCount(slug: string): Promise<number> {
-  const url = config.cfCommentUrl;
-  if (!url) return 0;
-  try {
-    const res = await fetch(`${url}/area/${slug}/comments`);
-    if (!res.ok) return 0;
-    const data = await res.json();
-    return (data as any[]).filter((c: any) => c.hidden !== 1).length;
-  } catch {
-    return 0;
-  }
-}
 
 /**
  * 获取所有文章（同一请求内缓存，避免重复调用）
@@ -69,20 +54,6 @@ export const getAllArticles = cache(async (): Promise<Article[]> => {
       ? `${R2_BASE}/blog-data/articles/${item.category?.slug || 'uncategorized'}/${item.slug}/slides`
       : undefined,
   }));
-
-  // 仅获取浏览量（1 次批量请求），开发模式跳过
-  if (!isDev) {
-    try {
-      const ids = articles.map(a => a.id);
-      const viewsData = await getBatchViews(ids);
-      const viewsMap = new Map(Object.entries(viewsData));
-      for (const article of articles) {
-        article.views = viewsMap.get(article.id) || 0;
-      }
-    } catch {
-      // 浏览量获取失败不影响文章列表
-    }
-  }
 
   return articles;
 });
@@ -168,26 +139,19 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
     needsSlidesJson ? getSlidesData(categorySlug, slug) : Promise.resolve([] as SlideData[]),
   ]);
 
+  // 服务端预渲染 markdown → HTML（含 GFM/数学/代码高亮/Mermaid/锚点），
+  // client ArticleContent 直接渲染 HTML，无需 react-markdown/hljs/mermaid 运行时
+  const renderedContent = content ? await renderMarkdown(content) : '';
+  // 服务端提取标题目录，client TOC 直接用结构化数据，无需把原始 markdown 序列化到 client
+  // （vercel-react-best-practices: server-serialization / server-dedup-props）
+  const headings = content ? extractHeadings(content) : [];
+
   const result: Article = {
     ...article,
-    content: content || '',
+    content: '', // 原始 markdown 不再下传 client（TOC 改用 headings）
+    renderedContent,
+    headings,
   };
-
-  // 获取单篇文章的动态数据（likes/views/comments），开发模式跳过
-  if (!isDev) {
-    try {
-      const [reactions, views, commentsCount] = await Promise.all([
-        getReactions(result.id),
-        getViews(result.id),
-        getCommentCount(slug),
-      ]);
-      result.likes = reactions.reduce((sum, r) => sum + r.count, 0);
-      result.views = views;
-      result.commentsCount = commentsCount;
-    } catch {
-      // 动态数据获取失败不影响文章详情
-    }
-  }
 
   // 播客数据处理：解析播客列表，填充完整 R2 URL
   if (ct?.podcast?.items) {

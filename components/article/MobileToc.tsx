@@ -3,17 +3,16 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronRight, List } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { extractHeadings, type Heading } from '@/lib/utils/heading';
+import { type Heading } from '@/lib/utils/heading';
 import { cn } from '@/lib/utils';
 
 interface MobileTocProps {
-  content: string;
+  headings: Heading[];
 }
 
-export default function MobileToc({ content }: MobileTocProps) {
+export default function MobileToc({ headings }: MobileTocProps) {
   const t = useTranslations('article');
   const [open, setOpen] = useState(false);
-  const headings = extractHeadings(content);
 
   if (headings.length === 0) return null;
 
