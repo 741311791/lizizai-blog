@@ -25,6 +25,7 @@ export interface SlidesMeta {
   source: 'html_slides';
   hasScreenshots: boolean;
   manifest?: { file: string; label: string }[];
+  maxModifiedTime?: number;
 }
 
 export interface ArticleMeta {
@@ -44,6 +45,14 @@ export interface ArticleMeta {
     article: true;
     podcast?: { items: PodcastItemMeta[] };
     slides?: SlidesMeta;
+    // 各子内容类型上次同步观测到的最大 modified_time（ISO），
+    // 用于多内容类型文件夹的精准增量判断——替代旧的"子文件 mtime > 文章 mtime"基准
+    // （后者因播客/PPT 晚于文章生成，mtime 天然偏大，导致增量永久失效）
+    syncCheckpoints?: {
+      article?: string;
+      podcast?: string;
+      slides?: string;
+    };
   };
   contentType?: 'article' | 'podcast' | 'slides';
   audioDuration?: number;
@@ -92,6 +101,28 @@ function isSubFolder(name: string, aliases: readonly string[]): boolean {
   return aliases.includes(name);
 }
 
+/** 飞书子文件夹名 → 内容类型标识 */
+function subFolderTypeOf(name: string): 'article' | 'podcast' | 'slides' {
+  if (isSubFolder(name, FOLDER_NAMES.article)) return 'article';
+  if (isSubFolder(name, FOLDER_NAMES.podcast)) return 'podcast';
+  return 'slides';
+}
+
+/** 取文件列表中的最大 modified_time（秒），空列表返回 0 */
+export function maxModifiedTime(files: FeishuFile[]): number {
+  let max = 0;
+  for (const f of files) {
+    const t = parseInt(f.modified_time);
+    if (t > max) max = t;
+  }
+  return max;
+}
+
+/** 秒级时间戳 → ISO 字符串（0/空 → undefined） */
+function toIso(seconds: number): string | undefined {
+  return seconds > 0 ? new Date(seconds * 1000).toISOString() : undefined;
+}
+
 // ─── 增量判断 ───
 
 /**
@@ -111,10 +142,16 @@ function docNeedsSync(
 
 /**
  * 深层检测：判断多内容类型文件夹是否需要同步
- * 遍历文章、播客、PPT 子文件夹，检查所有文件的 modified_time
+ *
+ * 采用「各内容类型独立高水位」策略：cached.contentTypes.syncCheckpoints 分别
+ * 记录文章/播客/PPT 子文件夹上次同步观测到的最大 modified_time，本次只与各自的
+ * 高水位比对。任一类型有更新 → 需要同步。
+ *
+ * 不能用"子文件 mtime > 文章 docx mtime"作基准——多内容类型文章的生产顺序是
+ * 先文章后播客/PPT，子文件 mtime 天然大于文章，会导致增量永久失效（每次全量重传）。
  * 返回 subItems 供后续复用，避免重复 listFiles 调用
  */
-async function blogFolderNeedsSync(
+export async function blogFolderNeedsSync(
   client: FeishuClient,
   blogFolder: FeishuFile,
   existingMap: Map<string, ArticleMeta>,
@@ -122,7 +159,7 @@ async function blogFolderNeedsSync(
   const cached = [...existingMap.values()].find(a => a.blogFolderToken === blogFolder.token);
   if (!cached) return { needsSync: true };
 
-  const r2Ms = new Date(cached.updatedAt).getTime();
+  const checkpoints = cached.contentTypes?.syncCheckpoints || {};
   const subItems = await client.listFiles(blogFolder.token);
 
   const foldersToCheck = subItems.filter(s =>
@@ -130,11 +167,12 @@ async function blogFolderNeedsSync(
   );
 
   for (const folder of foldersToCheck) {
+    const type = subFolderTypeOf(folder.name);
     const files = await client.listFiles(folder.token);
-    for (const f of files) {
-      if (parseInt(f.modified_time) * 1000 > r2Ms) {
-        return { needsSync: true, cached, subItems };
-      }
+    const currentMax = maxModifiedTime(files);
+    const checkpointMs = checkpoints[type] ? new Date(checkpoints[type]!).getTime() : 0;
+    if (currentMax * 1000 > checkpointMs) {
+      return { needsSync: true, cached, subItems };
     }
   }
 
@@ -454,17 +492,17 @@ async function syncBlogFolder(
   }
 
   // 2. 同步播客（可选，失败不阻塞）
-  let podcastItemsMeta: { items: PodcastItemMeta[] } | undefined;
+  let podcastResult: { items: PodcastItemMeta[]; maxModifiedTime: number } | undefined;
   if (podcastFolder) {
     try {
-      podcastItemsMeta = await syncPodcastFolder(client, podcastFolder, baseMeta.slug, category, env.R2, env.R2_BASE_PATH);
-      if (podcastItemsMeta) {
-        console.log(`  播客同步完成: ${baseMeta.slug}, ${podcastItemsMeta.items.length} 个播客`);
-      }
+      podcastResult = await syncPodcastFolder(client, podcastFolder, baseMeta.slug, category, env.R2, env.R2_BASE_PATH);
+      console.log(`  播客同步完成: ${baseMeta.slug}, ${podcastResult.items.length} 个播客`);
     } catch (err) {
       console.error(`  播客同步失败（不影响文章）:`, err);
     }
   }
+  const podcastItemsMeta = podcastResult && podcastResult.items.length > 0 ? { items: podcastResult.items } : undefined;
+  const podcastCp = podcastResult?.maxModifiedTime ?? 0;
 
   // 3. 同步 PPT（可选，失败不阻塞）
   let slidesMeta: SlidesMeta | undefined;
@@ -478,12 +516,22 @@ async function syncBlogFolder(
       console.error(`  PPT 同步失败（不影响文章）:`, err);
     }
   }
+  const slidesCp = slidesMeta?.maxModifiedTime ?? 0;
 
-  // 4. 组装完整 meta
+  // 4. 组装完整 meta（含各类型同步高水位，供下次精准增量判断）
   const fullMeta: ArticleMeta = {
     ...baseMeta,
     blogFolderToken: blogFolder.token,
-    contentTypes: { article: true as const, podcast: podcastItemsMeta, slides: slidesMeta },
+    contentTypes: {
+      article: true as const,
+      podcast: podcastItemsMeta,
+      slides: slidesMeta,
+      syncCheckpoints: {
+        article: toIso(maxModifiedTime(articleFolderItems)),
+        podcast: podcastFolder ? toIso(podcastCp) : undefined,
+        slides: slidesFolder ? toIso(slidesCp) : undefined,
+      },
+    },
   };
 
   if (podcastItemsMeta) {
@@ -636,14 +684,14 @@ async function syncPodcastFolder(
   category: CategoryInfo,
   r2: R2Bucket,
   r2BasePath: string,
-): Promise<{ items: PodcastItemMeta[] } | undefined> {
+): Promise<{ items: PodcastItemMeta[]; maxModifiedTime: number }> {
   const items = await client.listFiles(folder.token);
 
   const groups = groupFilesByBaseName(items);
 
   if (groups.size === 0) {
     console.log(`  播客文件夹无文件，跳过`);
-    return undefined;
+    return { items: [], maxModifiedTime: 0 };
   }
 
   const podcastItems: PodcastItemMeta[] = [];
@@ -715,10 +763,10 @@ async function syncPodcastFolder(
 
   if (podcastItems.length === 0) {
     console.log(`  播客文件夹无有效播客，跳过`);
-    return undefined;
+    return { items: [], maxModifiedTime: maxModifiedTime(items) };
   }
 
-  return { items: podcastItems };
+  return { items: podcastItems, maxModifiedTime: maxModifiedTime(items) };
 }
 
 async function syncSlidesFolder(
@@ -770,6 +818,7 @@ async function syncSlidesFolder(
     source: 'html_slides' as const,
     hasScreenshots,
     manifest: manifest.length > 0 ? manifest : undefined,
+    maxModifiedTime: maxModifiedTime(allFiles),
   };
 }
 

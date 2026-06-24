@@ -17,7 +17,8 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # 同步全量文档耗时随内容增长逼近上限；public 仓库 Actions 分钟数无限制
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@v4
