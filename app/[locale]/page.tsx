@@ -19,9 +19,6 @@ export default async function Home({
   // 最新文章（已按日期降序排列）
   const latestArticles = allArticles.slice(0, 9);
 
-  // 热门文章（按日期排序，后续可按 Webviso 浏览量排序）
-  const topArticles = allArticles.slice(0, 9);
-
   // Hero 精选文章：取第一篇
   const featuredArticle = allArticles[0];
 
@@ -39,10 +36,7 @@ export default async function Home({
       <DailyNews articles={dailyNewsArticles} />
 
       {/* 文章区块 — 精选大卡 + 最新/热门 */}
-      <ArticlesSection
-        latestArticles={latestArticles}
-        topArticles={topArticles}
-      />
+      <ArticlesSection articles={latestArticles} />
 
       {/* 关于我 — 维持现有布局 */}
       <AboutMe />

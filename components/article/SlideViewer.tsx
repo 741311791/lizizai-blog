@@ -191,12 +191,22 @@ export default function SlideViewer({
             </div>
 
             {/* 幻灯片内容 */}
-            <div className="flex-1 flex items-center justify-center p-4">
-              <div className="w-full max-w-[90vw] aspect-video rounded-lg overflow-hidden shadow-2xl">
+            {/* min-h-0：允许 flex 子项收缩，防止内容撑破溢出 */}
+            <div className="flex-1 min-h-0 flex items-center justify-center p-4 overflow-hidden">
+              {/*
+                宽度双重约束，保持 16:9 在任意视口比例下都不溢出：
+                1) 92vw —— 宽度上限
+                2) (100dvh - 180px) * 16/9 —— 按可用高度反推宽度上限
+                   180px 预留给顶部工具栏(~58px) + 底部缩略图(~77px) + 内边距(~32px) + 余量
+              */}
+              <div
+                className="relative aspect-video rounded-lg overflow-hidden shadow-2xl shadow-black/50"
+                style={{ width: 'min(92vw, calc((100dvh - 180px) * 16 / 9))' }}
+              >
                 <iframe
                   key={`fullscreen-${slideUrl}`}
                   src={slideUrl}
-                  className="w-full h-full border-0"
+                  className="absolute inset-0 w-full h-full border-0"
                   allowFullScreen
                   title={`幻灯片全屏 - ${slideLabel}`}
                 />

@@ -1,12 +1,14 @@
 /**
- * 文章区块 — 最新/热门 Tab 切换 + 网格/列表视图
+ * 文章区块 — 网格/列表视图切换
+ *
+ * 展示最新文章列表。原 latest/top Tab 已移除：top 数据与 latest 相同（死代码），
+ * 且 views 已改 client 实时获取（ed8fc0a），服务端无法实现真"热门"排序。
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useState, memo, useMemo } from 'react';
 import Image from 'next/image';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Clock, LayoutGrid, List } from 'lucide-react';
@@ -16,75 +18,52 @@ import { getCardImageUrl, shouldSkipImageOptimization } from '@/lib/utils/image'
 import type { Article } from '@/types/index';
 
 interface ArticlesSectionProps {
-  latestArticles: Article[];
-  topArticles: Article[];
+  articles: Article[];
 }
 
-export default function ArticlesSection({
-  latestArticles,
-  topArticles,
-}: ArticlesSectionProps) {
+export default function ArticlesSection({ articles }: ArticlesSectionProps) {
   const t = useTranslations('article');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
 
   return (
     <section className="py-12">
-      <Tabs defaultValue="latest" className="w-full">
-        <div className="flex items-center justify-between mb-6">
-          <TabsList>
-            <TabsTrigger value="latest">{t('latest')}</TabsTrigger>
-            <TabsTrigger value="top">{t('top')}</TabsTrigger>
-          </TabsList>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold tracking-tight">{t('latest')}</h2>
 
-          {/* 视图切换按钮 */}
-          <div className="hidden sm:flex items-center gap-1 bg-muted rounded-lg p-1">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-md transition-colors ${
-                viewMode === 'grid'
-                  ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <LayoutGrid className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-md transition-colors ${
-                viewMode === 'list'
-                  ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <List className="h-4 w-4" />
-            </button>
-          </div>
+        {/* 视图切换按钮 */}
+        <div className="hidden sm:flex items-center gap-1 bg-muted rounded-lg p-1">
+          <button
+            onClick={() => setViewMode('grid')}
+            className={`p-1.5 rounded-md transition-colors ${
+              viewMode === 'grid'
+                ? 'bg-card text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <LayoutGrid className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => setViewMode('list')}
+            className={`p-1.5 rounded-md transition-colors ${
+              viewMode === 'list'
+                ? 'bg-card text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <List className="h-4 w-4" />
+          </button>
         </div>
+      </div>
 
-        <TabsContent value="latest">
-          {viewMode === 'grid' ? (
-            <ArticleGrid articles={latestArticles} />
-          ) : (
-            <div className="space-y-0">
-              {latestArticles.map((article) => (
-                <ArticleListItem key={article.id} article={article} />
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="top">
-          {viewMode === 'grid' ? (
-            <ArticleGrid articles={topArticles} />
-          ) : (
-            <div className="space-y-0">
-              {topArticles.map((article) => (
-                <ArticleListItem key={article.id} article={article} />
-              ))}
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
+      {viewMode === 'grid' ? (
+        <ArticleGrid articles={articles} />
+      ) : (
+        <div className="space-y-0">
+          {articles.map((article) => (
+            <ArticleListItem key={article.id} article={article} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
@@ -103,18 +82,24 @@ function ArticleGrid({ articles }: { articles: Article[] }) {
 }
 
 /**
- * 网格卡片组件
+ * 网格卡片
+ * memo：article 引用不变时跳过重渲染（viewMode 切换不触发卡片重渲染）
+ * date 用 useMemo 缓存：避免每次渲染都 new Date + toLocaleDateString
  */
-function GridCard({ article }: { article: Article }) {
+const GridCard = memo(function GridCard({ article }: { article: Article }) {
   const locale = useLocale();
   const t = useTranslations('article');
   const imageUrl = getCardImageUrl(article.thumbnailImage, article.featuredImage, article.id);
-  const date = article.publishedAt
-    ? new Date(article.publishedAt).toLocaleDateString(
-        locale === 'zh' ? 'zh-CN' : 'en-US',
-        { month: 'short', day: 'numeric' }
-      )
-    : '';
+  const date = useMemo(
+    () =>
+      article.publishedAt
+        ? new Date(article.publishedAt).toLocaleDateString(
+            locale === 'zh' ? 'zh-CN' : 'en-US',
+            { month: 'short', day: 'numeric' }
+          )
+        : '',
+    [article.publishedAt, locale]
+  );
   const contentType = article.contentType || 'article';
   const timeLabel = getTimeLabel(t, article.contentType, article.readingTime || 0, article.slideCount);
 
@@ -171,4 +156,4 @@ function GridCard({ article }: { article: Article }) {
       </div>
     </Link>
   );
-}
+});
