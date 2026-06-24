@@ -1,5 +1,7 @@
 'use client';
 
+/* eslint-disable @typescript-eslint/no-explicit-any -- react-markdown 组件 props 与 rehype AST 节点为动态结构 */
+
 /**
  * Client 端 Markdown 渲染（react-markdown）
  *
