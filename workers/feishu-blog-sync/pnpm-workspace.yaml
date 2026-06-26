@@ -1,0 +1,6 @@
+# worker 是独立 pnpm 项目。
+# pnpm v11 已移除 package.json 的 pnpm.onlyBuiltDependencies，构建脚本授权统一用 allowBuilds。
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: false

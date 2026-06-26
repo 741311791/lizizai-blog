@@ -37,9 +37,10 @@ jobs:
           cache-dependency-path: workers/feishu-blog-sync/pnpm-lock.yaml
 
       - name: 安装依赖
-        # --ignore-workspace：worker 是独立 pnpm 项目，根目录 pnpm-workspace.yaml 仅有
-        # allowBuilds（无 packages），不忽略会被当作 workspace 根，导致本目录依赖未安装
-        run: pnpm install --ignore-workspace
+        # worker 有独立的 pnpm-workspace.yaml（allowBuilds 授权 esbuild/sharp 构建脚本），pnpm
+        # 会以 worker 为 workspace 根，不被根目录带偏。禁用 --ignore-workspace：它会跳过
+        # allowBuilds 配置，导致 ERR_PNPM_IGNORED_BUILDS（pnpm v11 strictDepBuilds 默认 true）
+        run: pnpm install
         working-directory: workers/feishu-blog-sync
 
       - name: 执行同步

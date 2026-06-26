@@ -14,9 +14,6 @@
     "tsx": "^4.0.0",
     "wrangler": "^3.57.0"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["sharp"]
-  },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.600.0",
     "beautiful-mermaid": "^1.1.3",
