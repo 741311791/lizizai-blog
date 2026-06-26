@@ -306,6 +306,11 @@ export async function performSync(env: SyncEnv, forceSync = false): Promise<Sync
 
   console.log(`[sync] ${categories.length} 个分类, ${rootDocFiles.length} 个根目录文档 (${forceSync ? '全量' : '增量'})`);
 
+  // 变更追踪（须在 categories 写入前创建，使分类变更也纳入追踪）
+  const fileChanges: string[] = [];
+  const trackedR2 = createTrackedR2(env.R2, fileChanges);
+  const trackedEnv = { ...env, R2: trackedR2 };
+
   // 2. 保存分类
   await trackedR2.put(`${env.R2_BASE_PATH}/categories.json`, JSON.stringify(categories, null, 2), {
     httpMetadata: { contentType: 'application/json' },
@@ -315,11 +320,6 @@ export async function performSync(env: SyncEnv, forceSync = false): Promise<Sync
   const existingIndex = await loadExistingIndex(env.R2, env.R2_BASE_PATH);
   const existingMap = new Map(existingIndex.map(a => [a.feishuDocToken, a]));
   console.log(`[sync] 已缓存 ${existingMap.size} 篇`);
-
-  // 变更追踪
-  const fileChanges: string[] = [];
-  const trackedR2 = createTrackedR2(env.R2, fileChanges);
-  const trackedEnv = { ...env, R2: trackedR2 };
 
   // 4. 顺序处理每篇文章（含增量判断）
   const allArticles: ArticleMeta[] = [];
