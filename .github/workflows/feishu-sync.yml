@@ -37,7 +37,9 @@ jobs:
           cache-dependency-path: workers/feishu-blog-sync/pnpm-lock.yaml
 
       - name: 安装依赖
-        run: pnpm install
+        # --ignore-workspace：worker 是独立 pnpm 项目，根目录 pnpm-workspace.yaml 仅有
+        # allowBuilds（无 packages），不忽略会被当作 workspace 根，导致本目录依赖未安装
+        run: pnpm install --ignore-workspace
         working-directory: workers/feishu-blog-sync
 
       - name: 执行同步
