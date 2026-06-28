@@ -45,6 +45,7 @@ export interface ArticleMeta {
     article: true;
     podcast?: { items: PodcastItemMeta[] };
     slides?: SlidesMeta;
+    html?: { htmlUrl: string; fileSize?: number };
     // 各子内容类型上次同步观测到的最大 modified_time（ISO），
     // 用于多内容类型文件夹的精准增量判断——替代旧的"子文件 mtime > 文章 mtime"基准
     // （后者因播客/PPT 晚于文章生成，mtime 天然偏大，导致增量永久失效）
@@ -52,9 +53,10 @@ export interface ArticleMeta {
       article?: string;
       podcast?: string;
       slides?: string;
+      html?: string;
     };
   };
-  contentType?: 'article' | 'podcast' | 'slides';
+  contentType?: 'article' | 'podcast' | 'slides' | 'html';
   audioDuration?: number;
   chapters?: { id: string; title: string; startTime: number }[];
   slideCount?: number;
@@ -95,6 +97,7 @@ const FOLDER_NAMES = {
   article: ['文章', 'article'],
   podcast: ['播客', 'podcast'],
   slides:  ['PPT', 'ppt'],
+  html:    ['html'],
 } as const;
 
 function isSubFolder(name: string, aliases: readonly string[]): boolean {
@@ -102,9 +105,10 @@ function isSubFolder(name: string, aliases: readonly string[]): boolean {
 }
 
 /** 飞书子文件夹名 → 内容类型标识 */
-function subFolderTypeOf(name: string): 'article' | 'podcast' | 'slides' {
+function subFolderTypeOf(name: string): 'article' | 'podcast' | 'slides' | 'html' {
   if (isSubFolder(name, FOLDER_NAMES.article)) return 'article';
   if (isSubFolder(name, FOLDER_NAMES.podcast)) return 'podcast';
+  if (isSubFolder(name, FOLDER_NAMES.html)) return 'html';
   return 'slides';
 }
 
@@ -163,7 +167,7 @@ export async function blogFolderNeedsSync(
   const subItems = await client.listFiles(blogFolder.token);
 
   const foldersToCheck = subItems.filter(s =>
-    s.type === 'folder' && (isSubFolder(s.name, FOLDER_NAMES.article) || isSubFolder(s.name, FOLDER_NAMES.podcast) || isSubFolder(s.name, FOLDER_NAMES.slides))
+    s.type === 'folder' && (isSubFolder(s.name, FOLDER_NAMES.article) || isSubFolder(s.name, FOLDER_NAMES.podcast) || isSubFolder(s.name, FOLDER_NAMES.slides) || isSubFolder(s.name, FOLDER_NAMES.html))
   );
 
   for (const folder of foldersToCheck) {
@@ -444,6 +448,7 @@ async function syncBlogFolder(
   const articleFolder = subItems.find(s => s.type === 'folder' && (s.name === '文章' || s.name === 'article'));
   const podcastFolder = subItems.find(s => s.type === 'folder' && (s.name === '播客' || s.name === 'podcast'));
   const slidesFolder  = subItems.find(s => s.type === 'folder' && (s.name === 'PPT' || s.name === 'ppt'));
+  const htmlFolder    = subItems.find(s => s.type === 'folder' && s.name === 'html');
 
   if (!articleFolder) {
     console.warn(`  跳过 ${blogFolder.name}：缺少 article 子文件夹`);
@@ -518,6 +523,17 @@ async function syncBlogFolder(
   }
   const slidesCp = slidesMeta?.maxModifiedTime ?? 0;
 
+  // 3.5 同步 HTML（可选，失败不阻塞）
+  let htmlMeta: { htmlUrl: string; fileSize?: number; maxModifiedTime: number } | undefined;
+  if (htmlFolder) {
+    try {
+      htmlMeta = await syncHtmlFolder(client, htmlFolder, baseMeta.slug, category, env.R2, env.R2_BASE_PATH, env.R2_PUBLIC_URL);
+    } catch (err) {
+      console.error(`  HTML 同步失败（不影响文章）:`, err);
+    }
+  }
+  const htmlCp = htmlMeta?.maxModifiedTime ?? 0;
+
   // 4. 组装完整 meta（含各类型同步高水位，供下次精准增量判断）
   const fullMeta: ArticleMeta = {
     ...baseMeta,
@@ -526,20 +542,24 @@ async function syncBlogFolder(
       article: true as const,
       podcast: podcastItemsMeta,
       slides: slidesMeta,
+      html: htmlMeta ? { htmlUrl: htmlMeta.htmlUrl, fileSize: htmlMeta.fileSize } : undefined,
       syncCheckpoints: {
         article: toIso(maxModifiedTime(articleFolderItems)),
         podcast: podcastFolder ? toIso(podcastCp) : undefined,
         slides: slidesFolder ? toIso(slidesCp) : undefined,
+        html: htmlFolder ? toIso(htmlCp) : undefined,
       },
     },
   };
 
-  if (podcastItemsMeta) {
-    fullMeta.contentType = 'podcast';
-  }
-  if (slidesMeta) {
+  // 主内容类型优先级：html > slides > podcast（html 为第一阅读类型）
+  if (htmlMeta) {
+    fullMeta.contentType = 'html';
+  } else if (slidesMeta) {
     fullMeta.contentType = 'slides';
     fullMeta.slideCount = slidesMeta.slideCount;
+  } else if (podcastItemsMeta) {
+    fullMeta.contentType = 'podcast';
   }
 
   // 写入最终 meta.json
@@ -818,6 +838,64 @@ async function syncSlidesFolder(
     source: 'html_slides' as const,
     hasScreenshots,
     manifest: manifest.length > 0 ? manifest : undefined,
+    maxModifiedTime: maxModifiedTime(allFiles),
+  };
+}
+
+/**
+ * 同步 HTML 内容类型文件夹
+ * 将 html 子目录下的主 .html 文件同步到 R2 articles/{cat}/{slug}/html/index.html，
+ * 供前端 HtmlViewer 以 iframe 渲染。产物需符合 lizizai-html 规范
+ * （主题 CSS + Google Fonts + postMessage 高度/TOC 同步脚本 + .prose 容器）。
+ * 主文件选取优先级：index.html > 与文章 slug 同名 > 唯一/第一个 html 文件。
+ */
+async function syncHtmlFolder(
+  client: FeishuClient,
+  folder: FeishuFile,
+  slug: string,
+  category: CategoryInfo,
+  r2: R2Bucket,
+  r2BasePath: string,
+  r2PublicUrl: string,
+): Promise<{ htmlUrl: string; fileSize?: number; maxModifiedTime: number } | undefined> {
+  console.log(`  同步 HTML 文件夹...`);
+
+  const allFiles = await client.listAllFilesRecursive(folder.token);
+  const htmlFiles = allFiles.filter(f => f.type !== 'folder' && /\.html?$/i.test(f.path));
+  if (htmlFiles.length === 0) {
+    console.warn(`  HTML 文件夹无 .html 文件，跳过`);
+    return undefined;
+  }
+
+  // 主文件选取：index.html 优先 → 与 slug 同名 → 唯一/第一个
+  const mainFile =
+    htmlFiles.find(f => /(^|\/)index\.html?$/i.test(f.path)) ||
+    htmlFiles.find(f => f.path.replace(/\.html?$/i, '').endsWith(slug)) ||
+    htmlFiles[0];
+  if (htmlFiles.length > 1) {
+    console.warn(`  HTML 文件夹含 ${htmlFiles.length} 个 html 文件，选用 ${mainFile.path} 作为 index.html`);
+  }
+
+  const r2Prefix = `${r2BasePath}/articles/${category.slug}/${slug}/html`;
+  const data = await client.downloadDriveFile(mainFile.token);
+  await r2.put(`${r2Prefix}/index.html`, data, {
+    httpMetadata: { contentType: 'text/html; charset=utf-8' },
+  });
+
+  // 辅助资源（自包含 HTML 通常无；若引用了相对路径的图片/字体等，一并同步保留结构）
+  const auxFiles = allFiles.filter(f => f.type !== 'folder' && f !== mainFile && !/\.html?$/i.test(f.path));
+  for (const file of auxFiles) {
+    const auxData = await client.downloadDriveFile(file.token);
+    await r2.put(`${r2Prefix}/${file.path}`, auxData, {
+      httpMetadata: { contentType: getContentType(file.path) },
+    });
+  }
+
+  console.log(`  HTML 同步完成: ${mainFile.path} → html/index.html (${(data.byteLength / 1024).toFixed(1)}KB${auxFiles.length ? ` + ${auxFiles.length} 资源` : ''})`);
+
+  return {
+    htmlUrl: `${r2PublicUrl}/${r2Prefix}/index.html`,
+    fileSize: data.byteLength,
     maxModifiedTime: maxModifiedTime(allFiles),
   };
 }

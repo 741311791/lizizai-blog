@@ -28,7 +28,7 @@ export function getTimeLabel(
 /**
  * 获取内容类型对应的封面图标签文本
  *
- * 播客 → 🎙️ 播客，PPT → 📊 幻灯片，文章 → 分类名称
+ * 播客 → 🎙️ 播客，PPT → 📊 幻灯片，HTML → 📄 HTML，文章 → 分类名称
  */
 export function getBadgeContent(
   t: TranslateFn,
@@ -41,6 +41,8 @@ export function getBadgeContent(
       return `🎙️ ${t('podcast')}`;
     case 'slides':
       return slideCount ? `📊 ${t('slideCount', { count: slideCount })}` : `📊 ${t('slides')}`;
+    case 'html':
+      return `📄 ${t('html')}`;
     default:
       return categoryName || null;
   }

@@ -76,7 +76,8 @@ export default function ArticleDetailClient({
   relatedArticles,
 }: ArticleDetailClientProps) {
   const realContentType = article.contentType || 'article';
-  const [activeContentType, setActiveContentType] = useState('article');
+  // 默认展示文章主内容类型（有 html 时默认 html，符合"HTML 为第一阅读类型"的产品定位）
+  const [activeContentType, setActiveContentType] = useState<string>(realContentType);
 
   // 播客状态
   const [podcastCurrentTime, setPodcastCurrentTime] = useState(0);
