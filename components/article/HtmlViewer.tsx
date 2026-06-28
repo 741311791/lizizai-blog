@@ -1,57 +1,35 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback, useMemo, forwardRef, useImperativeHandle } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { ExternalLink, RefreshCw } from 'lucide-react';
-
-export interface HtmlHeading {
-  id: string;
-  text: string;
-  level: number;
-  top: number;
-}
-
-export interface HtmlViewerHandle {
-  scrollToHeading: (top: number) => void;
-  getIframeRect: () => DOMRect | null;
-}
+import { ExternalLink, RefreshCw, Maximize, Minimize } from 'lucide-react';
 
 interface HtmlViewerProps {
   htmlUrl: string;
-  onTocUpdate?: (headings: HtmlHeading[]) => void;
 }
 
 const TIMEOUT_MS = 5000;
 const MIN_HEIGHT = 200;
 const MAX_HEIGHT_MULTIPLIER = 2;
 
-const HtmlViewer = forwardRef<HtmlViewerHandle, HtmlViewerProps>(function HtmlViewer({ htmlUrl, onTocUpdate }, ref) {
+/**
+ * HTML 内容查看器
+ *
+ * 仅通过 postMessage 接收 `html-content-height` 做高度自适应。
+ * 目录（TOC）已由 HTML 内部自带（浮动按钮 + 抽屉），不再通过 postMessage 传递——
+ * 旧方案在 sandbox="allow-scripts"（无 allow-same-origin）下 offsetTop 同步不可靠。
+ *
+ * 全屏沉浸模式：对容器调用 Fullscreen API，iframe 高度切到 100vh 独立滚动，
+ * 此时 HTML 内置的 fixed 目录与 IntersectionObserver 高亮才能完美生效。
+ */
+export default function HtmlViewer({ htmlUrl }: HtmlViewerProps) {
   const t = useTranslations('article');
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [iframeHeight, setIframeHeight] = useState(500);
   const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
-
-  // 用 ref 稳定回调，避免 postMessage 监听器频繁重建
-  const onTocUpdateRef = useRef(onTocUpdate);
-  onTocUpdateRef.current = onTocUpdate;
-
-  // 暴露方法给父组件
-  useImperativeHandle(ref, () => ({
-    scrollToHeading(top: number) {
-      const iframe = iframeRef.current;
-      if (!iframe) return;
-      const iframeRect = iframe.getBoundingClientRect();
-      const headerOffset = 100;
-      window.scrollTo({
-        top: iframeRect.top + window.scrollY + top - headerOffset,
-        behavior: 'smooth',
-      });
-    },
-    getIframeRect() {
-      return iframeRef.current?.getBoundingClientRect() ?? null;
-    },
-  }));
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const r2Origin = useMemo(() => {
     try { return new URL(htmlUrl).origin; } catch { return ''; }
@@ -72,7 +50,7 @@ const HtmlViewer = forwardRef<HtmlViewerHandle, HtmlViewerProps>(function HtmlVi
     setIframeHeight(clampHeight(height));
   }, [clampHeight]);
 
-  // 监听 postMessage（高度 + TOC）
+  // 监听 postMessage（仅高度同步）
   useEffect(() => {
     const handler = (e: MessageEvent) => {
       if (r2Origin && e.origin !== r2Origin && e.origin !== 'null') return;
@@ -82,11 +60,6 @@ const HtmlViewer = forwardRef<HtmlViewerHandle, HtmlViewerProps>(function HtmlVi
         throttledSetHeight(e.data.height);
         setStatus('loaded');
         if (timerRef.current) clearTimeout(timerRef.current);
-      }
-
-      // TOC 同步
-      if (e.data?.type === 'html-toc' && Array.isArray(e.data.headings)) {
-        onTocUpdateRef.current?.(e.data.headings);
       }
     };
     window.addEventListener('message', handler);
@@ -102,6 +75,13 @@ const HtmlViewer = forwardRef<HtmlViewerHandle, HtmlViewerProps>(function HtmlVi
     }, TIMEOUT_MS);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [htmlUrl, status]);
+
+  // 全屏状态追踪（用于切换图标 + iframe 高度策略）
+  useEffect(() => {
+    const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onFsChange);
+    return () => document.removeEventListener('fullscreenchange', onFsChange);
+  }, []);
 
   // iframe 加载完成
   const handleLoad = useCallback(() => {
@@ -119,6 +99,17 @@ const HtmlViewer = forwardRef<HtmlViewerHandle, HtmlViewerProps>(function HtmlVi
       iframeRef.current.src = htmlUrl;
     }
   }, [htmlUrl]);
+
+  // 切换全屏沉浸模式
+  const toggleFullscreen = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      el.requestFullscreen?.();
+    }
+  }, []);
 
   // 错误状态
   if (status === 'error') {
@@ -147,8 +138,14 @@ const HtmlViewer = forwardRef<HtmlViewerHandle, HtmlViewerProps>(function HtmlVi
     );
   }
 
+  // 全屏时 iframe 占满视口并独立滚动（内置 fixed 目录随之固定生效）
+  const iframeHeightStyle = isFullscreen ? '100vh' : status === 'loaded' ? iframeHeight : 500;
+
   return (
-    <div className="relative w-full rounded-lg overflow-hidden border border-border">
+    <div
+      ref={containerRef}
+      className="relative w-full overflow-hidden border border-border rounded-lg group [&:fullscreen]:rounded-none [&:fullscreen]:border-0 [&:fullscreen]:bg-background"
+    >
       <iframe
         ref={iframeRef}
         src={htmlUrl}
@@ -159,10 +156,19 @@ const HtmlViewer = forwardRef<HtmlViewerHandle, HtmlViewerProps>(function HtmlVi
         onLoad={handleLoad}
         className="w-full border-0"
         style={{
-          height: status === 'loaded' ? iframeHeight : 500,
-          transition: status === 'loaded' ? 'height 0.2s ease-out' : 'none',
+          height: iframeHeightStyle,
+          transition: isFullscreen ? 'none' : status === 'loaded' ? 'height 0.2s ease-out' : 'none',
         }}
       />
+      {/* 全屏沉浸按钮 */}
+      <button
+        onClick={toggleFullscreen}
+        aria-label={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
+        title={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
+        className="absolute top-3 right-3 z-10 size-9 rounded-lg border border-border bg-card/90 text-muted-foreground hover:text-primary hover:border-border-hover backdrop-blur-sm flex items-center justify-center transition-colors"
+      >
+        {isFullscreen ? <Minimize className="size-4" /> : <Maximize className="size-4" />}
+      </button>
       {status === 'loading' && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-3">
@@ -173,6 +179,4 @@ const HtmlViewer = forwardRef<HtmlViewerHandle, HtmlViewerProps>(function HtmlVi
       )}
     </div>
   );
-});
-
-export default HtmlViewer;
+}

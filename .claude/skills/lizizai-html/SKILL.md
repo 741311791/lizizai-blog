@@ -10,7 +10,7 @@
 
 ## 核心：不可违反的规则
 
-每份生成的 HTML **必须**包含以下三个部分，无例外：
+每份生成的 HTML **必须**包含以下四个部分，无例外：
 
 ### 1. 主题 CSS 引用
 
@@ -75,95 +75,138 @@
 </script>
 ```
 
-### 4. postMessage TOC 同步脚本
+### 4. HTML 内置目录（取代外部 TOC 同步）
 
-HTML 内容通过 iframe 展示，父页面需要获取 HTML 内的标题结构来渲染侧边栏目录（TOC），并实现目录跳转和活跃标题高亮。
+HTML 内容**自带目录索引**，不再通过 postMessage 把标题结构传给父页面。
 
-**约束**：iframe 使用 `sandbox="allow-scripts"`（无 `allow-same-origin`），父页面无法访问 iframe DOM。所有交互通过 postMessage 完成。
+**为什么废弃外部 TOC 同步**：iframe 使用 `sandbox="allow-scripts"`（无 `allow-same-origin`），跨 frame 的标题位置（`offsetTop`）计算与父页面 scroll 高亮同步在动态布局（字体回流、图片懒加载、内容动态渲染）下不可靠。改为 HTML 内部直接渲染目录控件，自包含、零外部依赖、无时序竞争。
 
-**关键设计**：iframe 高度 = 内容高度（无内部滚动），用户滚动的是父页面。因此：
-- 活跃标题追踪由**父页面**通过 scroll 事件计算（iframe 内 IntersectionObserver 无效）
-- 目录跳转由**父页面**通过 `window.scrollTo` 实现（iframe 无需接收滚动指令）
-- iframe 只需做一件事：提取标题并发送位置信息
+**关键设计**：
+- 目录为**浮动控件**（右下角按钮 `📌` + 侧边抽屉），用 `position: fixed` 定位
+- **标题跳转**用 `el.scrollIntoView()`——嵌入模式（iframe 高度=内容）下会滚动父页面，全屏模式下滚动 iframe 自身，两种模式都工作
+- **活跃标题高亮**用 `IntersectionObserver`——仅在**全屏沉浸模式**下完全生效（嵌入模式 iframe 无内部滚动，IO 降级为不高亮，可接受）
+- 配合父页面的**全屏按钮**，用户可进入沉浸式浏览获得最佳目录体验
 
-**协议设计：**
+**功能要求**：
 
-iframe → 父页面：
-
-| 消息类型 | 触发时机 | 数据结构 |
-|---------|---------|---------|
-| `html-toc` | DOMContentLoaded + 内容变更 | `{ type: 'html-toc', headings: [{id, text, level, top}] }` |
-
-字段说明：
-- `id`：标题元素的 DOM id（自动生成，去重）
-- `text`：标题文本
-- `level`：标题级别（1-3）
-- `top`：标题在 iframe 内容中的垂直偏移（`getOffsetTop` 遍历 offsetParent 链）
-
-**工作原理：**
-
-1. **标题提取**：扫描 `.prose`、`.prose-wide`、`.prose-full` 容器内的 h1/h2/h3 元素
-2. **ID 自动生成**：标题无 id 时，基于文本内容自动生成（与 `headingSlug` 规则一致）
-3. **位置计算**：遍历 offsetParent 链获取绝对偏移
-4. **变更监听**：MutationObserver + ResizeObserver 触发重新提取（覆盖动态内容、字体回流）
-5. **去重发送**：仅在标题列表变化时发送，避免不必要的 postMessage
+| 能力 | 实现方式 |
+|------|---------|
+| 标题采集 | 扫描 `.prose` / `.prose-wide` / `.prose-full` 内的 h2/h3（h1 由父页面文章标题渲染，不采集） |
+| ID 生成 | 标题无 id 时基于文本自动生成（去重），有则保留 |
+| 目录渲染 | 浮动按钮触发，抽屉式面板列出标题，h3 缩进表示层级 |
+| 跳转 | `scrollIntoView({behavior:'smooth', block:'start'})` + 标题 `scroll-margin-top` 预留顶部空间 |
+| 高亮 | IntersectionObserver 追踪可见标题，激活项 primary 色高亮 |
+| 重建 | MutationObserver 监听内容变更，重新采集渲染（覆盖动态内容） |
+| 关闭 | 点击遮罩 / 关闭按钮 / Esc 键 |
 
 ```html
+<style>
+  .lz-toc-fab{position:fixed;right:20px;bottom:20px;z-index:9998;width:44px;height:44px;border-radius:50%;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:color .2s,background .2s,border-color .2s}
+  .lz-toc-fab:hover{background:var(--color-surface-elevated);color:var(--color-primary);border-color:var(--color-border-hover)}
+  .lz-toc-fab svg{width:20px;height:20px}
+  .lz-toc-mask{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9997;opacity:0;pointer-events:none;transition:opacity .25s}
+  .lz-toc-mask.open{opacity:1;pointer-events:auto}
+  .lz-toc-panel{position:fixed;top:0;right:0;bottom:0;width:300px;max-width:85vw;z-index:9999;background:var(--color-surface);border-left:1px solid var(--color-border);transform:translateX(100%);transition:transform .25s ease;overflow-y:auto;padding:56px 0 24px;box-shadow:-8px 0 32px rgba(0,0,0,.3)}
+  .lz-toc-panel.open{transform:translateX(0)}
+  .lz-toc-title{position:absolute;top:18px;left:24px;font-family:var(--font-title);font-size:13px;font-weight:700;color:var(--color-text-muted);letter-spacing:.12em;text-transform:uppercase}
+  .lz-toc-close{position:absolute;top:14px;right:16px;width:30px;height:30px;border-radius:6px;border:none;background:transparent;color:var(--color-text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .lz-toc-close:hover{background:var(--color-surface-elevated);color:var(--color-text-primary)}
+  .lz-toc-close svg{width:16px;height:16px}
+  .lz-toc-item{display:block;width:100%;text-align:left;padding:8px 24px;font-family:var(--font-body);font-size:14px;line-height:1.5;color:var(--color-text-secondary);background:none;border:none;border-left:2px solid transparent;cursor:pointer;transition:color .15s,background .15s}
+  .lz-toc-item:hover{color:var(--color-text-primary);background:var(--color-surface-elevated)}
+  .lz-toc-item.active{color:var(--color-primary);border-left-color:var(--color-primary);font-weight:600;background:var(--color-surface-elevated)}
+  .lz-toc-item.lvl-3{padding-left:40px;font-size:13px}
+  .prose h2,.prose h3,.prose-wide h2,.prose-wide h3,.prose-full h2,.prose-full h3{scroll-margin-top:24px}
+</style>
 <script>
-(function() {
-  var lastTocJson = '';
+(function () {
+  var mask, panel, list, fab;
 
-  function getOffsetTop(el) {
-    var top = 0;
-    while (el) { top += el.offsetTop; el = el.offsetParent; }
-    return top;
-  }
-
-  function sendToc() {
-    var headings = [];
+  // 采集 .prose 系列容器内的 h2/h3，自动补 id
+  function collectHeadings() {
     var counter = {};
-    var containers = document.querySelectorAll('.prose, .prose-wide, .prose-full');
-    containers.forEach(function(container) {
-      container.querySelectorAll('h1, h2, h3').forEach(function(el) {
+    var headings = [];
+    document.querySelectorAll('.prose, .prose-wide, .prose-full').forEach(function (c) {
+      c.querySelectorAll('h2, h3').forEach(function (el) {
         if (!el.id) {
           var text = (el.textContent || '').trim();
-          var base = 'heading-' + text.toLowerCase().replace(/[^a-z0-9一-鿿]+/g, '-').replace(/^-+|-+$/g, '') || 'untitled';
-          var count = counter[base] || 0;
-          counter[base] = count + 1;
-          el.id = count === 0 ? base : base + '-' + count;
+          var base = 'h-' + text.toLowerCase().replace(/[^a-z0-9一-鿿]+/g, '-').replace(/^-+|-+$/g, '') || 'h-untitled';
+          var n = counter[base] || 0;
+          counter[base] = n + 1;
+          el.id = n === 0 ? base : base + '-' + n;
         }
-        headings.push({
-          id: el.id,
-          text: (el.textContent || '').trim(),
-          level: parseInt(el.tagName.charAt(1)),
-          top: getOffsetTop(el)
-        });
+        headings.push({ id: el.id, text: (el.textContent || '').trim(), level: parseInt(el.tagName.charAt(1), 10) });
       });
     });
-    var json = JSON.stringify(headings);
-    if (json !== lastTocJson) {
-      lastTocJson = json;
-      window.parent.postMessage({ type: 'html-toc', headings: headings }, '*');
-    }
+    return headings;
   }
 
-  var tocTimer = null;
-  function throttledSendToc() {
-    if (tocTimer) return;
-    tocTimer = setTimeout(function() { tocTimer = null; sendToc(); }, 200);
+  // 懒构建 DOM（首次有标题时才创建）
+  function ensureDom() {
+    if (fab) return;
+    mask = document.createElement('div'); mask.className = 'lz-toc-mask'; document.body.appendChild(mask);
+    panel = document.createElement('nav'); panel.className = 'lz-toc-panel'; panel.setAttribute('aria-label', '目录');
+    panel.innerHTML =
+      '<div class="lz-toc-title">目录</div>' +
+      '<button class="lz-toc-close" aria-label="关闭目录"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>';
+    list = document.createElement('div'); panel.appendChild(list); document.body.appendChild(panel);
+    fab = document.createElement('button'); fab.className = 'lz-toc-fab'; fab.setAttribute('aria-label', '打开目录');
+    fab.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h12"/></svg>';
+    document.body.appendChild(fab);
+
+    fab.addEventListener('click', open);
+    panel.querySelector('.lz-toc-close').addEventListener('click', close);
+    mask.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
   }
 
-  new MutationObserver(throttledSendToc)
-    .observe(document.documentElement, { childList: true, subtree: true });
-  new ResizeObserver(throttledSendToc)
-    .observe(document.body);
+  function open() { panel.classList.add('open'); mask.classList.add('open'); }
+  function close() { panel.classList.remove('open'); mask.classList.remove('open'); }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() { setTimeout(sendToc, 100); });
-  } else {
-    setTimeout(sendToc, 100);
+  // 活跃标题高亮（全屏沉浸模式下 iframe 独立滚动时生效）
+  var io = null;
+  function observe() {
+    if (io) io.disconnect();
+    if (!('IntersectionObserver' in window)) return;
+    var items = list.querySelectorAll('.lz-toc-item');
+    io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          var id = en.target.id;
+          items.forEach(function (it) { it.classList.toggle('active', it.dataset.target === id); });
+        }
+      });
+    }, { root: null, rootMargin: '0px 0px -70% 0px', threshold: 0 });
+    document.querySelectorAll('.prose h2,.prose h3,.prose-wide h2,.prose-wide h3,.prose-full h2,.prose-full h3').forEach(function (el) { io.observe(el); });
   }
-  window.addEventListener('load', function() { setTimeout(sendToc, 300); });
+
+  function render() {
+    ensureDom();
+    var headings = collectHeadings();
+    list.innerHTML = '';
+    if (headings.length === 0) { fab.style.display = 'none'; return; }
+    fab.style.display = 'flex';
+    headings.forEach(function (h) {
+      var btn = document.createElement('button');
+      btn.className = 'lz-toc-item' + (h.level === 3 ? ' lvl-3' : '');
+      btn.textContent = h.text;
+      btn.dataset.target = h.id;
+      btn.addEventListener('click', function () {
+        var target = document.getElementById(h.id);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        close();
+      });
+      list.appendChild(btn);
+    });
+    observe();
+  }
+
+  // 内容变更时重建（覆盖动态渲染，如日报数据注入）
+  var renderTimer = null;
+  function schedRender() { if (renderTimer) return; renderTimer = setTimeout(function () { renderTimer = null; render(); }, 200); }
+  new MutationObserver(schedRender).observe(document.documentElement, { childList: true, subtree: true });
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function () { setTimeout(render, 150); }); } else { setTimeout(render, 150); }
+  window.addEventListener('load', function () { setTimeout(render, 300); });
 })();
 </script>
 ```
@@ -191,10 +234,10 @@ iframe → 父页面：
 <body>
   <!-- 内容区域 -->
   <div class="prose">
-    <!-- 正文内容 -->
+    <!-- 正文内容：用 h2/h3 作为章节标题，内置目录会自动采集 -->
   </div>
 
-  <!-- postMessage 高度同步 -->
+  <!-- [必须] postMessage 高度同步 -->
   <script>
   (function() {
     function sendHeight() {
@@ -222,42 +265,98 @@ iframe → 父页面：
   })();
   </script>
 
-  <!-- postMessage TOC 同步 -->
+  <!-- [必须] HTML 内置目录（浮动按钮 + 抽屉 + 高亮） -->
+  <style>
+    .lz-toc-fab{position:fixed;right:20px;bottom:20px;z-index:9998;width:44px;height:44px;border-radius:50%;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:color .2s,background .2s,border-color .2s}
+    .lz-toc-fab:hover{background:var(--color-surface-elevated);color:var(--color-primary);border-color:var(--color-border-hover)}
+    .lz-toc-fab svg{width:20px;height:20px}
+    .lz-toc-mask{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9997;opacity:0;pointer-events:none;transition:opacity .25s}
+    .lz-toc-mask.open{opacity:1;pointer-events:auto}
+    .lz-toc-panel{position:fixed;top:0;right:0;bottom:0;width:300px;max-width:85vw;z-index:9999;background:var(--color-surface);border-left:1px solid var(--color-border);transform:translateX(100%);transition:transform .25s ease;overflow-y:auto;padding:56px 0 24px;box-shadow:-8px 0 32px rgba(0,0,0,.3)}
+    .lz-toc-panel.open{transform:translateX(0)}
+    .lz-toc-title{position:absolute;top:18px;left:24px;font-family:var(--font-title);font-size:13px;font-weight:700;color:var(--color-text-muted);letter-spacing:.12em;text-transform:uppercase}
+    .lz-toc-close{position:absolute;top:14px;right:16px;width:30px;height:30px;border-radius:6px;border:none;background:transparent;color:var(--color-text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .lz-toc-close:hover{background:var(--color-surface-elevated);color:var(--color-text-primary)}
+    .lz-toc-close svg{width:16px;height:16px}
+    .lz-toc-item{display:block;width:100%;text-align:left;padding:8px 24px;font-family:var(--font-body);font-size:14px;line-height:1.5;color:var(--color-text-secondary);background:none;border:none;border-left:2px solid transparent;cursor:pointer;transition:color .15s,background .15s}
+    .lz-toc-item:hover{color:var(--color-text-primary);background:var(--color-surface-elevated)}
+    .lz-toc-item.active{color:var(--color-primary);border-left-color:var(--color-primary);font-weight:600;background:var(--color-surface-elevated)}
+    .lz-toc-item.lvl-3{padding-left:40px;font-size:13px}
+    .prose h2,.prose h3,.prose-wide h2,.prose-wide h3,.prose-full h2,.prose-full h3{scroll-margin-top:24px}
+  </style>
   <script>
-  (function() {
-    var lastTocJson = '';
-    function getOffsetTop(el) {
-      var top = 0;
-      while (el) { top += el.offsetTop; el = el.offsetParent; }
-      return top;
-    }
-    function sendToc() {
-      var headings = [];
-      var counter = {};
-      document.querySelectorAll('.prose, .prose-wide, .prose-full').forEach(function(c) {
-        c.querySelectorAll('h1, h2, h3').forEach(function(el) {
+  (function () {
+    var mask, panel, list, fab;
+    function collectHeadings() {
+      var counter = {}; var headings = [];
+      document.querySelectorAll('.prose, .prose-wide, .prose-full').forEach(function (c) {
+        c.querySelectorAll('h2, h3').forEach(function (el) {
           if (!el.id) {
             var text = (el.textContent || '').trim();
-            var base = 'heading-' + text.toLowerCase().replace(/[^a-z0-9一-鿿]+/g, '-').replace(/^-+|-+$/g, '') || 'untitled';
-            var count = counter[base] || 0;
-            counter[base] = count + 1;
-            el.id = count === 0 ? base : base + '-' + count;
+            var base = 'h-' + text.toLowerCase().replace(/[^a-z0-9一-鿿]+/g, '-').replace(/^-+|-+$/g, '') || 'h-untitled';
+            var n = counter[base] || 0; counter[base] = n + 1;
+            el.id = n === 0 ? base : base + '-' + n;
           }
-          headings.push({ id: el.id, text: (el.textContent || '').trim(), level: parseInt(el.tagName.charAt(1)), top: getOffsetTop(el) });
+          headings.push({ id: el.id, text: (el.textContent || '').trim(), level: parseInt(el.tagName.charAt(1), 10) });
         });
       });
-      var json = JSON.stringify(headings);
-      if (json !== lastTocJson) { lastTocJson = json; window.parent.postMessage({ type: 'html-toc', headings: headings }, '*'); }
+      return headings;
     }
-    var tocTimer = null;
-    function throttledSendToc() {
-      if (tocTimer) return;
-      tocTimer = setTimeout(function() { tocTimer = null; sendToc(); }, 200);
+    function ensureDom() {
+      if (fab) return;
+      mask = document.createElement('div'); mask.className = 'lz-toc-mask'; document.body.appendChild(mask);
+      panel = document.createElement('nav'); panel.className = 'lz-toc-panel'; panel.setAttribute('aria-label', '目录');
+      panel.innerHTML = '<div class="lz-toc-title">目录</div><button class="lz-toc-close" aria-label="关闭目录"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>';
+      list = document.createElement('div'); panel.appendChild(list); document.body.appendChild(panel);
+      fab = document.createElement('button'); fab.className = 'lz-toc-fab'; fab.setAttribute('aria-label', '打开目录');
+      fab.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h12"/></svg>';
+      document.body.appendChild(fab);
+      fab.addEventListener('click', open);
+      panel.querySelector('.lz-toc-close').addEventListener('click', close);
+      mask.addEventListener('click', close);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
     }
-    new MutationObserver(throttledSendToc).observe(document.documentElement, { childList: true, subtree: true });
-    new ResizeObserver(throttledSendToc).observe(document.body);
-    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function() { setTimeout(sendToc, 100); }); } else { setTimeout(sendToc, 100); }
-    window.addEventListener('load', function() { setTimeout(sendToc, 300); });
+    function open() { panel.classList.add('open'); mask.classList.add('open'); }
+    function close() { panel.classList.remove('open'); mask.classList.remove('open'); }
+    var io = null;
+    function observe() {
+      if (io) io.disconnect();
+      if (!('IntersectionObserver' in window)) return;
+      var items = list.querySelectorAll('.lz-toc-item');
+      io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            var id = en.target.id;
+            items.forEach(function (it) { it.classList.toggle('active', it.dataset.target === id); });
+          }
+        });
+      }, { root: null, rootMargin: '0px 0px -70% 0px', threshold: 0 });
+      document.querySelectorAll('.prose h2,.prose h3,.prose-wide h2,.prose-wide h3,.prose-full h2,.prose-full h3').forEach(function (el) { io.observe(el); });
+    }
+    function render() {
+      ensureDom();
+      var headings = collectHeadings();
+      list.innerHTML = '';
+      if (headings.length === 0) { fab.style.display = 'none'; return; }
+      fab.style.display = 'flex';
+      headings.forEach(function (h) {
+        var btn = document.createElement('button');
+        btn.className = 'lz-toc-item' + (h.level === 3 ? ' lvl-3' : '');
+        btn.textContent = h.text; btn.dataset.target = h.id;
+        btn.addEventListener('click', function () {
+          var target = document.getElementById(h.id);
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          close();
+        });
+        list.appendChild(btn);
+      });
+      observe();
+    }
+    var renderTimer = null;
+    function schedRender() { if (renderTimer) return; renderTimer = setTimeout(function () { renderTimer = null; render(); }, 200); }
+    new MutationObserver(schedRender).observe(document.documentElement, { childList: true, subtree: true });
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function () { setTimeout(render, 150); }); } else { setTimeout(render, 150); }
+    window.addEventListener('load', function () { setTimeout(render, 300); });
   })();
   </script>
 </body>
@@ -392,7 +491,8 @@ iframe → 父页面：
 - [ ] 包含 `<link>` 引用主题 CSS（CDN 地址正确）
 - [ ] 包含 Google Fonts `<link>`
 - [ ] 包含 postMessage 高度同步 `<script>`
-- [ ] 包含 postMessage TOC 同步 `<script>`（标题提取 + 位置计算）
+- [ ] 包含 HTML 内置目录 `<style>` + `<script>`（浮动按钮、抽屉、标题采集、跳转、高亮）
+- [ ] 章节标题用 h2/h3（内置目录只采集 h2/h3，h1 由父页面渲染）
 - [ ] 内容包裹在 `.prose` / `.prose-wide` / `.prose-full` 容器中
 - [ ] 自定义 CSS 使用 CSS 变量而非硬编码值
 - [ ] 图片使用 `max-width: 100%` 防溢出
@@ -406,16 +506,16 @@ iframe → 父页面：
 
 ### 🔒 不可违反的约束（功能性）
 
-以下约束确保 HTML 能正确嵌入父页面并与侧边栏 TOC 集成，**无例外**：
+以下约束确保 HTML 能正确嵌入父页面并自带目录，**无例外**：
 
 | 约束 | 原因 |
 |------|------|
 | 必须包含主题 CSS `<link>` | 提供基础排版样式，否则无样式 |
 | 必须包含 Google Fonts `<link>` | 保证字体与主站一致 |
 | 必须包含高度同步 `<script>` | 父页面依赖此消息调整 iframe 高度 |
-| 必须包含 TOC 同步 `<script>` | 父页面依赖此消息渲染侧边栏目录 |
-| 内容必须在 `.prose` / `.prose-wide` / `.prose-full` 容器内 | TOC 脚本只扫描这些容器内的标题 |
-| 标题使用 h2/h3（避免 h1） | h1 由父页面文章标题渲染，侧边栏 h2 为顶级、h3 为子级 |
+| 必须包含内置目录 `<style>`+`<script>` | HTML 自带目录索引，取代脆弱的跨 frame TOC 同步 |
+| 内容必须在 `.prose` / `.prose-wide` / `.prose-full` 容器内 | 内置目录脚本只扫描这些容器内的标题 |
+| 标题使用 h2/h3（避免 h1） | h1 由父页面文章标题渲染；内置目录采集 h2（顶级）/h3（子级） |
 | 自定义 CSS 使用 CSS 变量 | `var(--color-primary)` 而非 `#d97706`，保持深色模式兼容 |
 | 无外部 JS 依赖 | 文件自包含，不引入 jQuery/Chart.js 等库 |
 | `<html lang="zh-CN">` | 语义正确性 |
@@ -436,9 +536,21 @@ iframe → 父页面：
 
 ### 📐 约束的本质
 
-> **约束基础设施层**（字体、颜色 token、iframe 通信协议），**不约束表达层**（布局、组件设计、视觉效果）。
+> **约束基础设施层**（字体、颜色 token、iframe 高度协议、内置目录控件），**不约束表达层**（布局、组件设计、视觉效果）。
 
-主题 CSS 提供的是一组**合理的默认值**，不是强制锁定。所有声明都可以通过自定义 CSS 覆盖。唯一不可覆盖的是四个 `<script>`/`<link>` 标签——它们是功能性的，不是视觉性的。
+主题 CSS 提供的是一组**合理的默认值**，不是强制锁定。所有声明都可以通过自定义 CSS 覆盖。唯一不可覆盖的是功能性标签——主题 CSS `<link>`、字体 `<link>`、高度同步 `<script>`、内置目录 `<style>`+`<script>`，它们是功能性的，不是视觉性的。
+
+---
+
+## 与父页面的协作边界
+
+HTML 内容通过 iframe 嵌入父页面，通信协议精简为**仅高度同步**（目录已由 HTML 自带）：
+
+| 消息 | 方向 | 用途 |
+|------|------|------|
+| `html-content-height` | iframe → 父 | 动态调整 iframe 高度 |
+
+父页面负责：iframe 容器、**全屏沉浸按钮**（Fullscreen API）、加载/错误状态。目录渲染、跳转、高亮全部由 HTML 内部完成，不再依赖 postMessage 传递标题。
 
 ---
 

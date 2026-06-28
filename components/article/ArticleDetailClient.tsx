@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import AuthorCard from './AuthorCard';
 import ArticleActions from './ArticleActions';
@@ -32,8 +32,6 @@ const SlideViewer = dynamic(() => import('./SlideViewer'), {
 const HtmlViewer = dynamic(() => import('./HtmlViewer'), {
   loading: () => <div className="h-[500px] rounded-lg bg-muted animate-pulse" />,
 })
-
-import type { HtmlHeading, HtmlViewerHandle } from './HtmlViewer';;
 
 const sidebarLoading = () => <div className="h-64 rounded-lg bg-muted animate-pulse" />;
 
@@ -68,6 +66,9 @@ interface ArticleDetailClientProps {
 /**
  * 文章详情页 Client Component
  * 渲染完整页面布局，根据 contentTypes/contentType 条件渲染不同内容区和侧边栏
+ *
+ * 注：HTML 内容类型的目录已由 HTML 自带（HtmlViewer 内 iframe 的浮动目录），
+ * 不再在此处维护 TOC 状态与 scroll 高亮。
  */
 export default function ArticleDetailClient({
   article,
@@ -85,11 +86,6 @@ export default function ArticleDetailClient({
 
   // 幻灯片状态（Markdown 模式）
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-
-  // HTML TOC 状态
-  const [htmlHeadings, setHtmlHeadings] = useState<HtmlHeading[]>([]);
-  const [htmlActiveId, setHtmlActiveId] = useState('');
-  const htmlViewerRef = useRef<HtmlViewerHandle>(null);
 
   // 播客回调
   const handlePodcastTimeUpdate = useCallback((time: number) => {
@@ -127,62 +123,13 @@ export default function ArticleDetailClient({
     setActiveContentType(type);
   }, []);
 
-  // HTML 模式：基于 scroll 追踪当前可见标题
-  useEffect(() => {
-    if (activeContentType !== 'html' || htmlHeadings.length === 0) {
-      setHtmlActiveId('');
-      return;
-    }
-
-    const handleScroll = () => {
-      const viewer = htmlViewerRef.current;
-      if (!viewer) return;
-
-      const iframeRect = viewer.getIframeRect();
-      if (!iframeRect) return;
-
-      const headerOffset = 100;
-      // 计算当前视口顶部在 iframe 内容中的相对位置
-      const viewportTopInIframe = -iframeRect.top + headerOffset;
-
-      // 找到最后一个 top <= viewportTopInIframe 的标题
-      let newActiveId = '';
-      for (const heading of htmlHeadings) {
-        if (heading.top <= viewportTopInIframe) {
-          newActiveId = heading.id;
-        } else {
-          break;
-        }
-      }
-      setHtmlActiveId(newActiveId);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeContentType, htmlHeadings]);
-
-  // HTML 模式：目录点击跳转
-  const handleHtmlHeadingClick = useCallback((headingId: string) => {
-    const heading = htmlHeadings.find(h => h.id === headingId);
-    if (heading && htmlViewerRef.current) {
-      htmlViewerRef.current.scrollToHeading(heading.top);
-      setHtmlActiveId(headingId);
-    }
-  }, [htmlHeadings]);
-
-  // HTML 模式：接收 iframe TOC 更新
-  const handleHtmlTocUpdate = useCallback((headings: HtmlHeading[]) => {
-    setHtmlHeadings(headings);
-  }, []);
-
   // 是否显示兜底页：用户切到了 podcast/slides/html 但实际没有数据
   const showComingSoon =
     (activeContentType === 'podcast' && !hasPodcastData) ||
     (activeContentType === 'slides' && !hasSlidesData) ||
     (activeContentType === 'html' && !hasHtmlData);
 
-  // HTML 模式下主内容区不限制宽度
+  // HTML 模式下主内容区不限制宽度（沉浸阅读，目录由 HTML 自带）
   const isFullWidth = activeContentType === 'html' && hasHtmlData;
 
   // 渲染主内容区
@@ -246,7 +193,7 @@ export default function ArticleDetailClient({
         );
 
       case 'html':
-        return <HtmlViewer ref={htmlViewerRef} htmlUrl={htmlUrl} onTocUpdate={handleHtmlTocUpdate} />;
+        return <HtmlViewer htmlUrl={htmlUrl} />;
 
       default:
         return (
@@ -307,15 +254,13 @@ export default function ArticleDetailClient({
         );
 
       case 'html':
+        // HTML 目录由内容自带，侧边栏仅展示文章元信息
         return (
           <ArticleSidebar
             article={article}
             likes={likes}
             views={views}
             headings={article.headings ?? []}
-            externalHeadings={htmlHeadings.length > 0 ? htmlHeadings : undefined}
-            externalActiveId={htmlActiveId || undefined}
-            onExternalHeadingClick={htmlHeadings.length > 0 ? handleHtmlHeadingClick : undefined}
           />
         );
 

@@ -11,12 +11,8 @@ interface ArticleSidebarProps {
   article: Article;
   likes: number;
   views: number;
-  // markdown 模式：服务端预提取的标题目录
+  // markdown 模式：服务端预提取的标题目录（HTML 模式的目录已由内容自带）
   headings?: Heading[];
-  // HTML 模式下的外部 TOC 数据
-  externalHeadings?: Array<{ id: string; text: string; level: number }>;
-  externalActiveId?: string;
-  onExternalHeadingClick?: (id: string) => void;
 }
 
 /** 将扁平标题列表组织为树形结构（h2 为父节点，h3 为子节点） */
@@ -58,25 +54,15 @@ export default function ArticleSidebar({
   likes,
   views,
   headings,
-  externalHeadings,
-  externalActiveId,
-  onExternalHeadingClick,
 }: ArticleSidebarProps) {
   const t = useTranslations('article');
   const [activeId, setActiveId] = useState<string>('');
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
-  // 使用外部 headings（HTML 模式）或服务端预提取的 headings（markdown 模式）
-  const isExternalMode = !!externalHeadings;
-  const groups = useMemo(() => {
-    const hs = isExternalMode ? externalHeadings! : (headings ?? []);
-    return groupHeadings(hs);
-  }, [headings, isExternalMode, externalHeadings]);
+  const groups = useMemo(() => groupHeadings(headings ?? []), [headings]);
 
-  // 滚动监听：仅 markdown 模式使用 IntersectionObserver
+  // 滚动监听：IntersectionObserver 追踪当前可见标题（headings 由 SSR 预提取，mount 时已在 DOM）
   useEffect(() => {
-    if (isExternalMode) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -92,17 +78,10 @@ export default function ArticleSidebar({
     headingElements.forEach((element) => observer.observe(element));
 
     return () => observer.disconnect();
-  }, [isExternalMode]);
-
-  // 当前高亮的 heading id
-  const currentActiveId = isExternalMode ? (externalActiveId || '') : activeId;
+  }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, headingId: string) => {
     e.preventDefault();
-    if (isExternalMode && onExternalHeadingClick) {
-      onExternalHeadingClick(headingId);
-      return;
-    }
     const element = document.getElementById(headingId);
     if (element) {
       const yOffset = -100;
@@ -144,7 +123,7 @@ export default function ArticleSidebar({
                   <div
                     className={cn(
                       'flex items-center gap-2 py-1.5 text-sm transition-colors',
-                      currentActiveId === group.heading.id
+                      activeId === group.heading.id
                         ? 'text-primary font-medium'
                         : 'text-muted-foreground hover:text-foreground'
                     )}
@@ -185,7 +164,7 @@ export default function ArticleSidebar({
                           onClick={(e) => handleClick(e, child.id)}
                           className={cn(
                             'flex items-center gap-2 py-1 text-sm transition-colors',
-                            currentActiveId === child.id
+                            activeId === child.id
                               ? 'text-primary font-medium'
                               : 'text-muted-foreground hover:text-foreground'
                           )}

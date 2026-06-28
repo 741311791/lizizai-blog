@@ -115,6 +115,8 @@
     "htmlError": "Failed to load HTML content",
     "htmlOpenInNewTab": "Open in new tab",
     "htmlRetry": "Retry",
+    "fullscreen": "Immersive fullscreen",
+    "exitFullscreen": "Exit fullscreen",
     "filterHtml": "HTML"
   },
   "share": {
