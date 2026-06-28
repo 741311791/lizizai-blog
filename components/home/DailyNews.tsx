@@ -9,6 +9,8 @@ import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Clock, ChevronRight } from 'lucide-react';
 import { getTranslations, getLocale } from 'next-intl/server';
+import ContentTypeBadge from '@/components/article/ContentTypeBadge';
+import { getTimeLabel, shouldShowTimeLabel, type TranslateFn } from '@/lib/content-utils';
 import type { Article } from '@/types/index';
 
 interface DailyNewsProps {
@@ -18,6 +20,7 @@ interface DailyNewsProps {
 export default async function DailyNews({ articles }: DailyNewsProps) {
   const t = await getTranslations('aiNews');
   const locale = await getLocale();
+  const tArticle = await getTranslations('article');
 
   // 无文章时整体隐藏
   if (articles.length === 0) return null;
@@ -48,7 +51,7 @@ export default async function DailyNews({ articles }: DailyNewsProps) {
       <div className="relative -mx-4 px-4">
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
           {articles.slice(0, 8).map((article: Article) => (
-            <NewsCard key={article.id} article={article} locale={locale} />
+            <NewsCard key={article.id} article={article} locale={locale} tArticle={tArticle} />
           ))}
         </div>
         {/* 右侧渐隐遮罩 */}
@@ -58,13 +61,14 @@ export default async function DailyNews({ articles }: DailyNewsProps) {
   );
 }
 
-function NewsCard({ article, locale }: { article: Article; locale: string }) {
+function NewsCard({ article, locale, tArticle }: { article: Article; locale: string; tArticle: TranslateFn }) {
   const date = article.publishedAt
     ? new Date(article.publishedAt).toLocaleDateString(
         locale === 'zh' ? 'zh-CN' : 'en-US',
         { month: 'short', day: 'numeric' }
       )
     : '';
+  const timeLabel = getTimeLabel(tArticle, article.contentType, article.readingTime || 0, article.slideCount);
 
   return (
     <Link href={`/article/${article.slug}`} className="flex-shrink-0 snap-start">
@@ -81,10 +85,21 @@ function NewsCard({ article, locale }: { article: Article; locale: string }) {
           </p>
         )}
 
-        {/* 时间戳 */}
+        {/* 内容类型标识 */}
+        <div className="mb-2">
+          <ContentTypeBadge article={article} compact />
+        </div>
+
+        {/* 时间戳 + 时长 */}
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Clock className="h-3 w-3" />
           <span>{date}</span>
+          {shouldShowTimeLabel(article.contentType, article.readingTime) && (
+            <>
+              <span>·</span>
+              <span>{timeLabel}</span>
+            </>
+          )}
         </div>
       </div>
     </Link>
