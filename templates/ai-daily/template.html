@@ -619,6 +619,23 @@
       if (n === undefined || n === null || n === '') return '';
       return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
+    function sourceLink(source, url) {
+      if (!source) return '';
+      if (url) {
+        return '<a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(source) + '</a>';
+      }
+      return esc(source);
+    }
+
+    function renderMarkdown(s) {
+      if (!s) return '';
+      // First escape HTML entities (security), then convert **bold** to <strong>
+      var d = document.createElement('div');
+      d.textContent = s;
+      var escaped = d.innerHTML;
+      // Convert **text** to <strong>text</strong>
+      return escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    }
 
     // 构建页面 — 统一使用 .daily-container 容器
     var html = '';
@@ -672,13 +689,13 @@
       data.news.forEach(function(item) {
         html += '<div class="news-item">';
         // 标题：有 url 时渲染为链接
-        if (item.url) {
-          html += '<h3 class="news-item__title"><a href="' + esc(item.url) + '" target="_blank" rel="noopener">' + esc(item.title) + '</a></h3>';
+        if (item.sourceUrl) {
+          html += '<h3 class="news-item__title"><a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener">' + esc(item.title) + '</a></h3>';
         } else {
           html += '<h3 class="news-item__title">' + esc(item.title) + '</h3>';
         }
         if (item.source) {
-          html += '<span class="news-item__source">' + esc(item.source) + '</span>';
+          html += '<span class="news-item__source">' + sourceLink(item.source, item.sourceUrl) + '</span>';
         }
         if (item.keyPoints) {
           html += '<div class="news-item__points">';
@@ -759,7 +776,7 @@
           html += '<td>' + esc(row.project) + '</td>';
           html += '<td>' + esc(row.update) + '</td>';
           html += '<td class="data-table__highlight">' + esc(row.highlight) + '</td>';
-          html += '<td>' + esc(row.source) + '</td>';
+          html += '<td>' + sourceLink(row.source, row.sourceUrl) + '</td>';
           html += '</tr>';
         });
         html += '</tbody></table></div>';
@@ -775,7 +792,7 @@
           html += '<td>' + esc(row.project) + '</td>';
           html += '<td>' + esc(row.update) + '</td>';
           html += '<td class="data-table__highlight">' + esc(row.highlight) + '</td>';
-          html += '<td>' + esc(row.source) + '</td>';
+          html += '<td>' + sourceLink(row.source, row.sourceUrl) + '</td>';
           html += '</tr>';
         });
         html += '</tbody></table></div>';
@@ -801,7 +818,7 @@
           html += '<div class="company-item__name">' + esc(item.company) + '</div>';
           html += '<p class="company-item__update">' + esc(item.update) + '</p>';
           if (item.source) {
-            html += '<div class="company-item__source">' + esc(item.source) + '</div>';
+            html += '<div class="company-item__source">' + sourceLink(item.source, item.sourceUrl) + '</div>';
           }
           html += '</div>';
         });
@@ -831,7 +848,7 @@
           html += '<td class="amount">' + esc(row.amount) + '</td>';
           html += '<td class="amount">' + esc(row.valuation || '—') + '</td>';
           html += '<td>' + esc(row.direction) + '</td>';
-          html += '<td>' + esc(row.source) + '</td>';
+          html += '<td>' + sourceLink(row.source, row.sourceUrl) + '</td>';
           html += '</tr>';
         });
         html += '</tbody></table></div>';
@@ -845,7 +862,7 @@
           html += '<div class="macro-card__value">' + esc(item.value) + '</div>';
           html += '<div class="macro-card__metric">' + esc(item.metric) + '</div>';
           if (item.source) {
-            html += '<div class="macro-card__source">' + esc(item.source) + '</div>';
+            html += '<div class="macro-card__source">' + sourceLink(item.source, item.sourceUrl) + '</div>';
           }
           html += '</div>';
         });
@@ -858,7 +875,7 @@
         html += '<div class="trend-analysis">';
         paragraphs.forEach(function(p) {
           if (p.trim()) {
-            html += '<p>' + esc(p.trim()) + '</p>';
+            html += '<p>' + renderMarkdown(p.trim()) + '</p>';
           }
         });
         html += '</div>';
@@ -885,7 +902,7 @@
             html += '<p class="opinion-item__original">' + esc(item.quoteOriginal) + '</p>';
           }
           if (item.source) {
-            html += '<div class="opinion-item__source">来源：' + esc(item.source) + '</div>';
+            html += '<div class="opinion-item__source">来源：' + sourceLink(item.source, item.sourceUrl) + '</div>';
           }
           html += '</div>';
         });
