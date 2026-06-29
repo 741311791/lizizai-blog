@@ -16,9 +16,7 @@ const R2_BASE = process.env.R2_PUBLIC_URL || 'https://lizizai-blog.lihehua.xyz';
  */
 export const getAllArticles = cache(async (): Promise<Article[]> => {
   const res = await fetch(`${R2_BASE}/blog-data/articles.json`, {
-    // tag 供 /api/revalidate 在同步成功后按需清除 Data Cache，
-    // 否则新文章在 3600s 缓存窗口内读不到，触发 404
-    next: { revalidate: 3600, tags: ['articles'] },
+    next: { revalidate: 3600 },
   });
 
   if (!res.ok) {
@@ -65,7 +63,7 @@ export const getAllArticles = cache(async (): Promise<Article[]> => {
  */
 export const getCategories = cache(async (): Promise<Category[]> => {
   const res = await fetch(`${R2_BASE}/blog-data/categories.json`, {
-    next: { revalidate: 3600, tags: ['categories'] },
+    next: { revalidate: 3600 },
   });
 
   if (!res.ok) return [];
@@ -83,7 +81,7 @@ export const getCategories = cache(async (): Promise<Category[]> => {
  */
 async function getArticleContent(categorySlug: string, articleSlug: string): Promise<string> {
   const res = await fetch(`${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/content.md`, {
-    next: { revalidate: 3600, tags: ['article-content'] },
+    next: { revalidate: 3600 },
   });
 
   if (!res.ok) return '';
