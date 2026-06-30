@@ -121,7 +121,21 @@ async function getSlidesData(categorySlug: string, articleSlug: string): Promise
 /**
  * 根据 slug 获取单篇文章（完整数据）
  */
+/**
+ * 容错解码 URL slug。Next.js 16 Turbopack dev 偶发向 page 组件传入未 URL 解码的
+ * 百分号编码 slug（中文路由段），导致按 slug 查询失败 → notFound → 404。
+ * 生产（webpack build）解码正常；对已解码的中文 slug 无副作用。
+ */
+function decodeSlug(slug: string): string {
+  try {
+    return slug.includes('%') ? decodeURIComponent(slug) : slug;
+  } catch {
+    return slug;
+  }
+}
+
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
+  slug = decodeSlug(slug);
   const articles = await getAllArticles();
   const article = articles.find(a => a.slug === slug);
   if (!article) return null;
@@ -203,6 +217,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
  * 按分类获取文章
  */
 export async function getArticlesByCategory(categorySlug: string): Promise<Article[]> {
+  categorySlug = decodeSlug(categorySlug);
   const articles = await getAllArticles();
   return articles.filter(a => a.category.slug === categorySlug);
 }
@@ -293,6 +308,7 @@ export async function getAllTags(): Promise<{ name: string; slug: string; count:
  * 按标签获取文章
  */
 export async function getArticlesByTag(tagSlug: string): Promise<Article[]> {
+  tagSlug = decodeSlug(tagSlug);
   const articles = await getAllArticles();
   return articles.filter(a => a.tags?.some(t => t.slug === tagSlug));
 }
