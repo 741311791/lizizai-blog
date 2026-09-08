@@ -52,3 +52,7 @@ public/pagefind/
 .design-preview/
 nimbalyst-local/
 .understand-anything/
+.spec-workflow/
+.video/
+.video-review/
+/shot*.png
