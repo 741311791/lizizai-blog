@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "lizizai-blog 技术架构",
+    "output": "docs/diagrams/lizizai-architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "write-path",
+        "label": "内容写流",
+        "focus": ["feishu", "gha", "r2"],
+        "note": "飞书文档经 GitHub Actions 增量同步写入 R2，低频批处理"
+      },
+      {
+        "id": "read-path",
+        "label": "内容读流",
+        "focus": ["r2", "next", "browser"],
+        "note": "ISR 从 R2 fetch 并按 3600s revalidate，高频读取走缓存"
+      },
+      {
+        "id": "edge-interaction",
+        "label": "边缘交互",
+        "focus": ["browser", "emaction", "webviso", "cf_comment", "counterscale"],
+        "note": "点赞/浏览量/评论/分析由浏览器客户端聚合独立 Worker 服务"
+      }
+    ]
+  },
+  "components": [
+    { "id": "feishu", "type": "external", "label": "飞书文档", "sublabel": "无头 CMS · 多内容类型", "pos": [40, 70], "size": [160, 64] },
+    { "id": "gha", "type": "cloud", "label": "GitHub Actions", "sublabel": "feishu-blog-sync CLI", "pos": [370, 70], "size": [180, 64] },
+    { "id": "r2", "type": "database", "label": "Cloudflare R2", "sublabel": "blog-data 存储桶", "pos": [780, 70], "size": [180, 64] },
+    { "id": "next", "type": "frontend", "label": "Next.js 16 ISR", "sublabel": "Vercel · blog-data.ts", "pos": [780, 300], "size": [180, 64] },
+    { "id": "browser", "type": "external", "label": "读者浏览器", "sublabel": "useEffect 客户端聚合", "pos": [1110, 300], "size": [160, 64] },
+    { "id": "emaction", "type": "backend", "label": "emaction", "sublabel": "点赞", "pos": [1490, 100], "size": [170, 60] },
+    { "id": "webviso", "type": "backend", "label": "Webviso", "sublabel": "浏览量", "pos": [1490, 225], "size": [170, 60] },
+    { "id": "cf_comment", "type": "backend", "label": "cf-comment", "sublabel": "评论", "pos": [1490, 350], "size": [170, 60] },
+    { "id": "counterscale", "type": "backend", "label": "counterscale", "sublabel": "分析", "pos": [1490, 475], "size": [170, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "飞书 · 内容生产层", "wraps": ["feishu"] },
+    { "kind": "region", "label": "GitHub Actions · 同步层", "wraps": ["gha"] },
+    { "kind": "region", "label": "Cloudflare R2 · 存储层", "wraps": ["r2"] },
+    { "kind": "region", "label": "Vercel · 渲染层", "wraps": ["next"] },
+    { "kind": "region", "label": "Workers + D1 · 边缘服务层", "wraps": ["emaction", "webviso", "cf_comment", "counterscale"], "pad": 24 }
+  ],
+  "connections": [
+    { "from": "feishu", "to": "gha", "label": "定时 + 手动触发", "variant": "emphasis" },
+    { "from": "gha", "to": "r2", "label": "articles.json + 资源", "variant": "emphasis" },
+    { "from": "r2", "to": "next", "label": "fetch + revalidate 3600s", "variant": "emphasis", "labelAt": [870, 210] },
+    { "from": "next", "to": "browser", "label": "ISR 静态页", "variant": "emphasis" },
+    { "from": "browser", "to": "emaction", "label": "点赞 · 60s", "variant": "dashed", "labelAt": [1430, 130] },
+    { "from": "browser", "to": "webviso", "label": "浏览量 · 300s", "variant": "dashed", "labelAt": [1430, 255] },
+    { "from": "browser", "to": "cf_comment", "label": "评论 · 不缓存", "variant": "dashed", "labelAt": [1430, 380] },
+    { "from": "browser", "to": "counterscale", "label": "分析上报", "variant": "dashed", "labelAt": [1430, 505] }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "静态优先",
+      "items": [
+        "内容与渲染解耦：飞书文档作 CMS，R2 存内容，前端零运行时数据库查询",
+        "ISR 缓存：文章列表 3600s · 浏览量 300s · 点赞 60s",
+        "正文服务端 renderMarkdown 预渲染 HTML 下传客户端"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "边缘服务自治",
+      "items": [
+        "评论 / 点赞 / 浏览量 / 分析各为独立 Cloudflare Worker + D1",
+        "页面 SSR 不含交互数据，客户端 useEffect 并发聚合",
+        "边缘服务故障不影响内容渲染，服务间完全解耦"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "同步与扩展",
+      "items": [
+        "GitHub Actions 定时 0 1 * * * + workflow_dispatch 手动增量同步",
+        "内容类型 article / podcast / slides / html，优先级 html > slides > podcast",
+        "Pagefind 构建时静态索引 · next-intl 国际化 · Substack 托管订阅"
+      ]
+    }
+  ]
+}
