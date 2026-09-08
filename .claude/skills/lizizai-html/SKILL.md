@@ -354,7 +354,15 @@ HTML 内容**自带目录索引**，不再通过 postMessage 把标题结构传�
     }
     var renderTimer = null;
     function schedRender() { if (renderTimer) return; renderTimer = setTimeout(function () { renderTimer = null; render(); }, 200); }
-    new MutationObserver(schedRender).observe(document.documentElement, { childList: true, subtree: true });
+    // 监听内容变化重建目录；忽略目录控件自身的 DOM 写入，否则 render 改 list 会触发自己 → 每 200ms 空转重建
+    new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) {
+        var t = muts[i].target;
+        if (t && t.closest && t.closest('.lz-toc-panel, .lz-toc-fab, .lz-toc-mask')) continue;
+        schedRender();
+        break;
+      }
+    }).observe(document.documentElement, { childList: true, subtree: true });
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function () { setTimeout(render, 150); }); } else { setTimeout(render, 150); }
     window.addEventListener('load', function () { setTimeout(render, 300); });
   })();
