@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Clock, ArrowRight, Mail } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { getArticleImageUrl, shouldSkipImageOptimization } from '@/lib/utils/image';
-import { getTimeLabel, getBadgeContent, shouldShowTimeLabel } from '@/lib/content-utils';
+import { getTimeLabel, shouldShowTimeLabel } from '@/lib/content-utils';
 import type { Article } from '@/types/index';
 
 interface HeroProps {
@@ -31,7 +31,6 @@ export default async function Hero({ article, locale }: HeroProps) {
     : '';
 
   const timeLabel = getTimeLabel(tArticle, article.contentType, article.readingTime || 0, article.slideCount);
-  const badgeContent = getBadgeContent(tArticle, article.contentType, article.category?.name, article.slideCount);
 
   return (
     <section className="relative py-8 lg:py-12">
@@ -54,13 +53,6 @@ export default async function Hero({ article, locale }: HeroProps) {
                 />
                 {/* 底部渐变遮罩 */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-
-                {/* 类型/分类标签 */}
-                {badgeContent && (
-                  <span className="absolute top-4 left-4 text-xs font-medium tracking-wide uppercase px-3 py-1 rounded-full bg-primary/90 text-primary-foreground backdrop-blur-sm">
-                    {badgeContent}
-                  </span>
-                )}
               </div>
             </Link>
           </div>

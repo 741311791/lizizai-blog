@@ -71,8 +71,8 @@ function NewsCard({ article, locale, tArticle }: { article: Article; locale: str
   const timeLabel = getTimeLabel(tArticle, article.contentType, article.readingTime || 0, article.slideCount);
 
   return (
-    <Link href={`/article/${article.slug}`} className="flex-shrink-0 snap-start">
-      <div className="group w-72 md:w-80 p-4 rounded-lg border border-border bg-card hover:bg-card/80 hover:border-border/80 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
+    <Link href={`/article/${article.slug}`} className="flex-shrink-0 snap-start flex">
+      <div className="group flex flex-col w-72 md:w-80 p-4 rounded-lg border border-border bg-card hover:bg-card/80 hover:border-border/80 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
         {/* 标题 */}
         <h3 className="text-sm font-semibold leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors">
           {article.title}
@@ -85,21 +85,24 @@ function NewsCard({ article, locale, tArticle }: { article: Article; locale: str
           </p>
         )}
 
-        {/* 内容类型标识 */}
-        <div className="mb-2">
-          <ContentTypeBadge article={article} compact />
-        </div>
+        {/* 底部信息固定在卡底，保证所有卡片等高对齐 */}
+        <div className="mt-auto">
+          {/* 内容类型标识 */}
+          <div className="mb-2">
+            <ContentTypeBadge article={article} compact />
+          </div>
 
-        {/* 时间戳 + 时长 */}
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Clock className="h-3 w-3" />
-          <span>{date}</span>
-          {shouldShowTimeLabel(article.contentType, article.readingTime) && (
-            <>
-              <span>·</span>
-              <span>{timeLabel}</span>
-            </>
-          )}
+          {/* 时间戳 + 时长 */}
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Clock className="h-3 w-3" />
+            <span>{date}</span>
+            {shouldShowTimeLabel(article.contentType, article.readingTime) && (
+              <>
+                <span>·</span>
+                <span>{timeLabel}</span>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </Link>
