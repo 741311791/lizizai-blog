@@ -1,283 +1,45 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { useTranslations } from 'next-intl';
 import { Separator } from '@/components/ui/separator';
-import { Check, Mail, Sparkles, Zap, BookOpen, Users, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Sparkles, Zap, BookOpen, Users, Check, ArrowLeft } from 'lucide-react';
+import SubstackEmbed from '@/components/subscribe/SubstackEmbed';
 
-function SubscribePageContent() {
-  const searchParams = useSearchParams();
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [confirmed, setConfirmed] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // 检查确认成功
-    if (searchParams.get('confirmed') === 'true') {
-      setConfirmed(true);
-    }
-
-    // 检查错误
-    const errorParam = searchParams.get('error');
-    if (errorParam) {
-      const errorMessages: Record<string, string> = {
-        'missing_token': 'Confirmation link is invalid. Please try subscribing again.',
-        'invalid_token': 'Confirmation link is invalid or has already been used.',
-        'token_expired': 'Confirmation link has expired. Please subscribe again.',
-        'confirmation_failed': 'Confirmation failed. Please try again or contact support.',
-        'server_error': 'Server error. Please try again later.',
-      };
-      setError(errorMessages[errorParam] || 'An error occurred. Please try again.');
-    }
-  }, [searchParams]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!email) {
-      setError('Please enter your email address');
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const response = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, name }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error?.message || 'Subscription failed');
-      }
-
-      setSuccess(true);
-      setEmail('');
-      setName('');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Subscription failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+export default function SubscribePage() {
+  const t = useTranslations('subscribe');
+  const tc = useTranslations('common');
+  const tf = useTranslations('footer');
 
   const benefits = [
-    {
-      icon: Sparkles,
-      title: 'Weekly Insights',
-      description: 'Get exclusive articles on AI, productivity, and personal growth',
-    },
-    {
-      icon: Zap,
-      title: 'Early Access',
-      description: 'Be the first to read new content and get special announcements',
-    },
-    {
-      icon: BookOpen,
-      title: 'Free Resources',
-      description: 'Access to templates, guides, and tools to build your business',
-    },
-    {
-      icon: Users,
-      title: 'Community Access',
-      description: 'Join discussions with 178,000+ like-minded entrepreneurs',
-    },
+    { icon: Sparkles, title: t('benefitWeekly'), description: t('benefitWeeklyDesc') },
+    { icon: Zap, title: t('benefitEarly'), description: t('benefitEarlyDesc') },
+    { icon: BookOpen, title: t('benefitFree'), description: t('benefitFreeDesc') },
+    { icon: Users, title: t('benefitCommunity'), description: t('benefitCommunityDesc') },
   ];
 
-  const features = [
-    'No spam, ever',
-    'Unsubscribe anytime',
-    'Free forever',
-    'Join 178,000+ subscribers',
-  ];
-
-  // 确认成功页面
-  if (confirmed) {
-    return (
-      <div className="container mx-auto max-w-2xl px-4 py-16">
-        <div className="text-center space-y-6">
-          <div className="flex justify-center">
-            <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
-              <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold">Welcome to Zizai Blog! 🎉</h1>
-            <p className="text-lg text-muted-foreground">
-              Your subscription has been confirmed successfully
-            </p>
-          </div>
-
-          <div className="p-6 rounded-lg border border-border bg-muted/50 text-left space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold">You're all set!</h3>
-                <p className="text-sm text-muted-foreground">
-                  You'll start receiving our weekly newsletter with exclusive insights on AI, productivity, and building a one-person business.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <Mail className="h-5 w-5 text-primary" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold">Check your inbox</h3>
-                <p className="text-sm text-muted-foreground">
-                  We've sent you a welcome email with more information about what to expect.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="shrink-0 w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold">What's next?</h3>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Explore our latest articles and resources</li>
-                  <li>• Join the community of 178,000+ entrepreneurs</li>
-                  <li>• Share your feedback and connect with us</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-4 justify-center">
-            <Link href="/">
-              <Button size="lg">Explore Articles</Button>
-            </Link>
-            <Link href="/about">
-              <Button variant="outline" size="lg">Learn More About Us</Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (success) {
-    return (
-      <div className="container mx-auto max-w-2xl px-4 py-16">
-        <div className="text-center space-y-6">
-          <div className="flex justify-center">
-            <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
-              <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold">Almost there! ✉️</h1>
-            <p className="text-lg text-muted-foreground">
-              Please check your email to confirm your subscription
-            </p>
-          </div>
-
-          <div className="p-6 rounded-lg border border-border bg-muted/50 text-left space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <Mail className="h-5 w-5 text-primary" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold">Check your inbox</h3>
-                <p className="text-sm text-muted-foreground">
-                  We've sent a confirmation email to <strong className="text-foreground">{email || 'your email'}</strong>.
-                  Click the link in the email to complete your subscription.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="shrink-0 w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
-                <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold">Can't find the email?</h3>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Check your spam or junk folder</li>
-                  <li>• Make sure you entered the correct email address</li>
-                  <li>• The confirmation link expires in 24 hours</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold">After confirmation</h3>
-                <p className="text-sm text-muted-foreground">
-                  You'll receive a welcome email and start getting our weekly newsletter with exclusive insights and resources.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-4 justify-center">
-            <Link href="/">
-              <Button>Back to Home</Button>
-            </Link>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSuccess(false);
-                setEmail('');
-                setName('');
-              }}
-            >
-              Subscribe Another Email
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const features = [t('noSpam'), t('unsubscribeAnytime'), t('freeForever')];
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">
-      <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8">
-        ← Back to Home
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {tc('backToHome')}
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-        {/* Left Column - Benefits */}
+        {/* 左侧：订阅价值 */}
         <div className="space-y-8">
           <div className="space-y-4">
-            <Badge variant="secondary" className="gap-1">
-              <Sparkles className="h-3 w-3" />
-              Join 178,000+ Subscribers
-            </Badge>
-            <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
-              Stay ahead of the curve
-            </h1>
-            <p className="text-xl text-muted-foreground">
-              Get weekly insights on building a one-person business, mastering AI tools, and designing your ideal lifestyle.
-            </p>
+            <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">{t('title')}</h1>
+            <p className="text-xl text-muted-foreground">{t('subtitle')}</p>
           </div>
 
           <Separator />
 
-          {/* Benefits Grid */}
           <div className="space-y-6">
             {benefits.map((benefit, index) => (
               <div key={index} className="flex gap-4">
@@ -286,123 +48,48 @@ function SubscribePageContent() {
                 </div>
                 <div className="space-y-1">
                   <h3 className="font-semibold">{benefit.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {benefit.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{benefit.description}</p>
                 </div>
               </div>
             ))}
           </div>
-
-          {/* Social Proof */}
-          <div className="p-6 rounded-lg border border-border bg-muted/50">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/50 border-2 border-background"
-                  />
-                ))}
-              </div>
-              <div className="text-sm">
-                <div className="font-semibold">178,000+ subscribers</div>
-                <div className="text-muted-foreground">and growing daily</div>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground italic">
-              "This newsletter changed how I think about building my business. The insights are pure gold."
-            </p>
-          </div>
         </div>
 
-        {/* Right Column - Subscribe Form */}
+        {/* 右侧：Substack 订阅入口 */}
         <div className="lg:sticky lg:top-8">
           <div className="p-8 rounded-lg border border-border bg-card shadow-lg">
-            <h2 className="text-2xl font-bold mb-2">Subscribe now</h2>
-            <p className="text-muted-foreground mb-6">
-              Join thousands of entrepreneurs building their future
-            </p>
+            <h2 className="text-2xl font-bold mb-2">{t('subscribeOnSubstack')}</h2>
+            <p className="text-muted-foreground mb-6">{t('confirmHint')}</p>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">
-                  Name
-                </label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  disabled={isLoading}
-                />
-              </div>
+            <SubstackEmbed
+              variant="form"
+              buttonText={t('subscribeForFree')}
+              placeholder={t('emailPlaceholder')}
+            />
 
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
-                  Email
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
-              </div>
-
-              {error && (
-                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-2">
-                  <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-                  <p className="text-sm text-destructive">{error}</p>
+            <div className="space-y-2 pt-6">
+              {features.map((feature, index) => (
+                <div key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-600" />
+                  <span>{feature}</span>
                 </div>
-              )}
-
-              <Button
-                type="submit"
-                className="w-full"
-                size="lg"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Subscribing...' : 'Subscribe for Free'}
-              </Button>
-
-              <div className="space-y-2 pt-2">
-                {features.map((feature, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Check className="h-4 w-4 text-green-600" />
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
-            </form>
+              ))}
+            </div>
 
             <Separator className="my-6" />
 
             <p className="text-xs text-center text-muted-foreground">
-              By subscribing, you agree to our{' '}
               <Link href="/terms" className="text-primary hover:underline">
-                Terms
-              </Link>{' '}
-              and{' '}
+                {tf('terms')}
+              </Link>
+              {' · '}
               <Link href="/privacy" className="text-primary hover:underline">
-                Privacy Policy
+                {tf('privacy')}
               </Link>
             </p>
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-export default function SubscribePage() {
-  return (
-    <Suspense fallback={<div className="container mx-auto max-w-2xl px-4 py-16 text-center">Loading...</div>}>
-      <SubscribePageContent />
-    </Suspense>
   );
 }

@@ -1,100 +1,28 @@
 'use client';
 
-import { useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import SocialLinks from '@/components/ui/social-links';
+import SubstackEmbed from '@/components/subscribe/SubstackEmbed';
 
 export default function Footer() {
   const t = useTranslations('footer');
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!email) {
-      setStatus('error');
-      setMessage(t('enterEmail'));
-      return;
-    }
-
-    setStatus('loading');
-    setMessage('');
-
-    try {
-      const response = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error?.message || 'Failed to subscribe');
-      }
-
-      setStatus('success');
-      setMessage(t('subscribeSuccess'));
-      setEmail('');
-      
-      // Reset status after 5 seconds
-      setTimeout(() => {
-        setStatus('idle');
-        setMessage('');
-      }, 5000);
-    } catch (error) {
-      setStatus('error');
-      setMessage(error instanceof Error ? error.message : t('subscribeFailed'));
-      
-      // Reset status after 5 seconds
-      setTimeout(() => {
-        setStatus('idle');
-        setMessage('');
-      }, 5000);
-    }
-  };
 
   return (
     <footer className="border-t border-border bg-card">
       <div className="container mx-auto max-w-7xl px-4 py-12">
-        {/* Newsletter subscription */}
+        {/* Newsletter subscription — Substack */}
         <div className="mb-8 text-center">
           <h3 className="mb-3 text-lg font-semibold">Zizai Blog</h3>
           <SocialLinks iconSize={18} className="mb-4" />
           <p className="mb-4 text-sm text-muted-foreground">{t('stayRelevant')}</p>
-          <form onSubmit={handleSubscribe} className="mx-auto max-w-md">
-            <div className="flex gap-2">
-              <Input
-                type="email"
-                placeholder={t('emailPlaceholder')}
-                className="bg-background"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={status === 'loading'}
-              />
-              <Button 
-                type="submit"
-                className="bg-primary hover:bg-primary/90"
-                disabled={status === 'loading'}
-              >
-                {status === 'loading' ? t('subscribing') : t('subscribe')}
-              </Button>
-            </div>
-            {message && (
-              <p className={`mt-2 text-sm ${
-                status === 'success' ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {message}
-              </p>
-            )}
-          </form>
+          <div className="mx-auto max-w-md">
+            <SubstackEmbed
+              variant="form"
+              buttonText={t('subscribeOnSubstack')}
+              placeholder={t('emailPlaceholder')}
+            />
+          </div>
         </div>
 
         {/* Footer links */}

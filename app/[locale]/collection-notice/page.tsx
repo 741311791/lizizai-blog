@@ -39,8 +39,8 @@ export default function CollectionNoticePage() {
         <section>
           <h2 className="text-xl font-semibold text-foreground mb-3">邮件订阅</h2>
           <p className="text-sm">
-            邮件订阅通过 Resend 服务处理。当你订阅时，你的邮箱地址会被安全地存储用于发送更新通知。
-            你可以随时取消订阅，取消后邮箱地址将从邮件列表中移除。
+            邮件订阅通过 Substack 服务处理。当你在订阅入口输入邮箱后，将跳转至 Substack 完成订阅，你的邮箱地址由 Substack 直接收集和处理，用于发送更新通知。
+            你可以随时取消订阅，具体参见 Substack 的隐私政策。
           </p>
         </section>
 

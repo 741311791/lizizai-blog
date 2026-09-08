@@ -27,13 +27,10 @@
     "terms": "服务条款",
     "collectionNotice": "信息收集声明",
     "subscribe": "订阅",
-    "subscribing": "订阅中...",
     "emailPlaceholder": "输入你的邮箱...",
     "stayRelevant": "保持竞争力",
-    "copyright": "© {year} Zizai Blog. 保留所有权利。",
-    "subscribeSuccess": "订阅成功！请检查邮箱确认。",
-    "enterEmail": "请输入邮箱地址",
-    "subscribeFailed": "订阅失败，请重试。"
+    "subscribeOnSubstack": "在 Substack 订阅",
+    "copyright": "© {year} Zizai Blog. 保留所有权利。"
   },
   "comment": {
     "title": "评论",
@@ -179,12 +176,10 @@
   "subscribe": {
     "title": "订阅 Zizai Blog",
     "subtitle": "加入社区。获取关于 AI、个人成长和一人创业的最新洞察。",
-    "name": "姓名",
-    "email": "邮箱",
+    "subscribeOnSubstack": "在 Substack 订阅",
     "subscribeForFree": "免费订阅",
-    "subscribing": "订阅中...",
-    "namePlaceholder": "你的名字",
     "emailPlaceholder": "你的邮箱地址",
+    "confirmHint": "提交后将跳转 Substack 完成订阅，请检查收件箱（含垃圾邮件）确认。",
     "benefitWeekly": "每周洞察",
     "benefitWeeklyDesc": "精心策划的 AI 工具、生产力和一人企业建议",
     "benefitEarly": "抢先阅读",
@@ -195,19 +190,7 @@
     "benefitCommunityDesc": "加入志同道合的创作者和构建者社区",
     "noSpam": "绝无垃圾邮件",
     "unsubscribeAnytime": "随时退订",
-    "freeForever": "永久免费",
-    "subscribers": "加入 {count}+ 订阅者",
-    "welcome": "欢迎加入 Zizai Blog！🎉",
-    "welcomeDesc": "你已成功订阅。请查收欢迎邮件。",
-    "almostThere": "快完成了！✉️",
-    "almostThereDesc": "我们已发送确认邮件，请点击链接验证你的订阅。",
-    "checkInbox": "检查收件箱",
-    "invalidLink": "确认链接无效",
-    "invalidLinkDesc": "此确认链接无效或已过期，请重新订阅。",
-    "confirmed": "订阅已确认！🎉",
-    "confirmedDesc": "你的订阅已确认，欢迎加入！",
-    "error": "发生错误",
-    "errorDesc": "出了点问题，请稍后重试。"
+    "freeForever": "永久免费"
   },
   "about": {
     "title": "关于",

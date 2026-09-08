@@ -18,7 +18,7 @@ export default function PrivacyPage() {
           <ul className="list-disc list-inside space-y-2 text-sm">
             <li><strong className="text-foreground">评论信息</strong>：当你在文章下方发表评论时，我们会收集你填写的昵称和邮箱地址。</li>
             <li><strong className="text-foreground">浏览数据</strong>：我们通过 Cloudflare Workers 收集匿名的页面浏览量数据，用于了解文章受欢迎程度。</li>
-            <li><strong className="text-foreground">邮件地址</strong>：如果你订阅了我们的邮件通知，我们会保存你的邮箱地址用于发送更新。</li>
+            <li><strong className="text-foreground">邮件订阅</strong>：订阅通过 Substack 完成，邮箱地址由 Substack 直接收集和处理，本博客不存储订阅邮箱。</li>
           </ul>
         </section>
 
@@ -27,7 +27,6 @@ export default function PrivacyPage() {
           <ul className="list-disc list-inside space-y-2 text-sm">
             <li>改善博客内容和用户体验</li>
             <li>防止垃圾评论和滥用行为</li>
-            <li>向你发送订阅的邮件通知（仅在你主动订阅的情况下）</li>
             <li>分析网站流量趋势</li>
           </ul>
         </section>
@@ -36,7 +35,7 @@ export default function PrivacyPage() {
           <h2 className="text-xl font-semibold text-foreground mb-3">第三方服务</h2>
           <ul className="list-disc list-inside space-y-2 text-sm">
             <li><strong className="text-foreground">Cloudflare</strong>：用于网站托管、分析、评论系统和数据存储（D1 数据库、R2 存储）。</li>
-            <li><strong className="text-foreground">Resend</strong>：用于发送邮件订阅通知。</li>
+            <li><strong className="text-foreground">Substack</strong>：用于邮件订阅服务，订阅者的邮箱由 Substack 收集和处理。</li>
             <li><strong className="text-foreground">Vercel</strong>：用于网站前端部署。</li>
           </ul>
         </section>
