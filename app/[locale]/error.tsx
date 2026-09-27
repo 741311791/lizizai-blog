@@ -1,12 +1,7 @@
-/**
- * 全局错误页面
- *
- * Next.js App Router 错误处理页面
- */
-
 'use client';
 
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { config } from '@/lib/env';
@@ -18,8 +13,9 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations('error');
+
   useEffect(() => {
-    // 记录错误
     console.error('Page error:', error);
   }, [error]);
 
@@ -27,10 +23,8 @@ export default function Error({
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <Card className="max-w-lg w-full">
         <CardHeader>
-          <CardTitle className="text-destructive">Something went wrong!</CardTitle>
-          <CardDescription>
-            We apologize for the inconvenience. An unexpected error has occurred.
-          </CardDescription>
+          <CardTitle className="text-destructive">{t('title')}</CardTitle>
+          <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {config.isDevelopment && (
@@ -44,10 +38,10 @@ export default function Error({
 
           <div className="flex gap-2">
             <Button onClick={reset} variant="default">
-              Try Again
+              {t('retry')}
             </Button>
             <Button onClick={() => (window.location.href = '/')} variant="outline">
-              Go Home
+              {t('goHome')}
             </Button>
           </div>
         </CardContent>
