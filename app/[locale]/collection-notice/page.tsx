@@ -1,64 +1,91 @@
+import { setRequestLocale } from 'next-intl/server';
+import LegalPage, { legalMetadata, type LegalSection } from '@/components/legal/LegalPage';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: '信息收集声明',
-  description: 'Zizai Blog 信息收集声明',
-};
+const PATH = 'collection-notice';
 
-export default function CollectionNoticePage() {
-  return (
-    <div className="container mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-3xl font-bold mb-8">信息收集声明</h1>
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return legalMetadata({ locale, ns: 'collection', path: PATH });
+}
 
-      <div className="prose prose-invert max-w-none space-y-6 text-muted-foreground">
-        <p className="text-sm text-muted-foreground">最后更新：2026 年 4 月</p>
+export default async function CollectionNoticePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
 
-        <section>
-          <h2 className="text-xl font-semibold text-foreground mb-3">网站分析</h2>
-          <p className="text-sm">
-            我们使用 Cloudflare Workers 进行网站流量分析。该服务会对 IP 地址进行匿名化处理，
-            不会追踪个人身份信息。收集的数据仅用于了解网站访问趋势和优化内容。
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold text-foreground mb-3">评论数据</h2>
-          <p className="text-sm">
+  const sections: LegalSection[] = [
+    {
+      id: 'analytics',
+      title: '网站分析',
+      content: (
+        <p>
+          我们使用 Cloudflare Workers 进行网站流量分析。该服务会对 IP 地址进行匿名化处理，
+          不会追踪个人身份信息。收集的数据仅用于了解网站访问趋势和优化内容。
+        </p>
+      ),
+    },
+    {
+      id: 'comments',
+      title: '评论数据',
+      content: (
+        <>
+          <p>
             评论数据存储在 Cloudflare D1 数据库中。当你在文章下方发表评论时，我们会收集：
           </p>
-          <ul className="list-disc list-inside space-y-2 text-sm">
+          <ul>
             <li>你填写的昵称</li>
             <li>评论内容</li>
             <li>评论时间</li>
           </ul>
-          <p className="text-sm mt-2">
-            评论数据不会与任何第三方共享。
-          </p>
-        </section>
+          <p>评论数据不会与任何第三方共享。</p>
+        </>
+      ),
+    },
+    {
+      id: 'subscribe',
+      title: '邮件订阅',
+      content: (
+        <p>
+          邮件订阅通过 Substack 服务处理。当你在订阅入口输入邮箱后，将跳转至 Substack 完成订阅，你的邮箱地址由 Substack 直接收集和处理，用于发送更新通知。
+          你可以随时取消订阅，具体参见 Substack 的隐私政策。
+        </p>
+      ),
+    },
+    {
+      id: 'no-sale',
+      title: '数据不出售',
+      content: (
+        <p>
+          我们承诺不出售、交易或以其他方式向外部第三方转让用户数据。
+          所有数据收集仅用于运营和改善本博客服务。
+        </p>
+      ),
+    },
+    {
+      id: 'contact',
+      title: '联系我们',
+      content: (
+        <p>
+          如果你对数据收集有任何疑问或担忧，请通过邮箱{' '}
+          <a
+            href="mailto:liancheng.ly@gmail.com"
+            className="text-primary hover:underline"
+          >
+            liancheng.ly@gmail.com
+          </a>{' '}
+          与我们取得联系。
+        </p>
+      ),
+    },
+  ];
 
-        <section>
-          <h2 className="text-xl font-semibold text-foreground mb-3">邮件订阅</h2>
-          <p className="text-sm">
-            邮件订阅通过 Substack 服务处理。当你在订阅入口输入邮箱后，将跳转至 Substack 完成订阅，你的邮箱地址由 Substack 直接收集和处理，用于发送更新通知。
-            你可以随时取消订阅，具体参见 Substack 的隐私政策。
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold text-foreground mb-3">数据不出售</h2>
-          <p className="text-sm">
-            我们承诺不出售、交易或以其他方式向外部第三方转让用户数据。
-            所有数据收集仅用于运营和改善本博客服务。
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold text-foreground mb-3">联系我们</h2>
-          <p className="text-sm">
-            如果你对数据收集有任何疑问或担忧，请通过博客上提供的联系方式与我们取得联系。
-          </p>
-        </section>
-      </div>
-    </div>
-  );
+  return <LegalPage locale={locale} ns="collection" sections={sections} />;
 }
