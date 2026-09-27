@@ -30,12 +30,12 @@
 
 ## Acceptance Criteria
 
-- [ ] AC1 代码审查：slides/html 检查点取值来源为顶层 `listFiles`（与 `blogFolderNeedsSync` 同口径）；article/podcast 未变。
-- [ ] AC2 本地校验通过：worker 目录 `tsc --noEmit`（或等价 typecheck）无错误；如有相关测试则通过。
-- [ ] AC3 workflow 含 `timeout-minutes: 180` 与 `if: failure() || cancelled()`，推送后手动触发成功启动。
-- [ ] AC4 追赶运行完成后：R2 公开 URL `blog-data/articles.json` 含 2026-09-26（或更新）的 daily-news 条目。
-- [ ] AC5 追赶后再次运行（或次日 cron）为快速增量（绝大多数 skip），并在验证后将 `timeout-minutes` 改回 60。
-- [ ] AC6 提交信息符合仓库惯例（中文、conventional commit 前缀），只包含本任务文件。
+- [x] AC1 代码审查：slides/html 检查点取值来源为顶层 `listFiles`（与 `blogFolderNeedsSync` 同口径）；article/podcast 未变。
+- [x] AC2 本地校验通过：worker 测试 15/15 + 48/48 通过；tsc 仅报 3 处既有基线错（converter.ts:163 / feishu.ts:58 / sync.ts:502，均非本次改动行）。
+- [x] AC3 workflow 含 `timeout-minutes: 180` 与 `if: failure() || cancelled()`，推送后手动触发成功启动（run 36332363018）。
+- [x] AC4 追赶运行完成（success，1h37m）：`articles.json` 159 篇、覆盖至 2026-09-27、8/23 后无缺天；线上 `/daily-news` 显示 9 月 27 天。
+- [x] AC5 验证 run 36338553546（timeout 已回 60）快速增量完成（详见 implement.md）；`timeout-minutes` 已改回 60（提交 2cbfcc3）。
+- [x] AC6 提交 c570cab / 2cbfcc3，中文 conventional 前缀，只含本任务文件（未动 Header/MobileNav）。
 
 ## Notes
 
