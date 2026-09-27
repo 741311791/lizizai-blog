@@ -14,10 +14,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPaths = ['', '/about', '/archive', '/subscribe', '/privacy', '/terms', '/collection-notice'];
   const locales = ['en', 'zh'];
 
+  // defaultLocale 为 zh：zh 无前缀，en 带 /en 前缀（与 i18n/routing.ts 保持一致）
+  const localeUrl = (locale: string, path: string) =>
+    locale === 'zh' ? `${baseUrl}${path}` : `${baseUrl}/en${path}`;
+
   // 静态页面 — 每种语言一个条目
   const staticPages: MetadataRoute.Sitemap = staticPaths.flatMap((path) =>
     locales.map((locale) => ({
-      url: locale === 'en' ? `${baseUrl}${path}` : `${baseUrl}/zh${path}`,
+      url: localeUrl(locale, path),
       lastModified: new Date(),
       changeFrequency: path === '' ? 'daily' as const : 'monthly' as const,
       priority: path === '' ? 1 : path === '/archive' ? 0.9 : 0.7,
@@ -28,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articles = await getAllArticles();
   const articlePages: MetadataRoute.Sitemap = articles.flatMap((article) =>
     locales.map((locale) => ({
-      url: locale === 'en' ? `${baseUrl}/article/${article.slug}` : `${baseUrl}/zh/article/${article.slug}`,
+      url: localeUrl(locale, `/article/${article.slug}`),
       lastModified: new Date(article.publishedAt),
       changeFrequency: 'weekly' as const,
       priority: 0.9,
@@ -39,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const categories = await getCategories();
   const categoryPages: MetadataRoute.Sitemap = categories.flatMap((category) =>
     locales.map((locale) => ({
-      url: locale === 'en' ? `${baseUrl}/category/${category.slug}` : `${baseUrl}/zh/category/${category.slug}`,
+      url: localeUrl(locale, `/category/${category.slug}`),
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
@@ -50,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const tags = await getAllTags();
   const tagPages: MetadataRoute.Sitemap = tags.flatMap((tag) =>
     locales.map((locale) => ({
-      url: locale === 'en' ? `${baseUrl}/tag/${tag.slug}` : `${baseUrl}/zh/tag/${tag.slug}`,
+      url: localeUrl(locale, `/tag/${tag.slug}`),
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.7,

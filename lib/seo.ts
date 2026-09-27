@@ -118,14 +118,14 @@ export function generateDefaultMetadata(locale: string = 'en'): Metadata {
     // Manifest
     manifest: '/site.webmanifest',
 
-    // RSS Feed + hreflang
+    // RSS Feed + hreflang（defaultLocale 为 zh：zh 无前缀，en 带 /en）
     alternates: {
       types: {
         'application/rss+xml': `${siteConfig.url}/feed.xml`,
       },
       languages: {
-        en: siteConfig.url,
-        zh: `${siteConfig.url}/zh`,
+        zh: siteConfig.url,
+        en: `${siteConfig.url}/en`,
       },
     },
   };
@@ -158,8 +158,9 @@ export function generateArticleMetadata({
   locale?: string;
 }): Metadata {
   const lang = locale === 'zh' ? 'zh' : 'en';
+  // defaultLocale 为 zh：zh 无前缀，en 带 /en（与 i18n/routing.ts 保持一致）
   const url = `${siteConfig.url}/article/${slug}`;
-  const zhUrl = `${siteConfig.url}/zh/article/${slug}`;
+  const enUrl = `${siteConfig.url}/en/article/${slug}`;
   const ogImage = imageUrl || siteConfig.ogImage;
 
   return {
@@ -172,7 +173,7 @@ export function generateArticleMetadata({
     openGraph: {
       type: 'article',
       locale: lang === 'zh' ? 'zh_CN' : 'en_US',
-      url: lang === 'zh' ? zhUrl : url,
+      url: lang === 'zh' ? url : enUrl,
       title,
       description: description || siteConfig.description[lang],
       siteName: siteConfig.name,
@@ -201,10 +202,10 @@ export function generateArticleMetadata({
 
     // hreflang alternate links
     alternates: {
-      canonical: locale === 'zh' ? zhUrl : url,
+      canonical: locale === 'zh' ? url : enUrl,
       languages: {
-        en: url,
-        zh: zhUrl,
+        zh: url,
+        en: enUrl,
       },
     },
   };
