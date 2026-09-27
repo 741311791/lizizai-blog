@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataEng-Twin 平台架构</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #18181b;
+      --color-ink:     #fafaf9;
+      --color-muted:   #a8a29e;
+      --color-accent:  #d97706;
+      --font-sans:     'Geist', 'Noto Sans SC', 'PingFang SC', sans-serif;
+      --font-serif:    'Noto Serif SC', 'Songti SC', serif;
+      --font-mono:     'Geist Mono', 'SF Mono', Menlo, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: #09090b;
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1100px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.4rem, 2.2vw + 0.7rem, 1.9rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+    svg { width: 100%; min-width: 860px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Architecture · DataEng-Twin</p>
+    <h1>数据工程师「数字分身」平台架构</h1>
+
+    <svg viewBox="0 0 1000 604" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="detwin-arch-title detwin-arch-desc">
+      <title id="detwin-arch-title">DataEng-Twin 数字分身平台架构</title>
+      <desc id="detwin-arch-desc">研发任务与群聊输入经常驻调度引擎分发到四类 Agent Skill（需求分流、代码生成、血缘溯源、智能答疑），依托五级知识图谱与 LLM Wiki 双轨混合检索组成的知识中枢作答，群聊知识自生长流入知识库、任务经验沉淀回流，Langfuse 全链路治理。</desc>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#a8a29e"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#d97706"/></marker>
+      </defs>
+
+      <!-- 纸面 -->
+      <rect width="100%" height="100%" fill="#18181b"/>
+
+      <!-- ============ 分区（先画） ============ -->
+      <rect x="436" y="128" width="204" height="292" rx="8" fill="rgba(250,250,249,0.02)" stroke="rgba(250,250,249,0.10)" stroke-width="0.8"/>
+      <rect x="486" y="132" width="104" height="12" rx="2" fill="#18181b"/>
+      <text x="538" y="141" fill="rgba(250,250,249,0.40)" font-size="7" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.14em">AGENT SKILLS</text>
+
+      <rect x="692" y="128" width="268" height="292" rx="8" fill="rgba(250,250,249,0.02)" stroke="rgba(250,250,249,0.10)" stroke-width="0.8"/>
+      <rect x="782" y="132" width="88" height="12" rx="2" fill="#18181b"/>
+      <text x="826" y="141" fill="rgba(250,250,249,0.40)" font-size="7" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.14em">知识中枢</text>
+
+      <!-- ============ 连接线（先于节点） ============ -->
+      <!-- 1 输入→调度 -->
+      <line x1="184" y1="264" x2="236" y2="264" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="178" y="246" width="64" height="12" rx="2" fill="#18181b"/>
+      <text x="210" y="255" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.06em">需求分流</text>
+
+      <!-- 2 调度→技能库 -->
+      <line x1="388" y1="264" x2="436" y2="264" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="388" y="246" width="48" height="12" rx="2" fill="#18181b"/>
+      <text x="412" y="255" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.06em">TASK</text>
+
+      <!-- 3 血缘溯源→五级图谱（正交肘形） -->
+      <path d="M624,316 H652 Q660,316 660,308 V200 Q660,192 668,192 H708" fill="none" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="596" y="278" width="52" height="12" rx="2" fill="#18181b"/>
+      <text x="648" y="287" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="end" letter-spacing="0.06em">CYPHER</text>
+
+      <!-- 4 智能答疑→双轨检索（正交肘形） -->
+      <path d="M624,380 H676 Q684,380 684,372 V348 Q684,340 692,340 H708" fill="none" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="636" y="352" width="40" height="12" rx="2" fill="#18181b"/>
+      <text x="676" y="361" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="end" letter-spacing="0.06em">QUERY</text>
+
+      <!-- 5 图谱→检索（同轴竖线） -->
+      <line x1="764" y1="220" x2="764" y2="312" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="770" y="258" width="56" height="12" rx="2" fill="#18181b"/>
+      <text x="772" y="267" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="start" letter-spacing="0.06em">融合排序</text>
+
+      <!-- 6 群聊→知识库 自生长（虚线，走上路） -->
+      <path d="M112,228 V96 Q112,88 120,88 H876 Q884,88 884,96 V312" fill="none" stroke="#a8a29e" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <rect x="448" y="70" width="136" height="12" rx="2" fill="#18181b"/>
+      <text x="516" y="79" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.06em">群聊挖掘 · 自生长</text>
+
+      <!-- 7 检索→调度 经验沉淀回流（虚线，走下路） -->
+      <path d="M824,368 V424 Q824,432 816,432 H320 Q312,432 312,424 V300" fill="none" stroke="#a8a29e" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <rect x="536" y="414" width="104" height="12" rx="2" fill="#18181b"/>
+      <text x="588" y="423" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.06em">经验沉淀回流</text>
+
+      <!-- 8 Langfuse→技能库 观察（虚线，跨线处跳桥） -->
+      <path d="M536,472 V440 a 8,8 0 0 0 0,-16 V420" fill="none" stroke="#a8a29e" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <rect x="546" y="440" width="64" height="12" rx="2" fill="#18181b"/>
+      <text x="548" y="449" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="start" letter-spacing="0.06em">OBSERVE</text>
+
+      <!-- ============ 节点 ============ -->
+      <!-- 输入 -->
+      <rect x="40" y="228" width="144" height="72" rx="6" fill="rgba(168,162,158,0.10)" stroke="#78716c" stroke-width="1"/>
+      <text x="112" y="260" fill="#fafaf9" font-size="12" font-weight="600" font-family="'Geist','Noto Sans SC','PingFang SC',sans-serif" text-anchor="middle">需求 · 群聊输入</text>
+      <text x="112" y="278" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">研发任务 / IM 协作</text>
+
+      <!-- 调度引擎（焦点 1） -->
+      <rect x="236" y="228" width="152" height="72" rx="6" fill="rgba(217,119,6,0.12)" stroke="#d97706" stroke-width="1.2"/>
+      <text x="312" y="260" fill="#fafaf9" font-size="12" font-weight="600" font-family="'Geist','Noto Sans SC','PingFang SC',sans-serif" text-anchor="middle">常驻调度引擎</text>
+      <text x="312" y="278" fill="#d97706" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">7×24h · 上下文管理</text>
+
+      <!-- 四类技能 -->
+      <g font-family="'Geist','Noto Sans SC','PingFang SC',sans-serif">
+        <rect x="452" y="164" width="172" height="48" rx="6" fill="#202024" stroke="rgba(250,250,249,0.45)" stroke-width="1"/>
+        <text x="538" y="184" fill="#fafaf9" font-size="12" font-weight="600" text-anchor="middle">需求分流</text>
+        <text x="538" y="200" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">Requirement-Parser</text>
+
+        <rect x="452" y="228" width="172" height="48" rx="6" fill="#202024" stroke="rgba(250,250,249,0.45)" stroke-width="1"/>
+        <text x="538" y="248" fill="#fafaf9" font-size="12" font-weight="600" text-anchor="middle">代码生成</text>
+        <text x="538" y="264" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">Pipeline-Generator</text>
+
+        <rect x="452" y="292" width="172" height="48" rx="6" fill="#202024" stroke="rgba(250,250,249,0.45)" stroke-width="1"/>
+        <text x="538" y="312" fill="#fafaf9" font-size="12" font-weight="600" text-anchor="middle">血缘溯源</text>
+        <text x="538" y="328" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">Lineage-Tracer</text>
+
+        <rect x="452" y="356" width="172" height="48" rx="6" fill="#202024" stroke="rgba(250,250,249,0.45)" stroke-width="1"/>
+        <text x="538" y="376" fill="#fafaf9" font-size="12" font-weight="600" text-anchor="middle">智能答疑</text>
+        <text x="538" y="392" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">QA-Assistant</text>
+      </g>
+
+      <!-- 五级图谱（存储） -->
+      <rect x="708" y="164" width="112" height="56" rx="6" fill="rgba(250,250,249,0.05)" stroke="#a8a29e" stroke-width="1"/>
+      <text x="764" y="188" fill="#fafaf9" font-size="12" font-weight="600" font-family="'Geist','Noto Sans SC','PingFang SC',sans-serif" text-anchor="middle">五级图谱</text>
+      <text x="764" y="204" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">Neo4j</text>
+
+      <!-- 双轨检索（焦点 2） -->
+      <rect x="708" y="312" width="236" height="56" rx="6" fill="rgba(217,119,6,0.12)" stroke="#d97706" stroke-width="1.2"/>
+      <text x="826" y="336" fill="#fafaf9" font-size="12" font-weight="600" font-family="'Geist','Noto Sans SC','PingFang SC',sans-serif" text-anchor="middle">LLM Wiki · 双轨混合检索</text>
+      <text x="826" y="352" fill="#d97706" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">BM25 + Dense · 聚类自生长</text>
+
+      <!-- Langfuse 治理（可选/异步） -->
+      <rect x="436" y="472" width="524" height="48" rx="6" fill="rgba(250,250,249,0.02)" stroke="rgba(250,250,249,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="698" y="492" fill="#fafaf9" font-size="12" font-weight="600" font-family="'Geist','Noto Sans SC','PingFang SC',sans-serif" text-anchor="middle">Langfuse LLMOps 治理</text>
+      <text x="698" y="508" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">全链路 Trace · Token 成本 · 检索命中率</text>
+
+      <!-- ============ 图例（底部横条） ============ -->
+      <line x1="40" y1="548" x2="960" y2="548" stroke="rgba(250,250,249,0.12)" stroke-width="0.8"/>
+      <text x="40" y="568" fill="#a8a29e" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" letter-spacing="0.14em">LEGEND</text>
+      <line x1="120" y1="565" x2="156" y2="565" stroke="#a8a29e" stroke-width="1.2"/>
+      <text x="164" y="568" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace">数据流</text>
+      <line x1="240" y1="565" x2="276" y2="565" stroke="#a8a29e" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="284" y="568" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace">知识回流 / 治理</text>
+      <rect x="404" y="559" width="12" height="12" rx="2" fill="rgba(217,119,6,0.12)" stroke="#d97706" stroke-width="1"/>
+      <text x="424" y="568" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace">焦点组件</text>
+    </svg>
+  </div>
+</body>
+</html>
