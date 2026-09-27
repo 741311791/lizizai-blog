@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Lock, RefreshCw, LogOut, CheckCircle, XCircle } from 'lucide-react';
+import { Lock, RefreshCw, LogOut, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -28,7 +28,7 @@ export default function AdminPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!password.trim()) return;
+    if (!password) return;
 
     setAuthLoading(true);
     setAuthError('');
@@ -37,10 +37,17 @@ export default function AdminPage() {
       const res = await fetch('/api/admin/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: password.trim() }),
+        body: JSON.stringify({ password }),
       });
 
-      const data = await res.json();
+      let data: { error?: string } = {};
+      try {
+        data = await res.json();
+      } catch {
+        // 网关/上游返回非 JSON（如 502 HTML）时给出可理解文案
+        setAuthError('服务暂时不可用，请稍后重试');
+        return;
+      }
 
       if (res.ok) {
         setAuthenticated(true);
@@ -55,8 +62,12 @@ export default function AdminPage() {
   };
 
   const handleLogout = async () => {
-    // 清除 cookie
-    document.cookie = 'admin_session=; path=/; max-age=0';
+    // cookie 是 httpOnly，必须由服务端 DELETE 接口删除
+    try {
+      await fetch('/api/admin/auth', { method: 'DELETE' });
+    } catch {
+      // 网络异常也重置本地状态，下次进入会重新校验
+    }
     setAuthenticated(false);
     setSyncResult(null);
   };
@@ -67,7 +78,14 @@ export default function AdminPage() {
 
     try {
       const res = await fetch('/api/admin/sync', { method: 'POST' });
-      const data = await res.json();
+
+      let data: { message?: string; error?: string } = {};
+      try {
+        data = await res.json();
+      } catch {
+        setSyncResult({ success: false, message: '服务暂时不可用，请稍后重试' });
+        return;
+      }
 
       if (res.ok) {
         setSyncResult({ success: true, message: data.message || '同步成功' });
@@ -104,21 +122,36 @@ export default function AdminPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
-              <Input
-                type="password"
-                placeholder="管理密码"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoFocus
-              />
+              <div className="space-y-2">
+                <label htmlFor="admin-password" className="sr-only">
+                  管理密码
+                </label>
+                <Input
+                  id="admin-password"
+                  type="password"
+                  placeholder="管理密码"
+                  autoComplete="current-password"
+                  className="h-11"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoFocus
+                />
+              </div>
               {authError && (
-                <p className="text-sm text-red-500 flex items-center gap-1">
+                <p className="text-sm text-red-500 flex items-center gap-1" role="alert">
                   <XCircle className="h-3.5 w-3.5" />
                   {authError}
                 </p>
               )}
-              <Button type="submit" className="w-full" disabled={authLoading}>
-                {authLoading ? '验证中...' : '进入后台'}
+              <Button type="submit" size="lg" className="w-full" disabled={authLoading}>
+                {authLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    验证中...
+                  </>
+                ) : (
+                  '进入后台'
+                )}
               </Button>
             </form>
           </CardContent>
@@ -159,6 +192,7 @@ export default function AdminPage() {
               <Button
                 onClick={handleSync}
                 disabled={syncing}
+                size="lg"
                 className="gap-2"
               >
                 <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
@@ -168,7 +202,9 @@ export default function AdminPage() {
               {/* 同步结果 */}
               {syncResult && (
                 <div
-                  className={`flex items-center gap-2 text-sm p-3 rounded-lg ${
+                  role="status"
+                  aria-live="polite"
+                  className={`flex items-center gap-2 text-sm p-3 rounded-lg animate-status-enter ${
                     syncResult.success
                       ? 'bg-green-500/10 text-green-500'
                       : 'bg-red-500/10 text-red-500'

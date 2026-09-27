@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import { constantTimeEqual, hasValidSession } from '@/lib/admin-session';
 
 const CF_COMMENT_URL = process.env.NEXT_PUBLIC_CF_COMMENT_URL || '';
 const CF_COMMENT_PASSWORD = process.env.CF_COMMENT_PASSWORD || '';
@@ -54,11 +55,10 @@ async function ensureCommentAreas(slugs: string[]): Promise<void> {
 }
 
 export async function POST(request: NextRequest) {
-  // 两种认证方式：管理员 cookie 或 Vercel Cron Secret
-  const session = request.cookies.get('admin_session')?.value;
+  // 两种认证方式：管理员会话 cookie（HMAC 签名校验）或 Vercel Cron Secret
   const cronSecret = request.headers.get('x-vercel-cron-secret');
-  const isCron = cronSecret === process.env.CRON_SECRET;
-  const isAdmin = session === 'true';
+  const isCron = !!process.env.CRON_SECRET && constantTimeEqual(cronSecret ?? '', process.env.CRON_SECRET);
+  const isAdmin = await hasValidSession(request);
 
   if (!isAdmin && !isCron) {
     return NextResponse.json({ error: '未授权' }, { status: 401 });
