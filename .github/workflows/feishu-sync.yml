@@ -17,9 +17,10 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    # 临时 180：2026-09-28 修复增量口径后需一次全量追赶（约 2h），验证增量恢复后改回 60。
-    # public 仓库 Actions 分钟数无限制，拉高无成本
-    timeout-minutes: 180
+    # 增量恢复后常规一轮为分钟级；上限留余量应对偶尔的多文章重传。
+    # 若再次逼近上限，先查增量是否失效（判断/检查点口径），不要直接调大。
+    # public 仓库 Actions 分钟数无限制
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@v4
