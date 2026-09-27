@@ -17,8 +17,9 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    # 同步全量文档耗时随内容增长逼近上限；public 仓库 Actions 分钟数无限制
-    timeout-minutes: 60
+    # 临时 180：2026-09-28 修复增量口径后需一次全量追赶（约 2h），验证增量恢复后改回 60。
+    # public 仓库 Actions 分钟数无限制，拉高无成本
+    timeout-minutes: 180
 
     steps:
       - uses: actions/checkout@v4
@@ -75,7 +76,8 @@ jobs:
             "${SITE_URL}/api/revalidate" || \
             echo "::warning::缓存刷新请求失败，ISR 将在 revalidate 周期内自然更新"
 
-      - name: 同步结果通知（失败时）
-        if: failure()
+      - name: 同步结果通知（失败或超时取消时）
+        # 超时被杀的 job 状态是 cancelled 而非 failure，此前漏报了一个多月
+        if: failure() || cancelled()
         run: |
-          echo "::error::飞书博客同步失败，请检查日志"
+          echo "::error::飞书博客同步失败或超时被取消，请检查日志"

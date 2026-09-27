@@ -153,6 +153,11 @@ function docNeedsSync(
  *
  * 不能用"子文件 mtime > 文章 docx mtime"作基准——多内容类型文章的生产顺序是
  * 先文章后播客/PPT，子文件 mtime 天然大于文章，会导致增量永久失效（每次全量重传）。
+ *
+ * ⚠ 口径约束：检查点写入基准（syncBlogFolder）必须与本函数判断口径一致——
+ * 均取类型子文件夹「顶层列表」的 max mtime（含 screenshots 等子文件夹条目）。
+ * 飞书文件夹条目 mtime 恒晚于内部文件 1–2 秒，若写入侧只记文件 mtime，
+ * 检查点永远偏小 → 每轮判断都需同步 → 全量重传（2026-08 每日资讯停更的根因）。
  * 返回 subItems 供后续复用，避免重复 listFiles 调用
  */
 export async function blogFolderNeedsSync(
@@ -384,6 +389,15 @@ export async function performSync(env: SyncEnv, forceSync = false): Promise<Sync
         }
       } catch (err) {
         console.error(`[sync] 处理失败 ${item.name}:`, err);
+      }
+
+      // 超时防护：每处理 10 篇落盘一次索引（绕过 trackedR2，避免变更清单重复记录）。
+      // 运行中途被杀（超时/取消）时已处理文章不丢失，下轮从新检查点续跑；
+      // 代价是运行期间索引短暂只含已遍历文章，结束时由下方完整写入覆盖
+      if (allArticles.length > 0 && allArticles.length % 10 === 0) {
+        await env.R2.put(`${env.R2_BASE_PATH}/articles.json`, JSON.stringify(allArticles, null, 2), {
+          httpMetadata: { contentType: 'application/json' },
+        });
       }
     }
   }
@@ -789,7 +803,7 @@ async function syncPodcastFolder(
   return { items: podcastItems, maxModifiedTime: maxModifiedTime(items) };
 }
 
-async function syncSlidesFolder(
+export async function syncSlidesFolder(
   client: FeishuClient,
   folder: FeishuFile,
   slug: string,
@@ -801,6 +815,10 @@ async function syncSlidesFolder(
 
   const allFiles = await client.listAllFilesRecursive(folder.token);
   if (allFiles.length === 0) return undefined;
+
+  // 检查点基准与 blogFolderNeedsSync 同口径：顶层列表（含子文件夹条目 mtime）。
+  // 文件夹条目 mtime 恒晚于内部文件，若只记递归文件 mtime，下轮判断必判"已修改"
+  const topItems = await client.listFiles(folder.token);
 
   // 过滤：优先同步核心文件，不再限制总数（GitHub Actions 无子请求限制）
   const coreFiles = allFiles.filter(f =>
@@ -838,7 +856,7 @@ async function syncSlidesFolder(
     source: 'html_slides' as const,
     hasScreenshots,
     manifest: manifest.length > 0 ? manifest : undefined,
-    maxModifiedTime: maxModifiedTime(allFiles),
+    maxModifiedTime: maxModifiedTime(topItems),
   };
 }
 
@@ -849,7 +867,7 @@ async function syncSlidesFolder(
  * （主题 CSS + Google Fonts + postMessage 高度/TOC 同步脚本 + .prose 容器）。
  * 主文件选取优先级：index.html > 与文章 slug 同名 > 唯一/第一个 html 文件。
  */
-async function syncHtmlFolder(
+export async function syncHtmlFolder(
   client: FeishuClient,
   folder: FeishuFile,
   slug: string,
@@ -861,6 +879,8 @@ async function syncHtmlFolder(
   console.log(`  同步 HTML 文件夹...`);
 
   const allFiles = await client.listAllFilesRecursive(folder.token);
+  // 检查点基准与 blogFolderNeedsSync 同口径：顶层列表（含子文件夹条目 mtime）
+  const topItems = await client.listFiles(folder.token);
   const htmlFiles = allFiles.filter(f => f.type !== 'folder' && /\.html?$/i.test(f.path));
   if (htmlFiles.length === 0) {
     console.warn(`  HTML 文件夹无 .html 文件，跳过`);
@@ -896,7 +916,7 @@ async function syncHtmlFolder(
   return {
     htmlUrl: `${r2PublicUrl}/${r2Prefix}/index.html`,
     fileSize: data.byteLength,
-    maxModifiedTime: maxModifiedTime(allFiles),
+    maxModifiedTime: maxModifiedTime(topItems),
   };
 }
 
