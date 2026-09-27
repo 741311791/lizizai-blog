@@ -1,53 +1,56 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart, Share2, Eye } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { getReactions, getViews, postReaction, postVisit, isEmactionEnabled, isWebvisoEnabled } from '@/lib/services';
+import { postReaction, postVisit, isEmactionEnabled, isWebvisoEnabled } from '@/lib/services';
+import { useArticleStats, bumpCachedLikes } from '@/hooks/useArticleStats';
 
 interface ArticleActionsProps {
   articleId: string;
   likes: number;
-  shares: number;
-  views?: number;
 }
 
 const LIKED_ARTICLES_KEY = 'liked_articles';
 
-export default function ArticleActions({ articleId, likes, shares, views }: ArticleActionsProps) {
+/** localStorage 读取容错：存储污染时回退空列表 */
+function readLikedArticles(): string[] {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LIKED_ARTICLES_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export default function ArticleActions({ articleId, likes }: ArticleActionsProps) {
   const t = useTranslations('article');
+  const stats = useArticleStats(articleId, { likes, views: 0 });
   const [isLiked, setIsLiked] = useState(false);
-  const [currentLikes, setCurrentLikes] = useState(likes);
-  const [currentViews, setCurrentViews] = useState(views ?? 0);
+  // 点赞乐观增量：真实值 = 服务端统计 + 本地增量，无需 effect 同步
+  const [likeDelta, setLikeDelta] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const currentLikes = stats.likes + likeDelta;
 
-  // 检查 localStorage 是否已点赞
-  useEffect(() => {
-    const likedArticles = JSON.parse(localStorage.getItem(LIKED_ARTICLES_KEY) || '[]');
-    setIsLiked(likedArticles.includes(articleId));
-  }, [articleId]);
-
-  // 客户端获取点赞数/浏览量（避免服务端短 revalidate 拉低文章页 ISR）
+  // 检查 localStorage 是否已点赞（微任务中同步，避免 effect 内同步 setState 级联渲染）
   useEffect(() => {
     let cancelled = false;
-    async function loadStats() {
-      const [reactions, v] = await Promise.all([
-        isEmactionEnabled() ? getReactions(articleId) : Promise.resolve([]),
-        isWebvisoEnabled() ? getViews(articleId) : Promise.resolve(0),
-      ]);
-      if (cancelled) return;
-      setCurrentLikes(reactions.reduce((sum, r) => sum + r.count, 0));
-      setCurrentViews(v);
-    }
-    loadStats();
-    return () => { cancelled = true; };
+    queueMicrotask(() => {
+      if (!cancelled) setIsLiked(readLikedArticles().includes(articleId));
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [articleId]);
 
-  // 记录页面访问（Webviso）
+  // 记录页面访问（ref 防御 StrictMode 双挂载重复计数）
+  const visitedRef = useRef(false);
   useEffect(() => {
+    if (visitedRef.current) return;
+    visitedRef.current = true;
     if (isWebvisoEnabled()) {
       postVisit(articleId);
     }
@@ -60,15 +63,16 @@ export default function ArticleActions({ articleId, likes, shares, views }: Arti
 
     // 乐观更新
     setIsLiked(true);
-    setCurrentLikes(currentLikes + 1);
+    setLikeDelta(d => d + 1);
 
     try {
       if (isEmactionEnabled()) {
         await postReaction(articleId, 'thumbs-up', 1);
+        bumpCachedLikes(articleId, 1);
       }
 
       // 更新 localStorage
-      const likedArticles = JSON.parse(localStorage.getItem(LIKED_ARTICLES_KEY) || '[]');
+      const likedArticles = readLikedArticles();
       if (!likedArticles.includes(articleId)) {
         likedArticles.push(articleId);
         localStorage.setItem(LIKED_ARTICLES_KEY, JSON.stringify(likedArticles));
@@ -76,7 +80,8 @@ export default function ArticleActions({ articleId, likes, shares, views }: Arti
     } catch (error) {
       console.error('点赞失败:', error);
       setIsLiked(false);
-      setCurrentLikes(currentLikes);
+      // 函数式回滚：避免闭包旧值
+      setLikeDelta(d => d - 1);
     } finally {
       setIsLoading(false);
     }
@@ -110,40 +115,37 @@ export default function ArticleActions({ articleId, likes, shares, views }: Arti
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       <Button
         variant="ghost"
         size="sm"
         onClick={handleLike}
         disabled={isLoading || isLiked}
+        aria-pressed={isLiked}
         className={cn(
-          'gap-1.5 h-8 px-3',
+          'gap-1.5 h-10 px-3.5 tabular-nums',
           isLiked && 'text-red-500 hover:text-red-600'
         )}
       >
-        <Heart className={cn('h-4 w-4', isLiked && 'fill-current')} />
+        <Heart className={cn('h-4 w-4', isLiked && 'fill-current')} aria-hidden="true" />
         <span className="text-sm">{currentLikes}</span>
       </Button>
 
       {isWebvisoEnabled() && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="gap-1.5 h-8 px-3 cursor-default"
-        >
-          <Eye className="h-4 w-4" />
-          <span className="text-sm">{currentViews}</span>
-        </Button>
+        <span className="inline-flex items-center gap-1.5 h-10 px-3.5 text-sm text-muted-foreground tabular-nums">
+          <Eye className="h-4 w-4" aria-hidden="true" />
+          {stats.views}
+        </span>
       )}
 
       <Button
         variant="ghost"
         size="sm"
         onClick={handleShare}
-        className="gap-1.5 h-8 px-3"
+        aria-label={t('share')}
+        className="gap-1.5 h-10 px-3.5"
       >
-        <Share2 className="h-4 w-4" />
-        <span className="text-sm">{shares}</span>
+        <Share2 className="h-4 w-4" aria-hidden="true" />
       </Button>
     </div>
   );

@@ -1,11 +1,16 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { Mic, Play, Pause, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { Mic, Play, Pause, FileText, ChevronDown } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import MarkdownContent from './MarkdownContent';
 import type { PodcastItem } from '@/types/index';
+
+// react-markdown/hljs/mermaid 仅在文字稿展开时加载
+const MarkdownContent = dynamic(() => import('./MarkdownContent'), {
+  ssr: false,
+  loading: () => <div className="h-24 rounded-lg bg-muted animate-pulse" />,
+});
 
 const AudioPlayer = dynamic(() => import('./AudioPlayer'), {
   loading: () => <div className="h-20 rounded-lg bg-muted animate-pulse mb-8" />,
@@ -25,6 +30,8 @@ export default function PodcastList({ podcasts, articleTitle }: PodcastListProps
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
   const [showTranscript, setShowTranscript] = useState(false);
   const [transcriptContent, setTranscriptContent] = useState('');
+  // 请求序号：快速切换播客时丢弃过期的文字稿响应
+  const transcriptReqRef = useRef(0);
 
   const activePodcast = podcasts.find(p => p.slug === activeSlug);
 
@@ -39,18 +46,21 @@ export default function PodcastList({ podcasts, articleTitle }: PodcastListProps
       return;
     }
     if (!activePodcast?.scriptFile) return;
+    const requestId = ++transcriptReqRef.current;
     try {
       const res = await fetch(activePodcast.scriptFile);
-      if (res.ok) {
-        setTranscriptContent(await res.text());
-        setShowTranscript(true);
-      }
+      if (!res.ok) return;
+      const text = await res.text();
+      if (transcriptReqRef.current !== requestId) return;
+      setTranscriptContent(text);
+      setShowTranscript(true);
     } catch {
       // 加载失败静默处理
     }
   }, [showTranscript, transcriptContent, activePodcast]);
 
   const handleSelectPodcast = useCallback((slug: string) => {
+    transcriptReqRef.current++; // 使旧请求过期
     setActiveSlug(prev => prev === slug ? null : slug);
     setShowTranscript(false);
     setTranscriptContent('');
@@ -79,6 +89,8 @@ export default function PodcastList({ podcasts, articleTitle }: PodcastListProps
                   src={podcast.coverFile}
                   alt={podcast.name}
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <Mic className="w-8 h-8 text-muted-foreground" />
@@ -98,7 +110,7 @@ export default function PodcastList({ podcasts, articleTitle }: PodcastListProps
             </div>
 
             {/* 播放图标 */}
-            <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity">
               {activeSlug === podcast.slug ? (
                 <Pause className="w-3.5 h-3.5 text-primary" />
               ) : (
@@ -133,11 +145,7 @@ export default function PodcastList({ podcasts, articleTitle }: PodcastListProps
               >
                 <FileText className="w-4 h-4" />
                 {t('transcript')}
-                {showTranscript ? (
-                  <ChevronUp className="w-3.5 h-3.5" />
-                ) : (
-                  <ChevronDown className="w-3.5 h-3.5" />
-                )}
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showTranscript ? 'rotate-180' : ''}`} />
               </button>
               {showTranscript && transcriptContent && (
                 <div className="mt-4 pt-4 border-t border-border">

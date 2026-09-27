@@ -33,12 +33,6 @@ export default function Footer() {
           <Link href="/archive" className="hover:text-primary transition-colors">
             {t('archive')}
           </Link>
-          <Link href="/recommendations" className="hover:text-primary transition-colors">
-            {t('recommendations')}
-          </Link>
-          <Link href="/sitemap" className="hover:text-primary transition-colors">
-            {t('sitemap')}
-          </Link>
           <Link href="/privacy" className="hover:text-primary transition-colors">
             {t('privacy')}
           </Link>

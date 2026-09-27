@@ -1,85 +1,121 @@
 import Image from 'next/image';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Mail, Twitter, Linkedin, Youtube, Globe } from 'lucide-react';
 import type { Metadata } from 'next';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { Link } from '@/i18n/navigation';
+import { siteConfig } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: '关于我们',
-  description: '在人工智能重塑每个行业的世界里，我们致力于帮助你在这场转型中导航，构建在AI时代蓬勃发展的一人企业。',
-  openGraph: {
-    title: '关于 Zizai Blog',
-    description: '在人工智能重塑每个行业的世界里，我们致力于帮助你在这场转型中导航，构建在AI时代蓬勃发展的一人企业。',
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'about' });
+  const isZh = locale === 'zh';
+  const url = isZh ? `${siteConfig.url}/about` : `${siteConfig.url}/en/about`;
+  return {
+    title: t('title'),
+    description: t('tagline'),
+    alternates: {
+      canonical: url,
+      languages: {
+        zh: `${siteConfig.url}/about`,
+        en: `${siteConfig.url}/en/about`,
+      },
+    },
+  };
+}
 
-export default function AboutPage() {
+const SOCIALS = [
+  { href: 'https://twitter.com/zizaiblog', Icon: Twitter, label: 'Twitter' },
+  { href: 'https://youtube.com/@zizaili', Icon: Youtube, label: 'YouTube' },
+  { href: 'https://www.linkedin.com/in/zizai-li', Icon: Linkedin, label: 'LinkedIn' },
+] as const;
+
+export default async function AboutPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('about');
+
+  const learnCards = [
+    { title: t('learn1Title'), desc: t('learn1Desc') },
+    { title: t('learn2Title'), desc: t('learn2Desc') },
+    { title: t('learn3Title'), desc: t('learn3Desc') },
+    { title: t('learn4Title'), desc: t('learn4Desc') },
+  ];
+
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
-      {/* Hero Section */}
+      {/* Hero */}
       <div className="text-center mb-12 space-y-6">
-        <Avatar className="h-32 w-32 mx-auto">
-          <AvatarImage src="https://picsum.photos/seed/author/400/400" alt="DAN KOE" />
-          <AvatarFallback className="text-2xl">DK</AvatarFallback>
-        </Avatar>
-        <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
-          About Zizai Blog
+        <div className="mx-auto h-32 w-32 overflow-hidden rounded-full ring-1 ring-white/10">
+          <Image
+            src="/avator/avatar_smile.png"
+            alt="李自在 / Zizai Li"
+            width={128}
+            height={128}
+            sizes="128px"
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <h1 className="text-4xl font-bold tracking-tight lg:text-5xl text-balance">
+          {t('title')}
         </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          A newsletter helping you stay relevant in a rapidly changing world
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
+          {t('tagline')}
         </p>
       </div>
 
       <Separator className="my-12" />
 
-      {/* Mission Statement */}
+      {/* Mission */}
       <section className="mb-12 space-y-6">
-        <h2 className="text-3xl font-bold">Our Mission</h2>
-        <div className="prose prose-invert prose-lg max-w-none">
-          <p className="text-muted-foreground leading-relaxed">
-            In a world where artificial intelligence is reshaping every industry, where traditional career paths are becoming obsolete, and where the definition of "making it" is being radically transformed, we need a new approach to building our lives and careers.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            Zizai Blog is dedicated to helping you navigate this transformation. We explore the intersection of technology, creativity, and entrepreneurship to help you build a one-person business that thrives in the age of AI.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            Our content focuses on three core pillars: learning (how to adapt and acquire new skills), persuasion (how to build an audience and attract opportunities), and execution (how to turn ideas into reality using modern tools and automation).
-          </p>
+        <h2 className="text-3xl font-bold">{t('missionTitle')}</h2>
+        <div className="max-w-none space-y-5">
+          <p className="text-muted-foreground leading-relaxed text-pretty">{t('missionP1')}</p>
+          <p className="text-muted-foreground leading-relaxed text-pretty">{t('missionP2')}</p>
+          <p className="text-muted-foreground leading-relaxed text-pretty">{t('missionP3')}</p>
         </div>
       </section>
 
       <Separator className="my-12" />
 
-      {/* About the Author */}
+      {/* Author */}
       <section className="mb-12 space-y-6">
-        <h2 className="text-3xl font-bold">About DAN KOE</h2>
-        <div className="prose prose-invert prose-lg max-w-none">
-          <p className="text-muted-foreground leading-relaxed">
-            DAN KOE is an entrepreneur, writer, and creator who has built a thriving one-person business helping others do the same. With over 178,000 subscribers, he shares insights on building sustainable online businesses, mastering digital skills, and designing a life of purpose and profit.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            His work focuses on helping individuals leverage modern technology to create location-independent income streams while maintaining creative autonomy and personal freedom.
-          </p>
+        <h2 className="text-3xl font-bold">{t('authorTitle')}</h2>
+        <div className="max-w-none space-y-5">
+          <p className="text-muted-foreground leading-relaxed text-pretty">{t('authorP1')}</p>
+          <p className="text-muted-foreground leading-relaxed text-pretty">{t('authorP2')}</p>
         </div>
 
-        {/* Social Links */}
+        {/* Social Links — 真实外链 */}
         <div className="flex flex-wrap gap-4 pt-6">
-          <Button variant="outline" size="lg" className="gap-2">
-            <Twitter className="h-5 w-5" />
-            Twitter
+          <Button variant="outline" size="lg" asChild className="gap-2">
+            <a href="mailto:liancheng.ly@gmail.com">
+              <Mail className="h-5 w-5" aria-hidden="true" />
+              Email
+            </a>
           </Button>
-          <Button variant="outline" size="lg" className="gap-2">
-            <Linkedin className="h-5 w-5" />
-            LinkedIn
-          </Button>
-          <Button variant="outline" size="lg" className="gap-2">
-            <Youtube className="h-5 w-5" />
-            YouTube
-          </Button>
-          <Button variant="outline" size="lg" className="gap-2">
-            <Globe className="h-5 w-5" />
-            Website
+          {SOCIALS.map(({ href, Icon, label }) => (
+            <Button key={label} variant="outline" size="lg" asChild className="gap-2">
+              <a href={href} target="_blank" rel="noopener noreferrer">
+                <Icon className="h-5 w-5" aria-hidden="true" />
+                {label}
+              </a>
+            </Button>
+          ))}
+          <Button variant="outline" size="lg" asChild className="gap-2">
+            <a href={siteConfig.url} target="_blank" rel="noopener noreferrer">
+              <Globe className="h-5 w-5" aria-hidden="true" />
+              {t('website')}
+            </a>
           </Button>
         </div>
       </section>
@@ -88,32 +124,14 @@ export default function AboutPage() {
 
       {/* What You'll Learn */}
       <section className="mb-12 space-y-6">
-        <h2 className="text-3xl font-bold">What You'll Learn</h2>
+        <h2 className="text-3xl font-bold">{t('learnTitle')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 rounded-lg border border-border bg-card">
-            <h3 className="text-xl font-semibold mb-3">AI & Prompts</h3>
-            <p className="text-muted-foreground">
-              Master the art of working with AI tools to enhance your productivity and creativity. Learn prompt engineering and automation strategies.
-            </p>
-          </div>
-          <div className="p-6 rounded-lg border border-border bg-card">
-            <h3 className="text-xl font-semibold mb-3">Writing Strategies</h3>
-            <p className="text-muted-foreground">
-              Develop your writing skills to create compelling content that attracts and engages your audience. From newsletters to long-form articles.
-            </p>
-          </div>
-          <div className="p-6 rounded-lg border border-border bg-card">
-            <h3 className="text-xl font-semibold mb-3">Marketing Strategies</h3>
-            <p className="text-muted-foreground">
-              Build and grow your personal brand using proven marketing techniques. Learn how to attract opportunities and monetize your expertise.
-            </p>
-          </div>
-          <div className="p-6 rounded-lg border border-border bg-card">
-            <h3 className="text-xl font-semibold mb-3">HUMAN 3.0</h3>
-            <p className="text-muted-foreground">
-              Explore the evolution of human potential in the age of AI. Discover how to thrive by embracing your unique human capabilities.
-            </p>
-          </div>
+          {learnCards.map((card) => (
+            <div key={card.title} className="p-6 rounded-lg border border-border bg-card">
+              <h3 className="text-xl font-semibold mb-3">{card.title}</h3>
+              <p className="text-muted-foreground text-pretty">{card.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -121,12 +139,15 @@ export default function AboutPage() {
 
       {/* Subscribe CTA */}
       <section className="text-center space-y-6 py-12 px-6 rounded-lg bg-muted/50">
-        <h2 className="text-3xl font-bold">Join 178,000+ Subscribers</h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Get weekly insights on building a one-person business, mastering AI tools, and designing your ideal lifestyle.
+        <h2 className="text-3xl font-bold">{t('ctaTitle')}</h2>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
+          {t('ctaDesc')}
         </p>
-        <Button size="lg" className="bg-primary hover:bg-primary/90">
-          Subscribe Now
+        <Button size="lg" asChild className="bg-primary hover:bg-primary/90 gap-2">
+          <Link href="/subscribe">
+            <Mail className="h-4 w-4" aria-hidden="true" />
+            {t('subscribeBtn')}
+          </Link>
         </Button>
       </section>
     </div>

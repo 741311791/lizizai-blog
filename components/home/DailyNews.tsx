@@ -30,11 +30,8 @@ export default async function DailyNews({ articles }: DailyNewsProps) {
       {/* 标题 + 查看全部 */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
-          {/* 脉冲圆点动画 */}
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
-          </span>
+          {/* 静态金点标识(minimal-functional:不做常驻动画) */}
+          <span className="inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
           <h2 className="text-xl md:text-2xl font-bold">
             {t('dailyTitle')}
           </h2>
@@ -47,9 +44,14 @@ export default async function DailyNews({ articles }: DailyNewsProps) {
         </Link>
       </div>
 
-      {/* 水平滚动卡片容器 */}
+      {/* 水平滚动卡片容器 — proximity 吸附不与触控板自由滚动打架;tabindex 支持方向键 */}
       <div className="relative -mx-4 px-4">
-        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+        <div
+          className="flex gap-4 overflow-x-auto pb-4 snap-x snap-proximity scrollbar-hide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-lg"
+          tabIndex={0}
+          role="region"
+          aria-label={t('dailyTitle')}
+        >
           {articles.slice(0, 8).map((article: Article) => (
             <NewsCard key={article.id} article={article} locale={locale} tArticle={tArticle} />
           ))}
@@ -72,7 +74,7 @@ function NewsCard({ article, locale, tArticle }: { article: Article; locale: str
 
   return (
     <Link href={`/article/${article.slug}`} className="flex-shrink-0 snap-start flex">
-      <div className="group flex flex-col w-72 md:w-80 p-4 rounded-lg border border-border bg-card hover:bg-card/80 hover:border-border/80 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
+      <div className="group flex flex-col w-72 md:w-80 p-4 rounded-lg border border-border bg-card hover:bg-card/80 hover:border-border/80 transition-[background-color,border-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
         {/* 标题 */}
         <h3 className="text-sm font-semibold leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors">
           {article.title}

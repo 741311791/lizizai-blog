@@ -31,9 +31,8 @@ export async function getReactions(targetId: string): Promise<ReactionData[]> {
   if (!EMACTION_URL) return [];
 
   try {
-    const res = await fetch(`${EMACTION_URL}/reactions?targetId=${encodeURIComponent(targetId)}`, {
-      next: { revalidate: 60 },
-    });
+    // 客户端调用：fetch 的 next.revalidate 仅服务端有效，此处直连
+    const res = await fetch(`${EMACTION_URL}/reactions?targetId=${encodeURIComponent(targetId)}`);
     if (!res.ok) return [];
     const data = await res.json();
     return data?.data?.reactionsGot || [];
@@ -80,9 +79,8 @@ export async function getViews(pageKey: string): Promise<number> {
   if (!WEBVISO_URL) return 0;
 
   try {
-    const res = await fetch(`${WEBVISO_URL}/count?pageKey=${encodeURIComponent(pageKey)}`, {
-      next: { revalidate: 300 },
-    });
+    // 客户端调用：fetch 的 next.revalidate 仅服务端有效，此处直连
+    const res = await fetch(`${WEBVISO_URL}/count?pageKey=${encodeURIComponent(pageKey)}`);
     if (!res.ok) return 0;
     const data = await res.json();
     return data.views ?? 0;
@@ -120,6 +118,8 @@ export async function postVisit(pageKey: string): Promise<void> {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pageKey }),
+      // keepalive：快速离开页面也不丢计数
+      keepalive: true,
     });
   } catch {
     // 静默失败

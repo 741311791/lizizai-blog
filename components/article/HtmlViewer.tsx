@@ -41,18 +41,34 @@ export default function HtmlViewer({ htmlUrl }: HtmlViewerProps) {
     return Math.max(MIN_HEIGHT, Math.min(h, max));
   }, []);
 
-  // 节流：100ms 内只处理一次高度更新
+  // 节流：100ms 内只处理一次高度更新，尾沿定时补发，避免高度停留旧值
   const lastUpdate = useRef(0);
+  const pendingHeight = useRef<number | null>(null);
+  const flushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const throttledSetHeight = useCallback((height: number) => {
     const now = Date.now();
-    if (now - lastUpdate.current < 100) return;
-    lastUpdate.current = now;
-    setIframeHeight(clampHeight(height));
+    if (now - lastUpdate.current >= 100) {
+      lastUpdate.current = now;
+      setIframeHeight(clampHeight(height));
+      return;
+    }
+    pendingHeight.current = height;
+    if (!flushTimer.current) {
+      flushTimer.current = setTimeout(() => {
+        flushTimer.current = null;
+        if (pendingHeight.current != null) {
+          lastUpdate.current = Date.now();
+          setIframeHeight(clampHeight(pendingHeight.current));
+          pendingHeight.current = null;
+        }
+      }, 100 - (now - lastUpdate.current));
+    }
   }, [clampHeight]);
 
-  // 监听 postMessage（仅高度同步）
+  // 监听 postMessage（仅高度同步）：必须来自本 iframe 的 contentWindow
   useEffect(() => {
     const handler = (e: MessageEvent) => {
+      if (e.source !== iframeRef.current?.contentWindow) return;
       if (r2Origin && e.origin !== r2Origin && e.origin !== 'null') return;
 
       // 高度同步
@@ -66,12 +82,11 @@ export default function HtmlViewer({ htmlUrl }: HtmlViewerProps) {
     return () => window.removeEventListener('message', handler);
   }, [r2Origin, throttledSetHeight]);
 
-  // 超时兜底
+  // 超时兜底（非 loading 态不再空转重设定时器）
   useEffect(() => {
+    if (status !== 'loading') return;
     timerRef.current = setTimeout(() => {
-      if (status === 'loading') {
-        setStatus('error');
-      }
+      setStatus('error');
     }, TIMEOUT_MS);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [htmlUrl, status]);
@@ -91,14 +106,11 @@ export default function HtmlViewer({ htmlUrl }: HtmlViewerProps) {
     }
   }, [status]);
 
-  // 重试
+  // 重试：error 态下 iframe 已卸载，置回 loading 触发重新挂载加载
   const handleRetry = useCallback(() => {
     setStatus('loading');
     setIframeHeight(500);
-    if (iframeRef.current) {
-      iframeRef.current.src = htmlUrl;
-    }
-  }, [htmlUrl]);
+  }, []);
 
   // 切换全屏沉浸模式
   const toggleFullscreen = useCallback(() => {
@@ -150,6 +162,7 @@ export default function HtmlViewer({ htmlUrl }: HtmlViewerProps) {
         ref={iframeRef}
         src={htmlUrl}
         sandbox="allow-scripts"
+        loading="lazy"
         title="HTML 内容查看器"
         aria-label="HTML 内容"
         tabIndex={0}
@@ -165,7 +178,7 @@ export default function HtmlViewer({ htmlUrl }: HtmlViewerProps) {
         onClick={toggleFullscreen}
         aria-label={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
         title={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
-        className="absolute top-3 right-3 z-10 size-9 rounded-lg border border-border bg-card/90 text-muted-foreground hover:text-primary hover:border-border-hover backdrop-blur-sm flex items-center justify-center transition-colors"
+        className="absolute top-3 right-3 z-10 size-10 rounded-lg border border-border bg-card/90 text-muted-foreground hover:text-primary hover:border-border-hover backdrop-blur-sm flex items-center justify-center transition-colors"
       >
         {isFullscreen ? <Minimize className="size-4" /> : <Maximize className="size-4" />}
       </button>

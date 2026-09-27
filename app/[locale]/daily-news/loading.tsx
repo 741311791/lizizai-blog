@@ -1,14 +1,14 @@
 /**
- * 每日资讯页骨架屏
+ * 每日资讯页骨架屏 — 默认 list 视图形态
  */
 
-import { CategoryHeaderSkeleton, CardGridSkeleton } from '@/components/article/CardGridSkeleton';
+import { CategoryHeaderSkeleton, ArticleListSectionSkeleton } from '@/components/article/CardGridSkeleton';
 
 export default function DailyNewsLoading() {
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-12">
+    <div className="container mx-auto max-w-[1200px] px-4 py-12">
       <CategoryHeaderSkeleton />
-      <CardGridSkeleton count={6} />
+      <ArticleListSectionSkeleton />
     </div>
   );
 }

@@ -43,16 +43,20 @@ export default async function DailyNewsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('category');
-  const categories = await getCategories();
+
+  // 并行获取，避免串行瀑布
+  const [categories, articles] = await Promise.all([
+    getCategories(),
+    getArticlesByCategory(CATEGORY_SLUG),
+  ]);
   const category = categories.find(c => c.slug === CATEGORY_SLUG);
-  const articles = await getArticlesByCategory(CATEGORY_SLUG);
 
   const categoryName = category?.name || 'Daily News';
   const categoryDesc = category?.description || '';
   const articleCount = articles.length;
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-12">
+    <div className="container mx-auto max-w-[1200px] px-4 py-12">
       {/* 分类头部 */}
       <header className="mb-12 text-center space-y-4">
         <div className="flex items-center justify-center gap-2 mb-4">

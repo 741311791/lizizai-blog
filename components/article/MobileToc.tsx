@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, List } from 'lucide-react';
+import { ChevronDown, List } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type Heading } from '@/lib/utils/heading';
 import { cn } from '@/lib/utils';
@@ -35,7 +35,7 @@ export default function MobileToc({ headings }: MobileTocProps) {
           <List className="h-4 w-4" />
           {t('tocWithCount', { count: headings.length })}
         </span>
-        {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
         <nav className="border-t border-border px-4 py-2 max-h-60 overflow-y-auto">
@@ -44,7 +44,7 @@ export default function MobileToc({ headings }: MobileTocProps) {
               key={heading.id}
               onClick={() => handleClick(heading.id)}
               className={cn(
-                'block w-full text-left text-sm py-1.5 hover:text-primary transition-colors',
+                'block w-full text-left text-sm py-2.5 leading-snug hover:text-primary transition-colors',
                 heading.level === 2 && 'pl-0 font-medium',
                 heading.level === 3 && 'pl-4 text-muted-foreground',
               )}

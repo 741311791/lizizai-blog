@@ -104,34 +104,40 @@ export default function ShareMenu({
   };
 
   const shareToNotes = () => {
-    const notesUrl = `notes://new?text=${encodeURIComponent(title)}\n${url}`;
-    window.open(notesUrl, '_blank');
+    // notes:// 协议仅 macOS 有效；其他平台降级为复制链接
+    const isMac = /Mac/i.test(navigator.userAgent);
+    if (!isMac) {
+      handleCopyLink();
+      return;
+    }
+    const notesUrl = `notes://new?text=${encodeURIComponent(`${title}\n${url}`)}`;
+    window.open(notesUrl, '_blank', 'noopener,noreferrer');
     onShare?.();
   };
 
   const shareToFacebook = () => {
     const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-    window.open(facebookUrl, '_blank', 'width=600,height=400');
+    window.open(facebookUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
     onShare?.();
   };
 
   const shareToLinkedIn = () => {
     const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-    window.open(linkedInUrl, '_blank', 'width=600,height=400');
+    window.open(linkedInUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
     onShare?.();
   };
 
   const shareToBluesky = () => {
     const text = `${title}${description ? '\n' + description : ''}`;
     const blueskyUrl = `https://bsky.app/intent/compose?text=${encodeURIComponent(text + '\n' + url)}`;
-    window.open(blueskyUrl, '_blank', 'width=600,height=600');
+    window.open(blueskyUrl, '_blank', 'noopener,noreferrer,width=600,height=600');
     onShare?.();
   };
 
   const shareToX = () => {
     const text = `${title}${description ? '\n' + description : ''}`;
     const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-    window.open(xUrl, '_blank', 'width=600,height=400');
+    window.open(xUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
     onShare?.();
   };
 
@@ -166,11 +172,11 @@ export default function ShareMenu({
           <span>{t('shareToLinkedin')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={shareToBluesky}>
-          <BlueskyIcon className="mr-2 h-4 w-4" />
+          <BlueskyIcon className="mr-2 h-3.5 w-3.5 opacity-90" />
           <span>{t('shareToBluesky')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={shareToX}>
-          <XIcon className="mr-2 h-4 w-4" />
+          <XIcon className="mr-2 h-3.5 w-3.5 opacity-90" />
           <span>{t('shareToX')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

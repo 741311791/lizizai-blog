@@ -44,7 +44,7 @@ export default async function Hero({ article, locale }: HeroProps) {
                   src={imageUrl}
                   alt={article.title}
                   fill
-                  sizes="(max-width: 1024px) 100vw, 60vw"
+                  sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 60vw, 750px"
                   placeholder="blur"
                   blurDataURL={`data:image/svg+xml;charset=utf-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500"><rect width="100%" height="100%" fill="%231a1a2e"/></svg>')}`}
                   className="object-cover transition-transform duration-500 group-hover:scale-105"

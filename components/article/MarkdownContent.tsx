@@ -15,6 +15,7 @@
 
 import { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
+import type { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -24,7 +25,8 @@ import { visit } from 'unist-util-visit';
 import hljs from '@/lib/highlight-config';
 import { headingSlug, buildHeadingIdMap } from '@/lib/utils/heading';
 import 'highlight.js/styles/github-dark-dimmed.css';
-// katex CSS 已在 globals.css 全局导入，此处不再重复
+// KaTeX 样式仅在含公式的路由加载（文章页），不进全局关键 CSS
+import 'katex/dist/katex.min.css';
 
 /** 自定义 rehype 插件：拦截 mermaid 代码块，渲染为内联 SVG */
 function rehypeMermaid() {
@@ -66,6 +68,21 @@ function rehypeMermaid() {
   };
 }
 
+// 模块级插件常量：避免每次 render 重建导致 ReactMarkdown 全量重跑
+const REMARK_PLUGINS = [remarkGfm, remarkMath];
+const REHYPE_PLUGINS = [rehypeMermaid, rehypeRaw, rehypeKatex];
+
+/** 递归提取 React 子树的纯文本（标题含 code/链接时避免 "[object Object]"） */
+function extractText(node: any): string {
+  if (node == null) return '';
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join('');
+  if (typeof node === 'object' && node.props?.children !== undefined) {
+    return extractText(node.props.children);
+  }
+  return '';
+}
+
 interface MarkdownContentProps {
   content: string;
 }
@@ -73,28 +90,24 @@ interface MarkdownContentProps {
 export default function MarkdownContent({ content }: MarkdownContentProps) {
   const headingIds = useMemo(() => buildHeadingIdMap(content), [content]);
 
-  const getHeadingId = (text: string): string => {
-    return headingIds.get(text) || `heading-${headingSlug(text)}`;
-  };
-
-  return (
-    <article className="max-w-none article-content">
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeMermaid, rehypeRaw, rehypeKatex]}
-        components={{
+  // components 仅在 heading 映射变化时重建，避免 ReactMarkdown 不必要重跑
+  const components = useMemo<Components>(() => {
+    const getHeadingId = (text: string): string => {
+      return headingIds.get(text) || `heading-${headingSlug(text)}`;
+    };
+    return {
           h1: ({ children, ...props }) => {
-            const text = String(children);
+            const text = extractText(children);
             const id = getHeadingId(text);
             return <h1 id={id} className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 mt-8 scroll-mt-24" {...props}>{children}</h1>;
           },
           h2: ({ children, ...props }) => {
-            const text = String(children);
+            const text = extractText(children);
             const id = getHeadingId(text);
             return <h2 id={id} className="text-2xl font-bold mb-4 mt-10 scroll-mt-24 leading-[1.4]" {...props}>{children}</h2>;
           },
           h3: ({ children, ...props }) => {
-            const text = String(children);
+            const text = extractText(children);
             const id = getHeadingId(text);
             return <h3 id={id} className="text-xl font-semibold mb-3 mt-8 scroll-mt-24 leading-[1.4]" {...props}>{children}</h3>;
           },
@@ -174,7 +187,15 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
           td: ({ ...props }) => (
             <td className="border border-border px-4 py-2" {...props} />
           ),
-        }}
+    };
+  }, [headingIds]);
+
+  return (
+    <article className="max-w-none article-content">
+      <ReactMarkdown
+        remarkPlugins={REMARK_PLUGINS}
+        rehypePlugins={REHYPE_PLUGINS}
+        components={components}
       >
         {content}
       </ReactMarkdown>

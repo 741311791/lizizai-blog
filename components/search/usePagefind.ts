@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
 interface SearchResult {
   url: string;
@@ -58,10 +58,15 @@ function loadPagefind(): Promise<PagefindInstance> {
 export function usePagefind() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
+  // 递增请求序号：慢的旧查询返回时若已有更新的查询，丢弃过期结果
+  const requestIdRef = useRef(0);
 
   const search = useCallback(async (query: string) => {
+    const requestId = ++requestIdRef.current;
+
     if (!query.trim()) {
       setResults([]);
+      setLoading(false);
       return;
     }
 
@@ -84,11 +89,15 @@ export function usePagefind() {
         })
       );
 
+      if (requestIdRef.current !== requestId) return;
       setResults(items);
     } catch {
+      if (requestIdRef.current !== requestId) return;
       setResults([]);
     } finally {
-      setLoading(false);
+      if (requestIdRef.current === requestId) {
+        setLoading(false);
+      }
     }
   }, []);
 

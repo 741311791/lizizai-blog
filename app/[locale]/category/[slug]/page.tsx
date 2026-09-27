@@ -44,18 +44,21 @@ export default async function CategoryPage({
   setRequestLocale(locale);
   const t = await getTranslations('category');
 
-  const categories = await getCategories();
+  // 并行获取，避免串行瀑布
+  const [categories, articles] = await Promise.all([
+    getCategories(),
+    getArticlesByCategory(slug),
+  ]);
   const category = categories.find(c => c.slug === slug);
 
   if (!category) {
     notFound();
   }
 
-  const articles = await getArticlesByCategory(slug);
   const articleCount = articles.length;
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-12">
+    <div className="container mx-auto max-w-[1200px] px-4 py-12">
       {/* Category Header */}
       <header className="mb-12 text-center space-y-4">
         <div className="flex items-center justify-center gap-2 mb-4">

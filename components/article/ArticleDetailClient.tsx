@@ -15,7 +15,7 @@ import ContentTypeSwitcher from './ContentTypeSwitcher';
 import ReadingProgress from './ReadingProgress';
 import RelatedArticles from './RelatedArticles';
 import ArticleSidebar from './ArticleSidebar';
-import type { Article } from '@/types/index';
+import type { Article, ArticleCardData } from '@/types/index';
 
 const AudioPlayer = dynamic(() => import('./AudioPlayer'), {
   loading: () => <div className="h-20 rounded-lg bg-muted animate-pulse mb-8" />,
@@ -60,7 +60,7 @@ interface ArticleDetailClientProps {
   article: Article;
   likes: number;
   views: number;
-  relatedArticles: Article[];
+  relatedArticles: ArticleCardData[];
 }
 
 /**
@@ -214,9 +214,8 @@ export default function ArticleDetailClient({
       return (
         <ArticleSidebar
           article={article}
-          likes={likes}
-          views={views}
           headings={article.headings ?? []}
+          contentKey={activeContentType}
         />
       );
     }
@@ -228,9 +227,8 @@ export default function ArticleDetailClient({
           return (
             <ArticleSidebar
               article={article}
-              likes={likes}
-              views={views}
               headings={article.headings ?? []}
+              contentKey={activeContentType}
             />
           );
         }
@@ -258,9 +256,8 @@ export default function ArticleDetailClient({
         return (
           <ArticleSidebar
             article={article}
-            likes={likes}
-            views={views}
             headings={article.headings ?? []}
+            contentKey={activeContentType}
           />
         );
 
@@ -268,9 +265,8 @@ export default function ArticleDetailClient({
         return (
           <ArticleSidebar
             article={article}
-            likes={likes}
-            views={views}
             headings={article.headings ?? []}
+            contentKey={activeContentType}
           />
         );
     }
@@ -290,18 +286,14 @@ export default function ArticleDetailClient({
         <ArticleBreadcrumb article={article} />
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_280px]">
           {/* 左栏：头部 + 内容 */}
-          <article
-            className={`transition-[max-width] duration-200 ${
-              isFullWidth ? 'max-w-none' : 'max-w-3xl'
-            }`}
-          >
+          <article className={isFullWidth ? 'max-w-none' : 'max-w-3xl'}>
             {/* 文章头部（所有类型共用） */}
             <header className="mb-8 space-y-4">
               <ContentTypeBadge
                 article={article}
                 categoryName={article.category?.name}
               />
-              <h1 className="text-3xl font-bold tracking-tight lg:text-4xl">
+              <h1 className="text-3xl font-bold tracking-tight lg:text-4xl text-balance">
                 {article.title}
               </h1>
               {article.subtitle && (
@@ -313,12 +305,7 @@ export default function ArticleDetailClient({
                   author={article.author}
                   publishedAt={article.publishedAt}
                 />
-                <ArticleActions
-                  articleId={article.id}
-                  likes={likes}
-                  shares={0}
-                  views={views}
-                />
+                <ArticleActions articleId={article.id} likes={likes} />
               </div>
 
               {/* 移动端类型切换条 */}
@@ -336,11 +323,8 @@ export default function ArticleDetailClient({
             {/* 内容区（根据类型渲染） */}
             {renderMainContent()}
 
-            {/* 评论区和相关文章 */}
+            {/* 评论区 */}
             <CommentSection slug={article.slug} />
-            {relatedArticles.length > 0 && (
-              <RelatedArticles articles={relatedArticles} />
-            )}
           </article>
 
           {/* 右栏：侧边栏 */}
@@ -355,6 +339,11 @@ export default function ArticleDetailClient({
             </div>
           </aside>
         </div>
+
+        {/* 相关文章：非正文内容，置于阅读栏之外的两列网格 */}
+        {relatedArticles.length > 0 && (
+          <RelatedArticles articles={relatedArticles} />
+        )}
       </div>
     </>
   );

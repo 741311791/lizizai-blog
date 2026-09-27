@@ -48,9 +48,11 @@ export default function SlidesSidebar({
               const screenshotUrl = `${article.slidesBaseUrl}/screenshots/${slideFileName}.png`;
 
               return (
-                <div
+                <button
+                  type="button"
                   key={item.file}
                   onClick={() => onSlideClick(idx)}
+                  aria-label={item.label || `幻灯片 ${idx + 1}`}
                   className={cn(
                     'aspect-video rounded border-2 cursor-pointer overflow-hidden relative transition-colors',
                     idx === currentIndex
@@ -69,7 +71,7 @@ export default function SlidesSidebar({
                   <span className="absolute bottom-0 right-1 text-[8px] text-white/80 bg-black/40 px-0.5 rounded-sm tabular-nums">
                     {idx + 1}
                   </span>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -95,9 +97,11 @@ export default function SlidesSidebar({
               .trim() || `${idx + 1}`;
 
             return (
-              <div
+              <button
+                type="button"
                 key={slide.id}
                 onClick={() => onSlideClick(idx)}
+                aria-label={`幻灯片 ${idx + 1}`}
                 className={cn(
                   'aspect-video rounded border-2 cursor-pointer overflow-hidden relative transition-colors',
                   idx === currentIndex
@@ -111,7 +115,7 @@ export default function SlidesSidebar({
                 <span className="absolute bottom-0 right-1 text-[8px] text-muted-foreground tabular-nums">
                   {idx + 1}
                 </span>
-              </div>
+              </button>
             );
           })}
         </div>

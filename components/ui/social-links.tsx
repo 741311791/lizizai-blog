@@ -21,7 +21,7 @@ export default function SocialLinks({ iconSize = 18, className }: SocialLinksPro
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-muted-foreground hover:text-primary transition-colors"
+          className="text-muted-foreground hover:text-primary transition-colors p-2.5 -m-2.5"
           aria-label={label}
         >
           <Icon size={iconSize} />

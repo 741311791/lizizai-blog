@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider, type AbstractIntlMessages } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Noto_Serif_SC, Noto_Sans_SC, Instrument_Sans } from 'next/font/google';
@@ -36,6 +36,32 @@ const instrumentSans = Instrument_Sans({
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
+}
+
+/**
+ * 客户端组件实际使用的命名空间。
+ * 服务端专用文案（seo/about/privacy/terms/collection/aiNews/category/tag）
+ * 不序列化进 RSC payload，减小每页体积。
+ */
+const CLIENT_NAMESPACES = [
+  'nav',
+  'footer',
+  'common',
+  'breadcrumb',
+  'home',
+  'archive',
+  'article',
+  'comment',
+  'share',
+  'subscribe',
+  'notFound',
+  'error',
+];
+
+function pickClientMessages(messages: AbstractIntlMessages): AbstractIntlMessages {
+  return Object.fromEntries(
+    Object.entries(messages).filter(([key]) => CLIENT_NAMESPACES.includes(key))
+  ) as AbstractIntlMessages;
 }
 
 export async function generateMetadata({
@@ -75,7 +101,7 @@ export default async function LocaleLayout({
         />
       </head>
       <body className={`${notoSerifSC.variable} ${notoSansSC.variable} ${instrumentSans.variable} ${GeistMono.variable} antialiased`}>
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider messages={pickClientMessages(messages)}>
           <ConditionalLayout>
             {children}
           </ConditionalLayout>

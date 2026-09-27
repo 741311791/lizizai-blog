@@ -29,14 +29,12 @@ export default function ArticlesSection({ articles }: ArticlesSectionProps) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
 
   // 热门排序：client 端批量获取浏览量（进入页面即预取，切 tab 即时显示）
+  // Webviso 未启用时初始即视为已加载，避免 effect 内同步 setState
   const [viewsMap, setViewsMap] = useState<Record<string, number>>({});
-  const [viewsLoaded, setViewsLoaded] = useState(false);
+  const [viewsLoaded, setViewsLoaded] = useState(() => !isWebvisoEnabled() || articles.length === 0);
 
   useEffect(() => {
-    if (!isWebvisoEnabled() || articles.length === 0) {
-      setViewsLoaded(true);
-      return;
-    }
+    if (viewsLoaded || articles.length === 0) return;
     let cancelled = false;
     getBatchViews(articles.map((a) => a.id)).then((map) => {
       if (cancelled) return;
@@ -46,7 +44,7 @@ export default function ArticlesSection({ articles }: ArticlesSectionProps) {
     return () => {
       cancelled = true;
     };
-  }, [articles]);
+  }, [articles, viewsLoaded]);
 
   const topArticles = useMemo(
     () =>
@@ -65,11 +63,13 @@ export default function ArticlesSection({ articles }: ArticlesSectionProps) {
             <TabsTrigger value="top">{t('top')}</TabsTrigger>
           </TabsList>
 
-          {/* 视图切换按钮 */}
+          {/* 视图切换按钮 — 40px 命中区,aria-pressed 表达当前状态 */}
           <div className="hidden sm:flex items-center gap-1 bg-muted rounded-lg p-1">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-md transition-colors ${
+              aria-label={t('viewGrid')}
+              aria-pressed={viewMode === 'grid'}
+              className={`h-10 w-10 flex items-center justify-center rounded-md transition-colors ${
                 viewMode === 'grid'
                   ? 'bg-card text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
@@ -79,7 +79,9 @@ export default function ArticlesSection({ articles }: ArticlesSectionProps) {
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-md transition-colors ${
+              aria-label={t('viewList')}
+              aria-pressed={viewMode === 'list'}
+              className={`h-10 w-10 flex items-center justify-center rounded-md transition-colors ${
                 viewMode === 'list'
                   ? 'bg-card text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
@@ -99,10 +101,14 @@ export default function ArticlesSection({ articles }: ArticlesSectionProps) {
           )}
         </TabsContent>
 
-        {/* 热门：按浏览量降序（client 端获取后排序） */}
+        {/* 热门：按浏览量降序（client 端获取后排序），骨架随 viewMode 呈对应形态 */}
         <TabsContent value="top">
           {!viewsLoaded ? (
-            <LoadingGrid />
+            viewMode === 'grid' ? (
+              <LoadingGrid />
+            ) : (
+              <LoadingList />
+            )
           ) : viewMode === 'grid' ? (
             <ArticleGrid articles={topArticles} />
           ) : (
@@ -118,8 +124,8 @@ export default function ArticlesSection({ articles }: ArticlesSectionProps) {
 function ArticleList({ articles }: { articles: Article[] }) {
   return (
     <div className="space-y-0">
-      {articles.map((article) => (
-        <ArticleListItem key={article.id} article={article} />
+      {articles.map((article, index) => (
+        <ArticleListItem key={article.id} article={article} priority={index === 0} />
       ))}
     </div>
   );
@@ -136,7 +142,7 @@ function ArticleGrid({ articles }: { articles: Article[] }) {
   );
 }
 
-/** 热门数据加载骨架（views 获取中） */
+/** 热门数据加载骨架 — 网格形态（views 获取中） */
 function LoadingGrid() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -150,6 +156,24 @@ function LoadingGrid() {
             <div className="h-4 bg-muted rounded animate-pulse" />
             <div className="h-4 w-2/3 bg-muted rounded animate-pulse" />
           </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** 热门数据加载骨架 — 列表形态（与 ArticleList 行结构一致，避免加载完成跳变） */
+function LoadingList() {
+  return (
+    <div className="space-y-0">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="flex gap-4 sm:gap-6 py-4 sm:py-6 border-b border-border">
+          <div className="flex-1 space-y-3">
+            <div className="h-6 w-3/4 rounded bg-muted animate-pulse" />
+            <div className="h-4 w-full rounded bg-muted animate-pulse" />
+            <div className="h-4 w-1/2 rounded bg-muted animate-pulse" />
+          </div>
+          <div className="w-24 h-24 sm:w-40 sm:h-40 rounded-lg bg-muted animate-pulse flex-shrink-0" />
         </div>
       ))}
     </div>
@@ -180,7 +204,7 @@ const GridCard = memo(function GridCard({ article }: { article: Article }) {
 
   return (
     <Link href={`/article/${article.slug}`}>
-      <div className="group rounded-lg border border-border bg-card overflow-hidden hover:border-border/80 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
+      <div className="group rounded-lg border border-border bg-card overflow-hidden hover:border-border/80 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
         {/* 封面图 */}
         <div className="relative aspect-video bg-muted">
           <Image

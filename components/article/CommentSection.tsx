@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { MessageCircle, Reply, Heart, Send } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { MessageCircle, Reply, Heart, Send, RotateCcw } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { getOrCreateGuestIdentity, type GuestIdentity } from '@/lib/guest-identity';
@@ -53,8 +53,8 @@ function buildCommentTree(comments: Comment[]): CommentNode[] {
   return roots;
 }
 
-/** 格式化时间为相对时间 */
-function formatTime(dateStr: string, t: ReturnType<typeof useTranslations<'comment'>>): string {
+/** 格式化时间为相对时间（超 30 天按 locale 输出日期） */
+function formatTime(dateStr: string, t: ReturnType<typeof useTranslations<'comment'>>, locale: string): string {
   const date = new Date(dateStr + (dateStr.includes('Z') || dateStr.includes('+') ? '' : 'Z'));
   const now = new Date();
   const diff = (now.getTime() - date.getTime()) / 1000;
@@ -63,42 +63,40 @@ function formatTime(dateStr: string, t: ReturnType<typeof useTranslations<'comme
   if (diff < 3600) return t('minutesAgo', { count: Math.floor(diff / 60) });
   if (diff < 86400) return t('hoursAgo', { count: Math.floor(diff / 3600) });
   if (diff < 2592000) return t('daysAgo', { count: Math.floor(diff / 86400) });
-  return date.toLocaleDateString('zh-CN');
+  return date.toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US');
 }
 
 const CF_COMMENT_URL = config.cfCommentUrl;
 
 // ============= CommentItem 组件 =============
+// memo：回复输入的状态下沉到本地，键入时仅当前 CommentItem 重渲
 
-function CommentItem({
+const CommentItem = memo(function CommentItem({
   comment,
   depth = 0,
   replyingTo,
   onReply,
   onSubmitReply,
   onCancelReply,
-  replyContent,
-  onReplyContentChange,
   submitting,
-  guestIdentity,
   slug,
   t,
 }: {
   comment: CommentNode;
   depth?: number;
   replyingTo: number | null;
-  onReply: (id: number, nickname: string) => void;
-  onSubmitReply: () => void;
+  onReply: (id: number) => void;
+  onSubmitReply: (id: number, nickname: string, content: string) => void;
   onCancelReply: () => void;
-  replyContent: string;
-  onReplyContentChange: (val: string) => void;
   submitting: boolean;
-  guestIdentity: GuestIdentity;
   slug: string;
   t: ReturnType<typeof useTranslations<'comment'>>;
 }) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(comment.likes);
+  // 回复内容本地化：输入时不触发整棵评论树重渲
+  const [replyContent, setReplyContent] = useState('');
+  const locale = useLocale();
   const isReplying = replyingTo === comment.id;
   const maxDepth = 4;
   const displayName = comment.nickname || t('anonymous');
@@ -132,7 +130,7 @@ function CommentItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 text-sm">
             <span className="font-medium text-primary">{displayName}</span>
-            <span className="text-muted-foreground text-xs">{formatTime(comment.created_at, t)}</span>
+            <span className="text-muted-foreground text-xs">{formatTime(comment.created_at, t, locale)}</span>
             {comment.pinned === 1 && (
               <span className="text-xs text-amber-500">{t('pinned')}</span>
             )}
@@ -150,7 +148,7 @@ function CommentItem({
           {/* 操作按钮 */}
           <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
             <button
-              onClick={() => onReply(comment.id, displayName)}
+              onClick={() => onReply(comment.id)}
               className="flex items-center gap-1 hover:text-primary transition-colors"
             >
               <Reply className="w-3.5 h-3.5" />
@@ -170,7 +168,7 @@ function CommentItem({
             <div className="mt-3 space-y-2">
               <Textarea
                 value={replyContent}
-                onChange={(e) => onReplyContentChange(e.target.value)}
+                onChange={(e) => setReplyContent(e.target.value)}
                 placeholder={t('replyTo', { name: displayName })}
                 className="min-h-[80px] text-sm bg-muted/20"
                 autoFocus
@@ -178,7 +176,7 @@ function CommentItem({
               <div className="flex items-center gap-2">
                 <Button
                   size="sm"
-                  onClick={onSubmitReply}
+                  onClick={() => onSubmitReply(comment.id, displayName, replyContent)}
                   disabled={submitting || !replyContent.trim()}
                 >
                   <Send className="w-3.5 h-3.5 mr-1" />
@@ -209,16 +207,31 @@ function CommentItem({
               onReply={onReply}
               onSubmitReply={onSubmitReply}
               onCancelReply={onCancelReply}
-              replyContent={replyContent}
-              onReplyContentChange={onReplyContentChange}
               submitting={submitting}
-              guestIdentity={guestIdentity}
               slug={slug}
               t={t}
             />
           ))}
         </div>
       )}
+    </div>
+  );
+});
+
+/** 评论加载骨架：与列表结构一致（头像 + 文本条） */
+function CommentListSkeleton() {
+  return (
+    <div className="space-y-6 py-4" role="status" aria-label="loading">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="flex gap-3 animate-pulse">
+          <div className="w-9 h-9 rounded-full bg-muted flex-shrink-0" />
+          <div className="flex-1 space-y-2 py-1">
+            <div className="h-3.5 w-24 rounded bg-muted" />
+            <div className="h-3 w-full rounded bg-muted" />
+            <div className="h-3 w-2/3 rounded bg-muted" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -234,27 +247,30 @@ export default function CommentSection({ slug }: CommentSectionProps) {
   const t = useTranslations('comment');
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [guestIdentity, setGuestIdentity] = useState<GuestIdentity | null>(null);
 
-  // 回复状态
+  // 回复状态（内容已下沉到 CommentItem 本地）
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
-  const [replyingToNickname, setReplyingToNickname] = useState('');
-  const [replyContent, setReplyContent] = useState('');
 
-  // 加载评论
+  // 加载评论（失败态与空态分离）
   const fetchComments = useCallback(async () => {
     if (!CF_COMMENT_URL) return;
+    setLoading(true);
+    setError(false);
     try {
       const res = await fetch(`${CF_COMMENT_URL}/area/${slug}/comments`);
       if (res.ok) {
         const data = await res.json();
         const visible = (data as Comment[]).filter((c: Comment) => c.hidden !== 1);
         setComments(visible);
+      } else {
+        setError(true);
       }
     } catch {
-      // 静默失败
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -292,19 +308,17 @@ export default function CommentSection({ slug }: CommentSectionProps) {
   };
 
   // 回复评论
-  const handleReply = (id: number, nickname: string) => {
+  const handleReply = useCallback((id: number) => {
     setReplyingTo(id);
-    setReplyingToNickname(nickname);
-    setReplyContent(`@${nickname} `);
-  };
+  }, []);
 
-  const handleSubmitReply = async () => {
-    if (!replyContent.trim() || !guestIdentity || !replyingTo || submitting) return;
+  const handleSubmitReply = useCallback(async (id: number, nickname: string, replyContent: string) => {
+    if (!replyContent.trim() || !guestIdentity || submitting) return;
     setSubmitting(true);
     try {
       const formData = new FormData();
       formData.append('content', replyContent.trim());
-      formData.append('parent_id', String(replyingTo));
+      formData.append('parent_id', String(id));
       formData.append('nickname', guestIdentity.nickname);
       formData.append('avatar_url', guestIdentity.avatarUrl);
 
@@ -314,36 +328,32 @@ export default function CommentSection({ slug }: CommentSectionProps) {
       });
 
       setReplyingTo(null);
-      setReplyContent('');
-      setReplyingToNickname('');
       await fetchComments();
     } catch {
       // 静默失败
     } finally {
       setSubmitting(false);
     }
-  };
+  }, [guestIdentity, submitting, slug, fetchComments]);
 
-  const handleCancelReply = () => {
+  const handleCancelReply = useCallback(() => {
     setReplyingTo(null);
-    setReplyContent('');
-    setReplyingToNickname('');
-  };
+  }, []);
 
   const [showAll, setShowAll] = useState(false);
 
-  if (!CF_COMMENT_URL) return null;
-
-  const commentTree = buildCommentTree(comments);
+  const commentTree = useMemo(() => buildCommentTree(comments), [comments]);
   const commentCount = comments.length;
 
   // 默认只展示前 6 条点赞最多的第一层评论（不含回复）
-  const sortedRoots = [...commentTree].sort((a, b) => {
+  const sortedRoots = useMemo(() => [...commentTree].sort((a, b) => {
     // 置顶评论始终在前
     if (a.pinned === 1 && b.pinned !== 1) return -1;
     if (a.pinned !== 1 && b.pinned === 1) return 1;
     return b.likes - a.likes;
-  });
+  }), [commentTree]);
+
+  if (!CF_COMMENT_URL) return null;
   const MAX_VISIBLE = 6;
   const visibleRoots = showAll ? sortedRoots : sortedRoots.slice(0, MAX_VISIBLE);
   const hasMore = sortedRoots.length > MAX_VISIBLE;
@@ -359,7 +369,15 @@ export default function CommentSection({ slug }: CommentSectionProps) {
       {/* 评论列表 */}
       <div className="space-y-1">
         {loading ? (
-          <div className="py-8 text-center text-muted-foreground text-sm">{t('loading')}</div>
+          <CommentListSkeleton />
+        ) : error ? (
+          <div className="py-8 text-center space-y-3">
+            <p className="text-muted-foreground text-sm">{t('error')}</p>
+            <Button variant="outline" size="sm" onClick={fetchComments} className="gap-1.5">
+              <RotateCcw className="h-3.5 w-3.5" />
+              {t('retry')}
+            </Button>
+          </div>
         ) : commentTree.length === 0 ? (
           <div className="py-8 text-center text-muted-foreground text-sm">
             {t('empty')}
@@ -374,10 +392,7 @@ export default function CommentSection({ slug }: CommentSectionProps) {
                 onReply={handleReply}
                 onSubmitReply={handleSubmitReply}
                 onCancelReply={handleCancelReply}
-                replyContent={replyContent}
-                onReplyContentChange={setReplyContent}
                 submitting={submitting}
-                guestIdentity={guestIdentity!}
                 slug={slug}
                 t={t}
               />

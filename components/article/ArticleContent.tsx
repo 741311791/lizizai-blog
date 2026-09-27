@@ -11,7 +11,8 @@
 
 import { useEffect, useRef } from 'react';
 import 'highlight.js/styles/github-dark-dimmed.css';
-// katex CSS 已在 globals.css 全局导入，此处不再重复
+// KaTeX 样式随文章路由按需加载，不进全局关键 CSS（webpack 会与 MarkdownContent 去重）
+import 'katex/dist/katex.min.css';
 
 interface ArticleContentProps {
   html: string;
@@ -47,7 +48,7 @@ export default function ArticleContent({ html }: ArticleContentProps) {
       label.textContent = lang;
 
       const btn = document.createElement('button');
-      btn.className = 'opacity-0 group-hover:opacity-100 transition-opacity hover:text-foreground px-2 py-0.5 rounded hover:bg-muted/50';
+      btn.className = 'opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity hover:text-foreground px-2 py-1 rounded hover:bg-muted/50';
       btn.setAttribute('aria-label', '复制代码');
       btn.textContent = '复制';
       btn.addEventListener('click', () => {

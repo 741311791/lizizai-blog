@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname, getPathname } from '@/i18n/navigation';
+import { useRouter, usePathname } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Languages } from 'lucide-react';
 
@@ -12,8 +12,8 @@ export default function LanguageSwitcher({ variant = 'icon' }: { variant?: 'icon
 
   const switchLocale = () => {
     const nextLocale = locale === 'en' ? 'zh' : 'en';
-    // getPathname 获取当前路径的无前缀版本
-    router.replace(pathname, { locale: nextLocale });
+    // push 而非 replace：语言切换后浏览器返回键可回退
+    router.push(pathname, { locale: nextLocale });
   };
 
   if (variant === 'text') {

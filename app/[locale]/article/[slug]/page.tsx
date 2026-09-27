@@ -4,6 +4,7 @@ import { generateArticleMetadata, generateArticleJsonLd } from '@/lib/seo';
 import ArticleDetailClient from '@/components/article/ArticleDetailClient';
 import { setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import type { ArticleCardData } from '@/types/index';
 
 export const revalidate = 3600; // ISR: 每小时重新验证
 
@@ -52,10 +53,28 @@ export default async function ArticlePage({
     notFound();
   }
 
-  // 获取相关文章
-  const relatedArticles = article.category?.slug
+  // 获取相关文章并投影为卡片最小字段集（不下发全文/幻灯片/播客数据）
+  const relatedFull = article.category?.slug
     ? await getRelatedArticles(article.category.slug, article.slug, 3)
     : [];
+  const relatedArticles: ArticleCardData[] = relatedFull.map((a) => ({
+    id: a.id,
+    title: a.title,
+    subtitle: a.subtitle,
+    excerpt: a.excerpt,
+    slug: a.slug,
+    featuredImage: a.featuredImage,
+    thumbnailImage: a.thumbnailImage,
+    author: a.author,
+    publishedAt: a.publishedAt,
+    likes: a.likes,
+    commentsCount: a.commentsCount,
+    readingTime: a.readingTime,
+    sharesCount: a.sharesCount,
+    tags: a.tags,
+    contentType: a.contentType,
+    slideCount: a.slideCount,
+  }));
 
   // 生成 JSON-LD
   const articleJsonLd = generateArticleJsonLd({

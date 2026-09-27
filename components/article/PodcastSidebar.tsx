@@ -38,19 +38,21 @@ export default function PodcastSidebar({
           </h3>
           <ul className="space-y-0">
             {chapters.map((ch, idx) => (
-              <li
-                key={ch.id}
-                onClick={() => onChapterClick(ch.startTime)}
-                className={`flex items-start gap-2.5 py-2 text-sm border-b border-border cursor-pointer transition-colors ${
-                  idx === activeChapterIndex
-                    ? 'text-primary font-medium'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <span className="text-xs tabular-nums min-w-[36px] flex-shrink-0 text-muted-foreground">
-                  {formatTime(ch.startTime)}
-                </span>
-                <span className="leading-snug">{ch.title}</span>
+              <li key={ch.id} className="border-b border-border">
+                <button
+                  type="button"
+                  onClick={() => onChapterClick(ch.startTime)}
+                  className={`flex w-full items-start gap-2.5 py-2.5 text-sm transition-colors text-left ${
+                    idx === activeChapterIndex
+                      ? 'text-primary font-medium'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <span className="text-xs tabular-nums min-w-[36px] flex-shrink-0 text-muted-foreground">
+                    {formatTime(ch.startTime)}
+                  </span>
+                  <span className="leading-snug">{ch.title}</span>
+                </button>
               </li>
             ))}
           </ul>
@@ -68,7 +70,7 @@ export default function PodcastSidebar({
             }
           </div>
           {remaining > 0 && (
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-muted-foreground tabular-nums">
               {t('remaining', { minutes: remaining })}
             </div>
           )}

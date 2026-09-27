@@ -33,7 +33,7 @@ export default function ArticleBreadcrumb({ article }: ArticleBreadcrumbProps) {
           <ChevronRight className="size-3" />
         </span>
       ))}
-      <span className="text-foreground truncate">{article.title}</span>
+      <span className="text-foreground truncate min-w-0 flex-1">{article.title}</span>
     </nav>
   );
 }

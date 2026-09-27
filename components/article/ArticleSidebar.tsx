@@ -6,13 +6,14 @@ import { type Heading } from '@/lib/utils/heading';
 import { ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { Article } from '@/types/index';
+import SidebarStats from './SidebarStats';
 
 interface ArticleSidebarProps {
   article: Article;
-  likes: number;
-  views: number;
   // markdown 模式：服务端预提取的标题目录（HTML 模式的目录已由内容自带）
   headings?: Heading[];
+  /** 内容类型标记：切换后正文标题 DOM 重建，observer 需重挂 */
+  contentKey?: string;
 }
 
 /** 将扁平标题列表组织为树形结构（h2 为父节点，h3 为子节点） */
@@ -51,9 +52,8 @@ function groupHeadings(headings: Heading[]): HeadingGroup[] {
  */
 export default function ArticleSidebar({
   article,
-  likes,
-  views,
   headings,
+  contentKey,
 }: ArticleSidebarProps) {
   const t = useTranslations('article');
   const [activeId, setActiveId] = useState<string>('');
@@ -61,8 +61,13 @@ export default function ArticleSidebar({
 
   const groups = useMemo(() => groupHeadings(headings ?? []), [headings]);
 
-  // 滚动监听：IntersectionObserver 追踪当前可见标题（headings 由 SSR 预提取，mount 时已在 DOM）
+  // 滚动监听：IntersectionObserver 追踪当前可见标题。
+  // 观察范围限定在正文容器内，避免误捕相关文章/评论区的标题；
+  // 依赖 contentKey：内容类型切换后正文 DOM 重建，observer 重新挂载。
   useEffect(() => {
+    const container = document.querySelector('.article-content');
+    if (!container) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -74,11 +79,10 @@ export default function ArticleSidebar({
       { rootMargin: '-100px 0px -80% 0px' }
     );
 
-    const headingElements = document.querySelectorAll('h1, h2, h3');
-    headingElements.forEach((element) => observer.observe(element));
+    container.querySelectorAll('h2, h3').forEach((element) => observer.observe(element));
 
     return () => observer.disconnect();
-  }, []);
+  }, [contentKey]);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, headingId: string) => {
     e.preventDefault();
@@ -141,7 +145,7 @@ export default function ArticleSidebar({
                     {hasChildren && (
                       <button
                         onClick={() => toggleExpand(group.heading.id)}
-                        className="p-0.5 text-muted-foreground hover:text-foreground transition-colors"
+                        className="p-2.5 -m-2 text-muted-foreground hover:text-foreground transition-colors"
                         aria-label={isExpanded ? t('tocCollapse') : t('tocExpand')}
                       >
                         <ChevronRight
@@ -184,22 +188,8 @@ export default function ArticleSidebar({
         </div>
       )}
 
-      {/* 阅读数据 */}
-      <div>
-        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-          {t('readingStats')}
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="rounded-lg bg-card p-2.5 text-center">
-            <div className="text-lg font-bold">{views || 0}</div>
-            <div className="text-[10px] text-muted-foreground">{t('views')}</div>
-          </div>
-          <div className="rounded-lg bg-card p-2.5 text-center">
-            <div className="text-lg font-bold">{likes || 0}</div>
-            <div className="text-[10px] text-muted-foreground">{t('likes')}</div>
-          </div>
-        </div>
-      </div>
+      {/* 阅读数据 + 标签（客户端拉取真实浏览/点赞） */}
+      <SidebarStats article={article} />
 
       {/* 标签 */}
       {article.tags && article.tags.length > 0 && (

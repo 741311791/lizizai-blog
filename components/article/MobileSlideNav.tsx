@@ -28,18 +28,22 @@ export default function MobileSlideNav({
         {t('currentSlide', { current: currentIndex + 1, total: slides.length })}
       </div>
 
-      {/* 导航点 */}
+      {/* 导航点 — w-11 命中区(44px)，负 margin 收紧视觉间距 */}
       {slides.length <= 12 && (
-        <div className="flex justify-center gap-1.5">
+        <div className="flex justify-center">
           {slides.map((_, idx) => (
             <button
               key={idx}
               onClick={() => onSlideClick(idx)}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                idx === currentIndex ? 'bg-primary' : 'bg-muted-foreground/30'
-              }`}
+              className="flex h-11 w-11 items-center justify-center active:scale-[0.96]"
               aria-label={`第 ${idx + 1} 页`}
-            />
+            >
+              <span
+                className={`h-2 w-2 rounded-full transition-colors ${
+                  idx === currentIndex ? 'bg-primary' : 'bg-muted-foreground/30'
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}

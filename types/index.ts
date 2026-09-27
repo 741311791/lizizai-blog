@@ -52,6 +52,15 @@ export interface SlideData {
   notes?: string;
 }
 
+/** ArticleCard 渲染所需的最小字段集（服务端投影下传，避免全量对象序列化） */
+export type ArticleCardData = Pick<
+  Article,
+  | 'id' | 'title' | 'subtitle' | 'excerpt' | 'slug'
+  | 'featuredImage' | 'thumbnailImage'
+  | 'author' | 'publishedAt' | 'likes' | 'commentsCount'
+  | 'readingTime' | 'sharesCount' | 'tags' | 'contentType' | 'slideCount'
+>;
+
 export interface Article {
   id: string;
   title: string;

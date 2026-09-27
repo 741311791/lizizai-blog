@@ -16,13 +16,13 @@
     "menu": "Menu",
     "searchPlaceholder": "Search articles...",
     "shareTitle": "Zizai Blog",
-    "shareDescription": "Welcome to Zizai Blog, sharing tech and life"
+    "shareDescription": "Welcome to Zizai Blog, sharing tech and life",
+    "resume": "Resume",
+    "menuDescription": "Navigation menu"
   },
   "footer": {
     "about": "About",
     "archive": "Archive",
-    "recommendations": "Recommendations",
-    "sitemap": "Sitemap",
     "privacy": "Privacy",
     "terms": "Terms",
     "collectionNotice": "Collection notice",
@@ -53,7 +53,9 @@
     "justNow": "Just now",
     "minutesAgo": "{count} min ago",
     "hoursAgo": "{count}h ago",
-    "daysAgo": "{count}d ago"
+    "daysAgo": "{count}d ago",
+    "error": "Failed to load comments",
+    "retry": "Retry"
   },
   "article": {
     "toc": "Table of Contents",
@@ -114,7 +116,12 @@
     "htmlRetry": "Retry",
     "fullscreen": "Immersive fullscreen",
     "exitFullscreen": "Exit fullscreen",
-    "filterHtml": "HTML"
+    "filterHtml": "HTML",
+    "viewGrid": "Grid view",
+    "viewList": "List view",
+    "sortLabel": "Article sorting",
+    "noArticlesInFilter": "No articles under this filter",
+    "progress": "Playback progress"
   },
   "share": {
     "copyLink": "Copy link",
@@ -171,7 +178,11 @@
   "tag": {
     "tags": "Tags",
     "articles": "articles",
-    "taggedWith": "Tagged with \"{tag}\""
+    "taggedWith": "Tagged with \"{tag}\"",
+    "backToArchive": "Back to Archive",
+    "otherTags": "Other Tags",
+    "noArticles": "No articles under this tag yet",
+    "articleCount": "{count} articles"
   },
   "subscribe": {
     "title": "Subscribe to Zizai Blog",
@@ -193,8 +204,28 @@
     "freeForever": "Free forever"
   },
   "about": {
-    "title": "About",
-    "description": "About Zizai Blog and the author"
+    "title": "About Zizai Blog",
+    "tagline": "A Chinese blog helping you stay competitive in the AI era",
+    "missionTitle": "Our Mission",
+    "missionP1": "As AI reshapes every industry, traditional career paths fade, and the very definition of \"making it\" is rewritten, we need a new way to build our careers and lives.",
+    "missionP2": "Zizai Blog helps you navigate this transformation. We explore the intersection of technology, creativity, and entrepreneurship to help you build a one-person business that thrives in the age of AI.",
+    "missionP3": "Our content focuses on three pillars: learning (acquiring new skills fast), persuasion (building an audience and attracting opportunities), and execution (turning ideas into reality with modern tools and automation).",
+    "authorTitle": "About Zizai Li",
+    "authorP1": "Zizai Li is the author of Zizai Blog, sharing hands-on experience with AI tools, writing methods, and building a one-person business — exploring how technology amplifies individual creativity.",
+    "authorP2": "He believes individual creators can build sustainable online businesses with AI and automation — without sacrificing creative autonomy or personal freedom.",
+    "learnTitle": "What You'll Learn",
+    "learn1Title": "AI & Prompts",
+    "learn1Desc": "Master working with AI tools to boost productivity and creativity — prompt engineering and automation strategies.",
+    "learn2Title": "Writing",
+    "learn2Desc": "Sharpen your writing to create compelling content that attracts and keeps readers — from newsletters to long-form articles.",
+    "learn3Title": "Marketing",
+    "learn3Desc": "Build and grow your personal brand with proven marketing techniques, attract opportunities, and monetize your expertise.",
+    "learn4Title": "HUMAN 3.0",
+    "learn4Desc": "Explore the evolution of human potential in the age of AI — discover your uniquely human edge and stay ahead of the curve.",
+    "ctaTitle": "Join the Newsletter",
+    "ctaDesc": "Get weekly insights on building a one-person business, mastering AI tools, and designing your ideal lifestyle.",
+    "subscribeBtn": "Subscribe for Free",
+    "website": "Website"
   },
   "privacy": {
     "title": "Privacy Policy",
@@ -222,7 +253,8 @@
     "pageNotFound": "Page not found",
     "pageNotFoundDesc": "The page you visited does not exist or has been moved. Try finding what you need from the homepage or archive.",
     "backToHome": "Back to Home",
-    "browseArchive": "Browse Archive"
+    "browseArchive": "Browse Archive",
+    "legalZhOnly": "The legal text on this page is currently available in Chinese only."
   },
   "breadcrumb": {
     "label": "Breadcrumb",
@@ -231,5 +263,17 @@
   "aiNews": {
     "dailyTitle": "Daily News",
     "viewAll": "View All"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or has been moved. Try finding what you want from the homepage or the archive.",
+    "backHome": "Back to Home",
+    "browseArchive": "Browse Archive"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "We apologize for the inconvenience. An unexpected error has occurred. Please try again.",
+    "retry": "Try Again",
+    "goHome": "Go Home"
   }
 }

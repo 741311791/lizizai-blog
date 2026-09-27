@@ -9,6 +9,7 @@
     "archive": "归档",
     "aiNews": "每日资讯",
     "subscribe": "订阅",
+    "resume": "简历",
     "search": "搜索",
     "closeSearch": "关闭搜索",
     "noResults": "未找到相关文章",
@@ -16,13 +17,12 @@
     "menu": "菜单",
     "searchPlaceholder": "搜索文章...",
     "shareTitle": "Zizai Blog",
-    "shareDescription": "欢迎来到 Zizai Blog，分享技术与生活"
+    "shareDescription": "欢迎来到 Zizai Blog，分享技术与生活",
+    "menuDescription": "导航菜单"
   },
   "footer": {
     "about": "关于",
     "archive": "归档",
-    "recommendations": "推荐",
-    "sitemap": "站点地图",
     "privacy": "隐私政策",
     "terms": "服务条款",
     "collectionNotice": "信息收集声明",
@@ -53,7 +53,9 @@
     "justNow": "刚刚",
     "minutesAgo": "{count} 分钟前",
     "hoursAgo": "{count} 小时前",
-    "daysAgo": "{count} 天前"
+    "daysAgo": "{count} 天前",
+    "error": "评论加载失败",
+    "retry": "重试"
   },
   "article": {
     "toc": "目录",
@@ -114,7 +116,12 @@
     "htmlRetry": "重试",
     "fullscreen": "全屏沉浸模式",
     "exitFullscreen": "退出全屏",
-    "filterHtml": "HTML"
+    "filterHtml": "HTML",
+    "viewGrid": "网格视图",
+    "viewList": "列表视图",
+    "sortLabel": "文章排序",
+    "noArticlesInFilter": "该筛选条件下暂无文章",
+    "progress": "播放进度"
   },
   "share": {
     "copyLink": "复制链接",
@@ -171,7 +178,11 @@
   "tag": {
     "tags": "标签",
     "articles": "篇文章",
-    "taggedWith": "标签 \"{tag}\" 下的文章"
+    "taggedWith": "标签 \"{tag}\" 下的文章",
+    "backToArchive": "返回归档",
+    "otherTags": "其他标签",
+    "noArticles": "暂无该标签下的文章",
+    "articleCount": "共 {count} 篇文章"
   },
   "subscribe": {
     "title": "订阅 Zizai Blog",
@@ -193,8 +204,28 @@
     "freeForever": "永久免费"
   },
   "about": {
-    "title": "关于",
-    "description": "关于 Zizai Blog 和作者"
+    "title": "关于 Zizai Blog",
+    "tagline": "帮助你在 AI 时代保持竞争力的中文博客",
+    "missionTitle": "我们的使命",
+    "missionP1": "当人工智能正在重塑每一个行业、传统职业路径逐渐失效、「成功」的定义被彻底改写,我们需要一种新的方式来构建自己的事业与生活。",
+    "missionP2": "Zizai Blog 致力于帮你驾驭这场变革。我们探索技术、创作与创业的交叉点,帮助你构建能在 AI 时代蓬勃生长的一人企业。",
+    "missionP3": "内容聚焦三个支柱:学习(如何快速掌握新技能)、说服(如何建立受众、吸引机会)、执行(如何用现代工具与自动化把想法变成现实)。",
+    "authorTitle": "关于李自在",
+    "authorP1": "李自在是 Zizai Blog 的作者,持续分享 AI 工具、写作方法与一人企业构建的实战经验,探索用技术放大个人创造力的路径。",
+    "authorP2": "相信个体创作者可以借助 AI 与自动化,在不牺牲创作自主与生活自由的前提下,建立可持续的线上事业。",
+    "learnTitle": "你将学到什么",
+    "learn1Title": "AI 与提示词",
+    "learn1Desc": "掌握与 AI 工具协作的方法,提升生产力与创造力,学习提示词工程与自动化策略。",
+    "learn2Title": "写作方法",
+    "learn2Desc": "打磨写作技巧,创作能吸引并留住读者的重要内容——从 Newsletter 到长文。",
+    "learn3Title": "营销策略",
+    "learn3Desc": "用经过验证的营销方法建立与增长个人品牌,吸引机会并把专业能力变现。",
+    "learn4Title": "HUMAN 3.0",
+    "learn4Desc": "探索 AI 时代人类潜力的进化,发掘属于人的独特价值,在变革中保持竞争优势。",
+    "ctaTitle": "加入订阅",
+    "ctaDesc": "每周获取关于一人企业、AI 工具与理想生活方式设计的洞察。",
+    "subscribeBtn": "免费订阅",
+    "website": "个人网站"
   },
   "privacy": {
     "title": "隐私政策",
@@ -222,7 +253,8 @@
     "pageNotFound": "页面未找到",
     "pageNotFoundDesc": "你访问的页面不存在或已被移动。试试从首页或归档页找到你想要的内容。",
     "backToHome": "返回首页",
-    "browseArchive": "浏览归档"
+    "browseArchive": "浏览归档",
+    "legalZhOnly": "本页面的法律文本目前仅提供中文版本。"
   },
   "breadcrumb": {
     "label": "面包屑导航",
@@ -231,5 +263,17 @@
   "aiNews": {
     "dailyTitle": "每日资讯",
     "viewAll": "查看全部"
+  },
+  "notFound": {
+    "title": "页面未找到",
+    "description": "你访问的页面不存在或已被移动。试试从首页或归档页找到你想要的内容。",
+    "backHome": "返回首页",
+    "browseArchive": "浏览归档"
+  },
+  "error": {
+    "title": "出错了",
+    "description": "抱歉，页面发生了意外错误。请重试，或稍后再来看看。",
+    "retry": "重试",
+    "goHome": "回到首页"
   }
 }

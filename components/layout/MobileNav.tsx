@@ -1,7 +1,7 @@
 'use client';
 
 import { Link, usePathname } from '@/i18n/navigation';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -9,14 +9,14 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher';
 
-const NAV_LINKS = [
-  { href: '/', labelKey: 'home' as const },
-  { href: '/daily-news', labelKey: 'aiNews' as const },
-  { href: '/category/ai', labelKey: 'ai' as const },
-  { href: '/category/human-3-0', labelKey: 'cognition' as const },
-  { href: '/category/premium-course', labelKey: 'premiumCourse' as const },
-  { href: '/category/portfolio', labelKey: 'portfolio' as const },
-  { href: '/archive', labelKey: 'archive' as const },
+const NAV_LINKS: { href: string; labelKey: 'home' | 'aiNews' | 'ai' | 'cognition' | 'premiumCourse' | 'portfolio' | 'archive' | 'resume'; accent?: boolean }[] = [
+  { href: '/', labelKey: 'home' },
+  { href: '/daily-news', labelKey: 'aiNews' },
+  { href: '/category/ai', labelKey: 'ai' },
+  { href: '/category/human-3-0', labelKey: 'cognition' },
+  { href: '/category/premium-course', labelKey: 'premiumCourse' },
+  { href: '/category/portfolio', labelKey: 'portfolio' },
+  { href: '/archive', labelKey: 'archive' },
 ];
 
 export default function MobileNav() {
@@ -32,13 +32,14 @@ export default function MobileNav() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden" aria-label={t('menu')}>
+        <Button variant="ghost" size="icon" className="lg:hidden size-11" aria-label={t('menu')}>
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
       <SheetContent side="right">
         <SheetHeader>
           <SheetTitle>Zizai Blog</SheetTitle>
+          <SheetDescription className="sr-only">{t('menuDescription')}</SheetDescription>
         </SheetHeader>
         <nav className="flex flex-col gap-1 mt-6">
           {NAV_LINKS.map((link) => (
@@ -47,12 +48,16 @@ export default function MobileNav() {
               href={link.href}
               onClick={() => setOpen(false)}
               className={cn(
-                'px-3 py-2.5 rounded-md text-sm transition-colors',
+                'flex items-center gap-2 px-3 py-2.5 rounded-md text-sm transition-colors',
+                link.accent && 'border border-primary/40',
                 isActive(link.href)
                   ? 'text-primary font-semibold bg-primary/10'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  : link.accent
+                    ? 'text-primary hover:bg-primary/10'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
               )}
             >
+              <span aria-hidden="true" className={cn('h-1 w-1 rounded-full', link.accent ? 'bg-primary' : 'bg-transparent')} />
               {t(link.labelKey)}
             </Link>
           ))}

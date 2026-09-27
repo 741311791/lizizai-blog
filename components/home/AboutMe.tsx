@@ -19,8 +19,8 @@ export default function AboutMe() {
               src="/avator/avatar_smile.png"
               alt="Zizai Li"
               fill
+              sizes="(max-width: 1024px) 208px, 280px"
               className="object-cover"
-              priority
             />
           </div>
           <SocialLinks iconSize={24} className="gap-5" />

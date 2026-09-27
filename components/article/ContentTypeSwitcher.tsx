@@ -50,7 +50,7 @@ export default function ContentTypeSwitcher({ contentTypes, activeType, onTypeCh
           <button
             key={opt.key}
             onClick={() => onTypeChange?.(opt.key)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-center text-[11px] rounded-md transition-colors cursor-pointer ${
+            className={`flex-1 min-h-10 flex items-center justify-center gap-1.5 px-1 text-center text-[11px] rounded-md transition-colors cursor-pointer ${
               activeType === opt.key
                 ? 'bg-secondary text-primary'
                 : 'text-muted-foreground hover:text-foreground'

@@ -9,8 +9,6 @@ export const config = {
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://lizizai.xyz',
 
   // Resend 邮件 API
-  resendApiKey: process.env.RESEND_API_KEY,
-  resendFromEmail: process.env.RESEND_FROM_EMAIL || 'Zizai Blog <noreply@lizizai.xyz>',
 
   // Cloudflare 服务端点
   emactionUrl: process.env.NEXT_PUBLIC_EMACTION_URL || '',

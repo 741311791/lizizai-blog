@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, List } from 'lucide-react';
+import { ChevronDown, List } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { formatTime } from '@/lib/utils/format';
 
@@ -40,7 +40,7 @@ export default function MobileChapterList({
           <List className="h-4 w-4" />
           {t('chapters')} ({chapters.length})
         </span>
-        {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
         <nav className="border-t border-border px-4 py-2 max-h-60 overflow-y-auto">
@@ -50,7 +50,7 @@ export default function MobileChapterList({
               onClick={() => {
                 onChapterClick(ch.startTime);
               }}
-              className={`block w-full text-left text-sm py-1.5 hover:text-primary transition-colors ${
+              className={`block w-full text-left text-sm py-2.5 leading-snug hover:text-primary transition-colors ${
                 idx === activeIndex ? 'text-primary font-medium' : 'text-muted-foreground'
               }`}
             >

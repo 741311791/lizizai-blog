@@ -29,7 +29,7 @@ export default function ContentTypeFilter({
   const t = useTranslations('article');
 
   return (
-    <div className="flex items-center gap-1.5 flex-wrap">
+    <div className="flex items-center gap-2 flex-wrap">
       {FILTER_OPTIONS.map(({ value, icon: Icon, labelKey }) => {
         const count = counts[value] || 0;
         if (count === 0 && value !== 'all') return null;
@@ -39,16 +39,17 @@ export default function ContentTypeFilter({
           <button
             key={value}
             onClick={() => onFilterChange(value)}
+            aria-pressed={isActive}
             className={cn(
-              'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm transition-colors',
+              'inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
               isActive
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-card text-muted-foreground hover:text-foreground border border-border'
             )}
           >
-            <Icon className="size-3.5" />
+            <Icon className="size-3.5" aria-hidden="true" />
             <span>{t(labelKey)}</span>
-            <span className="text-xs opacity-70">{count}</span>
+            <span className="text-xs opacity-70 tabular-nums">{count}</span>
           </button>
         );
       })}

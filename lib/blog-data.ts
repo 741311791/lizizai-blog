@@ -12,16 +12,33 @@ import { extractHeadings } from '@/lib/utils/heading';
 const R2_BASE = process.env.R2_PUBLIC_URL || 'https://lizizai-blog.lihehua.xyz';
 
 /**
+ * 数据源不可用错误：抛出后由 error.tsx 呈现错误页与重试，
+ * 避免静默返回空数组导致"空站"假象并被 ISR 缓存。
+ */
+export class BlogDataUnavailableError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'BlogDataUnavailableError';
+  }
+}
+
+/**
  * 获取所有文章（同一请求内缓存，避免重复调用）
  */
 export const getAllArticles = cache(async (): Promise<Article[]> => {
-  const res = await fetch(`${R2_BASE}/blog-data/articles.json`, {
-    next: { revalidate: 3600 },
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${R2_BASE}/blog-data/articles.json`, {
+      next: { revalidate: 3600 },
+    });
+  } catch (err) {
+    console.error('Failed to fetch articles (network):', err);
+    throw new BlogDataUnavailableError('Blog data source unreachable');
+  }
 
   if (!res.ok) {
     console.error('Failed to fetch articles:', res.status);
-    return [];
+    throw new BlogDataUnavailableError(`Blog data source returned ${res.status}`);
   }
 
   const data = await res.json();
@@ -134,7 +151,8 @@ function decodeSlug(slug: string): string {
   }
 }
 
-export async function getArticleBySlug(slug: string): Promise<Article | null> {
+// React.cache：generateMetadata 与 page 共享同一次执行（含 renderMarkdown/extractHeadings 等重活）
+export const getArticleBySlug = cache(async function getArticleBySlug(slug: string): Promise<Article | null> {
   slug = decodeSlug(slug);
   const articles = await getAllArticles();
   const article = articles.find(a => a.slug === slug);
@@ -211,7 +229,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
   }
 
   return result;
-}
+});
 
 /**
  * 按分类获取文章
