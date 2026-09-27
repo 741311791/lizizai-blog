@@ -1,0 +1,107 @@
+<svg width="1000" viewBox="0 0 1000 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="roadmap-sm-title roadmap-sm-desc">
+      <title id="roadmap-sm-title">Roadmap Agent 多智能体状态机</title>
+      <desc id="roadmap-sm-desc">用户意图经结构化澄清后依次进入目标拆解、路径规划、对抗审查与内容生成；对抗审查对非标输出强制拦截并自愈重试，任意长任务可中断进入 HITL 人工确认后无损续跑，全程状态由 AsyncPostgresSaver 持久化。</desc>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#a8a29e"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#d97706"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#18181b"/>
+
+      <!-- ============ 转移（先于状态节点） ============ -->
+      <!-- 起点 → 意图澄清 -->
+      <circle cx="36" cy="232" r="6" fill="#fafaf9"/>
+      <line x1="44" y1="232" x2="64" y2="232" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- 澄清→拆解 -->
+      <line x1="176" y1="232" x2="240" y2="232" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="180" y="214" width="56" height="12" rx="2" fill="#18181b"/>
+      <text x="208" y="223" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.06em">意图解析</text>
+
+      <!-- 拆解→规划 -->
+      <line x1="352" y1="232" x2="416" y2="232" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="356" y="214" width="56" height="12" rx="2" fill="#18181b"/>
+      <text x="384" y="223" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.06em">目标图谱</text>
+
+      <!-- 规划→审查 -->
+      <line x1="528" y1="232" x2="592" y2="232" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="532" y="214" width="56" height="12" rx="2" fill="#18181b"/>
+      <text x="560" y="223" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.06em">DRAFT</text>
+
+      <!-- 审查→生成 -->
+      <line x1="704" y1="232" x2="768" y2="232" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+      <rect x="708" y="214" width="56" height="12" rx="2" fill="#18181b"/>
+      <text x="736" y="223" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.06em">审查通过</text>
+
+      <!-- 审查→规划 非标拦截回环（上弧） -->
+      <path d="M648,204 C648,140 472,140 472,204" fill="none" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="496" y="118" width="128" height="12" rx="2" fill="#18181b"/>
+      <text x="560" y="127" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.06em">非标拦截 · 自愈重试</text>
+
+      <!-- 生成→交付（终点环点） -->
+      <line x1="880" y1="232" x2="914" y2="232" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="908" y="206" width="32" height="12" rx="2" fill="#18181b"/>
+      <text x="924" y="215" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.06em">交付</text>
+
+      <!-- 规划⇢HITL（虚线中断） -->
+      <path d="M472,260 V348" fill="none" stroke="#a8a29e" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <rect x="478" y="292" width="64" height="12" rx="2" fill="#18181b"/>
+      <text x="480" y="301" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="start" letter-spacing="0.06em">中断·确认</text>
+
+      <!-- HITL→生成（虚线续跑，跨线跳桥） -->
+      <path d="M556,348 V308 Q556,300 564,300 H808 a 8,8 0 0 1 16,0 H840 Q848,300 848,292 V260" fill="none" stroke="#a8a29e" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <rect x="616" y="278" width="64" height="12" rx="2" fill="#18181b"/>
+      <text x="648" y="287" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle" letter-spacing="0.06em">确认·续跑</text>
+
+      <!-- 生成⇢持久化（虚线检查点） -->
+      <path d="M816,260 V348" fill="none" stroke="#a8a29e" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <rect x="736" y="310" width="72" height="12" rx="2" fill="#18181b"/>
+      <text x="808" y="319" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="end" letter-spacing="0.06em">CHECKPOINT</text>
+
+      <!-- ============ 状态节点 ============ -->
+      <g font-family="'Geist','Noto Sans SC','PingFang SC',sans-serif">
+        <rect x="64" y="204" width="112" height="56" rx="8" fill="#202024" stroke="rgba(250,250,249,0.45)" stroke-width="1"/>
+        <text x="120" y="226" fill="#fafaf9" font-size="12" font-weight="600" text-anchor="middle">意图澄清</text>
+        <text x="120" y="242" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">40% → 85%</text>
+
+        <rect x="240" y="204" width="112" height="56" rx="8" fill="#202024" stroke="rgba(250,250,249,0.45)" stroke-width="1"/>
+        <text x="296" y="226" fill="#fafaf9" font-size="12" font-weight="600" text-anchor="middle">目标拆解</text>
+        <text x="296" y="242" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">DECOMPOSE</text>
+
+        <rect x="416" y="204" width="112" height="56" rx="8" fill="#202024" stroke="rgba(250,250,249,0.45)" stroke-width="1"/>
+        <text x="472" y="226" fill="#fafaf9" font-size="12" font-weight="600" text-anchor="middle">路径规划</text>
+        <text x="472" y="242" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">PLANNER</text>
+
+        <rect x="592" y="204" width="112" height="56" rx="8" fill="#202024" stroke="rgba(250,250,249,0.45)" stroke-width="1"/>
+        <text x="648" y="226" fill="#fafaf9" font-size="12" font-weight="600" text-anchor="middle">对抗审查</text>
+        <text x="648" y="242" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">CRITIC</text>
+
+        <rect x="768" y="204" width="112" height="56" rx="8" fill="rgba(217,119,6,0.12)" stroke="#d97706" stroke-width="1.2"/>
+        <text x="824" y="226" fill="#fafaf9" font-size="12" font-weight="600" text-anchor="middle">内容生成</text>
+        <text x="824" y="242" fill="#d97706" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">两阶段 CoT</text>
+      </g>
+
+      <!-- HITL（人工介入） -->
+      <rect x="416" y="348" width="176" height="56" rx="8" fill="rgba(168,162,158,0.10)" stroke="#78716c" stroke-width="1"/>
+      <text x="504" y="370" fill="#fafaf9" font-size="12" font-weight="600" font-family="'Geist','Noto Sans SC','PingFang SC',sans-serif" text-anchor="middle">HITL 人工确认</text>
+      <text x="504" y="386" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">interrupt · 状态回滚</text>
+
+      <!-- ThreadState 持久化（存储） -->
+      <rect x="704" y="348" width="200" height="56" rx="8" fill="rgba(250,250,249,0.05)" stroke="#a8a29e" stroke-width="1"/>
+      <text x="804" y="370" fill="#fafaf9" font-size="12" font-weight="600" font-family="'Geist','Noto Sans SC','PingFang SC',sans-serif" text-anchor="middle">ThreadState 持久化</text>
+      <text x="804" y="386" fill="#a8a29e" font-size="10" font-family="'Geist Mono','SF Mono',Menlo,monospace" text-anchor="middle">AsyncPostgresSaver · 断点续跑</text>
+
+      <!-- 终点环点 -->
+      <circle cx="924" cy="232" r="8" fill="none" stroke="#fafaf9" stroke-width="1.2"/>
+      <circle cx="924" cy="232" r="4" fill="#fafaf9"/>
+
+      <!-- ============ 图例 ============ -->
+      <line x1="64" y1="436" x2="936" y2="436" stroke="rgba(250,250,249,0.12)" stroke-width="0.8"/>
+      <text x="64" y="456" fill="#a8a29e" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace" letter-spacing="0.14em">LEGEND</text>
+      <line x1="144" y1="453" x2="180" y2="453" stroke="#a8a29e" stroke-width="1.2"/>
+      <text x="188" y="456" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace">主流程转移</text>
+      <line x1="292" y1="453" x2="328" y2="453" stroke="#a8a29e" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="336" y="456" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace">HITL 中断 / 持久化</text>
+      <rect x="500" y="447" width="12" height="12" rx="2" fill="rgba(217,119,6,0.12)" stroke="#d97706" stroke-width="1"/>
+      <text x="520" y="456" fill="#78716c" font-size="9" font-family="'Geist Mono','SF Mono',Menlo,monospace">焦点状态（两阶段 CoT 输出）</text>
+    </svg>
