@@ -1,15 +1,41 @@
-'use client';
-
 import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Separator } from '@/components/ui/separator';
 import { Sparkles, Zap, BookOpen, Users, Check, ArrowLeft } from 'lucide-react';
 import SubstackEmbed from '@/components/subscribe/SubstackEmbed';
+import { siteConfig } from '@/lib/seo';
+import type { Metadata } from 'next';
 
-export default function SubscribePage() {
-  const t = useTranslations('subscribe');
-  const tc = useTranslations('common');
-  const tf = useTranslations('footer');
+interface SubscribePageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: SubscribePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'subscribe' });
+  const isZh = locale === 'zh';
+  const url = isZh ? `${siteConfig.url}/subscribe` : `${siteConfig.url}/en/subscribe`;
+  return {
+    title: t('title'),
+    description: t('subtitle'),
+    alternates: {
+      canonical: url,
+      languages: {
+        zh: `${siteConfig.url}/subscribe`,
+        en: `${siteConfig.url}/en/subscribe`,
+      },
+    },
+  };
+}
+
+export default async function SubscribePage({ params }: SubscribePageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('subscribe');
+  const tc = await getTranslations('common');
+  const tf = await getTranslations('footer');
 
   const benefits = [
     { icon: Sparkles, title: t('benefitWeekly'), description: t('benefitWeeklyDesc') },
@@ -34,8 +60,10 @@ export default function SubscribePage() {
         {/* 左侧：订阅价值 */}
         <div className="space-y-8">
           <div className="space-y-4">
-            <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">{t('title')}</h1>
-            <p className="text-xl text-muted-foreground">{t('subtitle')}</p>
+            <h1 className="text-4xl font-bold tracking-tight lg:text-5xl text-balance">
+              {t('title')}
+            </h1>
+            <p className="text-xl text-muted-foreground text-pretty">{t('subtitle')}</p>
           </div>
 
           <Separator />
@@ -44,7 +72,7 @@ export default function SubscribePage() {
             {benefits.map((benefit, index) => (
               <div key={index} className="flex gap-4">
                 <div className="shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <benefit.icon className="h-6 w-6 text-primary" />
+                  <benefit.icon className="h-6 w-6 text-primary" aria-hidden="true" />
                 </div>
                 <div className="space-y-1">
                   <h3 className="font-semibold">{benefit.title}</h3>
@@ -57,7 +85,7 @@ export default function SubscribePage() {
 
         {/* 右侧：Substack 订阅入口 */}
         <div className="lg:sticky lg:top-8">
-          <div className="p-8 rounded-lg border border-border bg-card shadow-lg">
+          <div className="p-8 rounded-xl border border-border bg-card">
             <h2 className="text-2xl font-bold mb-2">{t('subscribeOnSubstack')}</h2>
             <p className="text-muted-foreground mb-6">{t('confirmHint')}</p>
 
@@ -65,12 +93,13 @@ export default function SubscribePage() {
               variant="form"
               buttonText={t('subscribeForFree')}
               placeholder={t('emailPlaceholder')}
+              emailLabel={t('emailPlaceholder')}
             />
 
             <div className="space-y-2 pt-6">
               {features.map((feature, index) => (
                 <div key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <Check className="h-4 w-4 text-primary" aria-hidden="true" />
                   <span>{feature}</span>
                 </div>
               ))}

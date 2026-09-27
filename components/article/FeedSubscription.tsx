@@ -61,14 +61,12 @@ export default function FeedSubscription({
             </span>
             <button
               onClick={() => handleCopy(link.url)}
-              className="shrink-0 p-1 hover:text-foreground transition-colors"
+              className="relative shrink-0 size-10 flex items-center justify-center hover:text-foreground transition-colors"
               aria-label={t('copyFeedUrl')}
             >
-              {copiedUrl === link.url ? (
-                <Check className="h-3 w-3 text-green-500" />
-              ) : (
-                <Copy className="h-3 w-3 text-muted-foreground" />
-              )}
+              {/* 两图标叠放 cross-fade:150ms,匹配交互反馈规范 */}
+              <Copy className={`absolute h-3.5 w-3.5 text-muted-foreground transition-opacity duration-150 ${copiedUrl === link.url ? 'opacity-0' : 'opacity-100'}`} />
+              <Check className={`absolute h-3.5 w-3.5 text-green-500 transition-opacity duration-150 ${copiedUrl === link.url ? 'opacity-100' : 'opacity-0'}`} />
             </button>
           </div>
         ))}
