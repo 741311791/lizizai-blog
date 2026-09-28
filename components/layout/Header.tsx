@@ -13,7 +13,7 @@ import { Menu, FileText } from 'lucide-react';
 function MobileNavPlaceholder() {
   const t = useTranslations('nav');
   return (
-    <button className="lg:hidden p-2" aria-label={t('menu')}>
+    <button className="xl:hidden p-2" aria-label={t('menu')}>
       <Menu className="h-5 w-5" />
     </button>
   );
@@ -82,14 +82,15 @@ export default function Header() {
             <span className="text-lg font-bold tracking-tight">Zizai Blog</span>
           </Link>
 
-          {/* 导航居中 — 桌面端（≥1024px，768-1024 区间与两侧内容重叠，改走移动菜单） */}
-          <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-7">
+          {/* 导航居中 — 桌面端（≥1280px：英文整行导航较宽，1024–1280 放不下，改走移动菜单。
+              全宽 inset-x-0 + justify-center 居中：left-1/2 定位的收缩宽度以锚点右侧空间为限，英文标签必然换行 */}
+          <nav className="hidden xl:flex absolute inset-x-0 items-center justify-center gap-5 2xl:gap-7 pointer-events-none">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'text-sm relative py-1 transition-colors',
+                  'text-sm relative py-1 transition-colors whitespace-nowrap pointer-events-auto',
                   link.accent
                     ? 'inline-flex items-center gap-1.5 rounded-full border border-primary/50 bg-primary/[0.08] px-3 font-semibold text-primary hover:bg-primary/15'
                     : 'text-muted-foreground hover:text-foreground',
