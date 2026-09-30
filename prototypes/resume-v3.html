@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>李自在 · 数据与 AI 自媒体博主 — Bento 复刻稿 v3.1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-page:#080604; --orange:#FF9E2F; --orange-hi:#FFC46B; --orange-deep:#F07818;
+  --t-title:#F2F3F5; --t-body:#9BA1A8; --t-muted:#6F757D; --t-mono:#8A9099; --green:#3ECF8E;
+}
+html{background:var(--bg-page)}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg-page);color:var(--t-title);font-feature-settings:'tnum';
+  background-image:radial-gradient(900px 500px at 75% 12%, rgba(255,120,20,.10), transparent 70%),
+                   radial-gradient(700px 420px at 12% 46%, rgba(255,120,20,.06), transparent 70%),
+                   radial-gradient(900px 500px at 60% 92%, rgba(255,110,10,.07), transparent 70%);
+  background-repeat:no-repeat}
+.mono{font-family:'JetBrains Mono','Noto Sans SC',monospace}
+/* 渐变描边发光卡：上亮下暗 */
+.card{position:relative;border:1px solid transparent;border-radius:16px;padding:26px 30px;
+  background:linear-gradient(160deg,#171009 0%,#120d07 55%,#100b06 100%) padding-box,
+             linear-gradient(180deg,rgba(255,183,94,.9) 0%,rgba(201,118,34,.6) 40%,rgba(110,63,18,.4) 75%,rgba(80,46,16,.55) 100%) border-box;
+  box-shadow:0 0 36px -6px rgba(255,150,40,.55), 0 0 10px rgba(255,170,70,.4), inset 0 0 18px rgba(255,140,30,.09);
+  transition:box-shadow .4s}
+.card:hover{box-shadow:0 0 48px -6px rgba(255,160,50,.7), 0 0 14px rgba(255,190,100,.5), inset 0 0 26px rgba(255,150,40,.14)}
+.card-bright{
+  background:linear-gradient(160deg,#1a1208 0%,#130d07 60%,#110b06 100%) padding-box,
+             linear-gradient(180deg,rgba(255,196,120,1) 0%,rgba(230,140,50,.8) 45%,rgba(130,74,24,.5) 100%) border-box;
+  box-shadow:0 0 46px -6px rgba(255,160,50,.68), 0 0 12px rgba(255,190,100,.5), inset 0 0 24px rgba(255,150,40,.12)}
+.panel{background:#181109;border:1px solid rgba(255,170,80,.14);border-radius:12px;padding:16px 18px}
+.hud::before,.hud::after{content:'';position:absolute;width:24px;height:24px;pointer-events:none;z-index:20}
+.hud::before{top:-2px;left:-2px;border-top:2.5px solid var(--orange-hi);border-left:2.5px solid var(--orange-hi);border-top-left-radius:8px;filter:drop-shadow(0 0 5px rgba(255,183,94,.9))}
+.hud::after{bottom:-2px;right:-2px;border-bottom:2.5px solid var(--orange-hi);border-right:2.5px solid var(--orange-hi);border-bottom-right-radius:8px;filter:drop-shadow(0 0 5px rgba(255,183,94,.9))}
+.chip{width:46px;height:46px;border-radius:12px;border:1px solid rgba(255,158,47,.55);background:rgba(255,158,46,.1);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 0 10px rgba(255,150,40,.2)}
+.tag{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);color:#A9AFB6;font-size:13px;padding:6px 14px;border-radius:999px}
+.btn-main{background:linear-gradient(90deg,#FFAB52,#F08312);color:#3A1C00;font-weight:700;border-radius:999px;padding:16px 38px;font-size:16px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 0 24px rgba(255,140,30,.5),0 0 6px rgba(255,160,60,.3)}
+.btn-main:hover{box-shadow:0 0 34px rgba(255,140,30,.65),0 0 10px rgba(255,170,70,.4)}
+.btn-ghost{border:1px solid rgba(255,255,255,.45);color:#F5F5F5;border-radius:999px;padding:16px 38px;font-size:16px;display:inline-flex;align-items:center;gap:8px}
+.btn-ghost:hover{border-color:var(--orange)}
+.link-arrow{color:var(--orange);font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.link-arrow span{transition:transform .3s}.link-arrow:hover span{transform:translateX(4px)}
+.svg-glow{filter:drop-shadow(0 0 4px rgba(255,158,47,.8))}
+.svg-bloom{filter:drop-shadow(0 0 6px rgba(255,170,70,.9)) drop-shadow(0 0 14px rgba(255,140,40,.4))}
+.vertical-text{writing-mode:vertical-rl;letter-spacing:.28em}
+.grain::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* 四角 L 形角标（叠于主边框上，更亮更粗） */
+.cf{position:absolute;width:28px;height:28px;pointer-events:none;z-index:15;filter:drop-shadow(0 0 5px rgba(255,183,94,.95))}
+.cf-tl{top:-2px;left:-2px;border-top:2.5px solid #FFD79A;border-left:2.5px solid #FFD79A}
+.cf-tr{top:-2px;right:-2px;border-top:2.5px solid #FFD79A;border-right:2.5px solid #FFD79A}
+.cf-bl{bottom:-2px;left:-2px;border-bottom:2.5px solid #FFD79A;border-left:2.5px solid #FFD79A}
+.cf-br{bottom:-2px;right:-2px;border-bottom:2.5px solid #FFD79A;border-right:2.5px solid #FFD79A}
+/* 边框引脚刻度 */
+.pin{position:absolute;width:13px;height:2px;background:#FFAB52;z-index:15;box-shadow:0 0 5px rgba(255,158,47,.7)}
+.pin-l{left:-4.5px}.pin-r{right:-4.5px}
+/* 边框阶梯连接器（电路端口） */
+.port{position:absolute;right:0;top:17%;width:18px;height:14px;border-top:1.5px solid rgba(255,190,100,.9);border-bottom:1.5px solid rgba(255,190,100,.9);z-index:15;filter:drop-shadow(0 0 4px rgba(255,158,47,.6))}
+.port::before{content:'';position:absolute;right:2px;top:6px;width:7px;height:1.5px;background:rgba(255,190,100,.9)}
+/* 图标芯片放大 */
+.chip{width:72px;height:72px;border-radius:20px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.pulse{animation:pulse 2.4s ease-in-out infinite}
+@keyframes eq{0%,100%{height:6px}50%{height:16px}}
+.eq i{display:inline-block;width:3px;background:var(--orange);border-radius:2px;margin:0 1.5px;animation:eq 1.1s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:.2s}.eq i:nth-child(3){animation-delay:.4s}.eq i:nth-child(4){animation-delay:.6s}
+#beams{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:visible}
+</style>
+</head>
+<body class="grain">
+<div class="page-wrap max-w-[1344px] mx-auto px-6 md:px-12 relative">
+
+<!-- 导航 -->
+<nav class="flex items-center justify-between h-20">
+  <div class="flex items-center gap-2.5">
+    <span class="text-lg font-black tracking-wide">李自在</span>
+    <span class="w-2 h-2 rounded-[2px] rotate-45 bg-[var(--orange)] svg-glow"></span>
+  </div>
+  <div class="flex items-center gap-9 text-[15px]" style="color:var(--t-body)">
+    <a href="#" class="text-[var(--orange)] font-medium border-b-2 border-[var(--orange)] pb-1">首页</a>
+    <a href="#work" class="hover:text-white transition-colors">项目经历</a>
+    <a href="#" class="hover:text-white transition-colors">博客</a>
+    <a href="#" class="hover:text-white transition-colors">关于我</a>
+    <span class="eq flex items-end h-4 ml-2"><i></i><i></i><i></i><i></i></span>
+  </div>
+</nav>
+
+<!-- Hero 大卡 -->
+<header class="card hud relative overflow-hidden mt-2 flex items-stretch min-h-[560px]">
+  <i class="cf cf-tr"></i><i class="cf cf-bl"></i><i class="port"></i>
+  <div class="absolute rounded-full pointer-events-none" style="left:-560px;top:-60px;width:1100px;height:1100px;border:1px solid rgba(255,200,150,.14)"></div>
+  <!-- 层1: 大范围暖光 -->
+  <div class="absolute inset-0" style="background:radial-gradient(680px 480px at 72% 48%, rgba(255,130,20,.24), transparent 70%)"></div>
+  <!-- 层2: Hero 内 PCB 走线 -->
+  <svg class="absolute inset-0 w-full h-full" viewBox="0 0 1344 560" preserveAspectRatio="none">
+    <g stroke="rgba(205,135,55,.85)" stroke-width="1" fill="none">
+      <path d="M0 90 H150 L185 125 H320"/><path d="M0 210 H70 L100 240 H130"/>
+      <path d="M1344 120 H1240 L1205 155 H1140"/><path d="M1344 460 H1220 L1185 495 H1080"/>
+      <path d="M980 0 V70 L1010 100 V150"/><path d="M420 560 V510 L390 480 H330"/>
+    </g>
+    <g fill="#D98A35">
+      <circle cx="320" cy="125" r="3"/><circle cx="130" cy="240" r="3"/><circle cx="1140" cy="155" r="3"/>
+      <circle cx="1080" cy="495" r="3"/><circle cx="1010" cy="150" r="3"/><circle cx="330" cy="480" r="3"/>
+    </g>
+    <!-- 竖向光柱 -->
+    <g stroke="rgba(255,140,40,.18)" stroke-width="2">
+      <line x1="880" y1="360" x2="880" y2="560"/><line x1="905" y1="300" x2="905" y2="560"/>
+      <line x1="930" y1="400" x2="930" y2="560"/><line x1="855" y1="440" x2="855" y2="560"/>
+    </g>
+    <!-- 底部城市剪影 -->
+    <g opacity=".5">
+      <path d="M0 560 V528 H40 V508 H70 V536 H120 V496 H160 V522 H210 V484 H250 V540 H300 V512 H340 V530 H400 V500 H430 V560 Z" fill="#050302"/>
+      <path d="M700 560 V532 H740 V500 H770 V528 H820 V492 H860 V538 H910 V516 H950 V560 Z" fill="#050302"/>
+      <path d="M1000 560 V526 H1040 V506 H1080 V534 H1130 V498 H1170 V560 Z" fill="#050302"/>
+      <g fill="rgba(255,150,50,.5)"><circle cx="55" cy="516" r="1.2"/><circle cx="130" cy="505" r="1.2"/><circle cx="175" cy="530" r="1.2"/><circle cx="222" cy="492" r="1.2"/><circle cx="750" cy="512" r="1.2"/><circle cx="832" cy="502" r="1.2"/><circle cx="1050" cy="516" r="1.2"/><circle cx="1140" cy="510" r="1.2"/></g>
+    </g>
+    <!-- 尘埃粒子（JS 补充随机） -->
+    <g id="dust" fill="rgba(255,190,120,.7)"></g>
+  </svg>
+  <!-- 层3: 人像 + 三层光环 -->
+  <div class="absolute right-0 top-0 h-full w-[55%] pointer-events-none">
+    <div class="absolute right-[4%] top-1/2 -translate-y-1/2 w-[780px] h-[780px] rounded-full" style="background:radial-gradient(circle, rgba(255,122,0,.3) 0%, rgba(255,122,0,.08) 45%, transparent 70%)"></div>
+    <div class="absolute right-[4%] top-1/2 -translate-y-1/2 w-[410px] h-[410px] rounded-full" style="background:radial-gradient(circle, rgba(255,150,60,.16) 0%, transparent 62%)"></div>
+    <div class="absolute right-[4%] top-1/2 -translate-y-1/2 w-[410px] h-[410px] rounded-full" style="border:2.5px solid #FFB25E;box-shadow:0 0 24px rgba(255,178,94,.75),0 0 70px rgba(255,122,0,.4),inset 0 0 30px rgba(255,150,60,.25)"></div>
+    <div class="absolute right-[4%] top-1/2 -translate-y-1/2 w-[410px] h-[410px] rounded-full blur-[7px]" style="border:2px solid rgba(255,178,94,.5)"></div>
+    <img src="asset-hero-portrait.png" alt="李自在" class="absolute right-[0%] bottom-0 h-[96%] max-w-none object-contain" style="filter:brightness(1.18) saturate(1.4) drop-shadow(0 0 28px rgba(255,140,40,.32));-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18%),linear-gradient(180deg,#000 82%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 18%),linear-gradient(180deg,#000 82%,transparent 100%);mask-composite:intersect">
+  </div>
+  <!-- 芯片装饰块 + 竖排文字 -->
+  <div class="absolute right-14 top-[13%] z-10 flex flex-col items-end gap-6">
+    <span class="block w-8 h-[3px] bg-[var(--orange)] svg-glow"></span>
+    <div class="panel !p-3.5 w-[150px]" style="background:rgba(24,17,9,.85)">
+      <p class="text-[11px]" style="color:var(--t-muted)">内容更新 / 周</p>
+      <p class="mono text-xl font-bold mt-0.5">6 <span class="text-[11px] font-medium" style="color:var(--orange)">篇</span></p>
+      <div class="flex items-end gap-1.5 h-6 mt-2">
+        <span class="flex-1 rounded-[2px]" style="height:40%;background:rgba(255,158,47,.35)"></span>
+        <span class="flex-1 rounded-[2px]" style="height:65%;background:rgba(255,158,47,.5)"></span>
+        <span class="flex-1 rounded-[2px]" style="height:45%;background:rgba(255,158,47,.35)"></span>
+        <span class="flex-1 rounded-[2px]" style="height:85%;background:rgba(255,158,47,.75)"></span>
+        <span class="flex-1 rounded-[2px]" style="height:60%;background:rgba(255,158,47,.45)"></span>
+        <span class="flex-1 rounded-[2px] svg-glow" style="height:100%;background:#FFAB52"></span>
+      </div>
+    </div>
+    <div class="vertical-text text-[15px] font-medium" style="color:#E0B584">数据 <span class="text-[var(--orange)]">×</span> AI <span class="text-[var(--orange)]">×</span> 内容 <span class="text-[var(--orange)]">×</span> 成长</div>
+    <div class="mono text-[11px] tracking-[.2em] text-right leading-[2]" style="color:#8A7360"><p>BETTER DATA</p><p>BETTER DECISIONS</p></div>
+  </div>
+  <!-- 左列文字 -->
+  <div class="relative z-10 flex flex-col justify-center gap-5 pl-8 md:pl-[72px] py-14 max-w-[560px]">
+    <div class="flex items-center gap-4">
+      <h1 class="text-6xl font-black tracking-tight">李自在</h1>
+      <span class="text-[14px] font-bold px-3 py-1 rounded-full" style="background:linear-gradient(180deg,#FFB03A,#F68E1E);color:#241303">笔名</span>
+    </div>
+    <h2 class="text-[36px] leading-tight font-bold text-white">数据与 AI 自媒体博主</h2>
+    <div class="flex items-center gap-2.5 text-[16px] mt-1" style="color:#C8CDD2">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF9E2F" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 12h18"/></svg>
+      <span>7 年工程经验</span>
+    </div>
+    <div class="flex items-center gap-5 mt-1">
+      <span class="text-[13px]" style="color:var(--t-muted)">曾任职于</span>
+      <span class="flex items-center gap-2.5"><img src="resume-diagrams/alibabacloud.svg" class="w-8 h-8" alt="阿里云"><span class="text-[15px] font-medium text-white">阿里云</span></span>
+      <span class="flex items-center gap-2.5"><img src="resume-diagrams/taobao.svg" class="w-9 h-9" alt="淘宝"></span>
+    </div>
+    <div class="flex flex-wrap gap-4 mt-6">
+      <a href="#work" class="btn-main">查看项目经历 <span>→</span></a>
+      <a href="#contact" class="btn-ghost">订阅博客</a>
+    </div>
+  </div>
+</header>
+
+<!-- Bento 主网格（beams overlay 动态连线由 JS 绘制） -->
+<main id="work" class="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 mt-6 relative">
+<svg id="beams"></svg>
+  <!-- 左列 -->
+  <div class="flex flex-col gap-6">
+
+    <!-- 卡1 -->
+    <section class="card flex gap-8 items-stretch" data-beam="agent">
+  <i class="cf cf-tl"></i><i class="cf cf-tr"></i><i class="cf cf-bl"></i><i class="cf cf-br"></i>
+
+      <div class="flex-1 min-w-0 flex flex-col">
+        <div class="flex items-start justify-between">
+          <div>
+            <h3 class="text-2xl font-bold" style="text-shadow:0 0 18px rgba(255,255,255,.15)">生产级 Agent 系统</h3>
+            <p class="text-[15px] leading-relaxed mt-2" style="color:var(--t-body)">基于大模型的企业级 Agent 平台，支持多智能体协作、工具调用与工作流编排，已服务 100+ 业务场景。</p>
+          </div>
+          <span class="chip"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FF9E2F" stroke-width="1.6" class="svg-glow"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5Z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span>
+        </div>
+        <div class="panel flex-1 mt-5 flex flex-col justify-between">
+          <div class="flex items-baseline justify-between">
+            <span class="text-[13px]" style="color:var(--t-muted)">任务处理量 / 日</span>
+            <span class="mono text-lg font-semibold text-white">12.6k <b class="text-[var(--orange)] font-medium text-sm ml-1">↑ 38%</b></span>
+          </div>
+          <svg viewBox="0 0 520 130" class="w-full h-[110px] my-2" preserveAspectRatio="none">
+            <defs><linearGradient id="af" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF9E2F" stop-opacity=".4"/><stop offset="1" stop-color="#FF9E2F" stop-opacity="0"/></linearGradient></defs>
+            <g stroke="rgba(255,255,255,.07)"><line x1="0" y1="32" x2="520" y2="32"/><line x1="0" y1="64" x2="520" y2="64"/><line x1="0" y1="96" x2="520" y2="96"/></g>
+            <path d="M0,102 30,94 46,99 64,80 92,86 118,64 140,70 168,52 196,60 224,44 250,66 278,50 306,58 332,38 362,46 390,28 418,36 446,20 476,26 502,14 520,18" fill="none" stroke="#FFB056" stroke-width="2.5" class="svg-bloom"/>
+            <g fill="#FFC46B"><circle cx="118" cy="64" r="3"/><circle cx="224" cy="44" r="3"/><circle cx="446" cy="20" r="3"/></g>
+            <circle cx="332" cy="38" r="6" fill="#FFD79A" class="svg-bloom"/>
+            <circle cx="332" cy="38" r="11" fill="none" stroke="rgba(255,190,100,.5)" stroke-width="1"/>
+            <circle cx="520" cy="18" r="4" fill="#FFC46B" class="svg-bloom"/>
+          </svg>
+          <div class="mono text-[10.5px] flex justify-between" style="color:var(--t-muted)"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+        </div>
+        <div class="flex flex-wrap gap-2.5 mt-5"><span class="tag">LLM</span><span class="tag">Agent</span><span class="tag">工具调用</span><span class="tag">监控</span></div>
+        <div class="mt-4"><a href="#" class="link-arrow">查看详情 <span>→</span></a></div>
+      </div>
+      <div class="w-[170px] flex-none hidden md:flex flex-col items-center justify-center gap-4 panel !rounded-xl">
+        <div class="relative w-[112px] h-[112px]">
+          <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+            <circle cx="60" cy="60" r="51" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
+            <defs><linearGradient id="dz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC46B"/><stop offset="1" stop-color="#F08312"/></linearGradient></defs><circle class="svg-bloom" cx="60" cy="60" r="51" fill="none" stroke="url(#dz)" stroke-width="10" stroke-linecap="round" stroke-dasharray="315" stroke-dashoffset="4.1"/>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span class="text-[12px]" style="color:var(--t-muted)">成功率</span>
+            <span class="mono text-xl font-bold" style="color:#FFAB52">98.7%</span>
+          </div>
+        </div>
+        <p class="text-[12px] text-center leading-relaxed" style="color:var(--t-muted)">生产环境<br>7×24h 常驻运行</p>
+      </div>
+    </section>
+
+    <!-- 卡2：左数据 + 右 mesh 拓扑 -->
+    <section class="card flex flex-col" data-beam="data">
+  <i class="cf cf-tl"></i><i class="cf cf-tr"></i><i class="cf cf-bl"></i><i class="cf cf-br"></i>
+
+      <div class="flex items-start justify-between">
+        <div>
+          <h3 class="text-2xl font-bold" style="text-shadow:0 0 18px rgba(255,255,255,.15)">PB 级数据底座</h3>
+          <p class="text-[15px] leading-relaxed mt-2 max-w-[560px]" style="color:var(--t-body)">构建湖仓一体的数据平台，支撑海量数据存储、实时计算与多维分析，服务业务全链路。</p>
+        </div>
+        <span class="chip"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FF9E2F" stroke-width="1.6" class="svg-glow"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>
+      </div>
+      <div class="flex flex-col gap-4 mt-5 flex-1">
+        <div class="grid grid-cols-2 gap-4 w-full flex-none">
+          <div class="panel flex-1 flex flex-col justify-between">
+            <span class="text-[13px]" style="color:var(--t-muted)">数据规模</span>
+            <div><span class="mono text-3xl font-semibold">1.2 PB</span> <b class="text-[var(--orange)] font-medium text-sm ml-1">↑ 100%</b></div>
+            <svg viewBox="0 0 200 44" class="w-full h-9" preserveAspectRatio="none">
+              <path d="M0,38 24,33 48,36 72,26 96,30 120,18 144,24 168,10 200,5 L200,44 0,44 Z" fill="rgba(255,158,47,.3)"/>
+              <path d="M0,38 24,33 48,36 72,26 96,30 120,18 144,24 168,10 200,5" fill="none" stroke="#FFB056" stroke-width="2" class="svg-bloom"/>
+            </svg>
+          </div>
+          <div class="panel flex-1 flex flex-col justify-between">
+            <span class="text-[13px]" style="color:var(--t-muted)">实时计算延迟</span>
+            <div class="mono text-3xl font-semibold">&lt; 1s</div>
+            <div class="flex items-center gap-2 text-[14px]" style="color:var(--t-body)"><span class="w-2 h-2 rounded-full pulse" style="background:var(--green);box-shadow:0 0 8px var(--green)"></span>稳定</div>
+          </div>
+        </div>
+        <!-- mesh 拓扑图 + 竖排图例 -->
+        <div class="panel flex-1 relative overflow-hidden">
+          <svg viewBox="0 0 360 210" class="w-full h-full" preserveAspectRatio="xMidYMid slice">
+            <g stroke="rgba(255,158,47,.45)" stroke-width="1">
+              <line x1="40" y1="160" x2="95" y2="105"/><line x1="95" y1="105" x2="70" y2="50"/><line x1="95" y1="105" x2="170" y2="140"/><line x1="70" y1="50" x2="150" y2="30"/><line x1="150" y1="30" x2="210" y2="75"/><line x1="210" y1="75" x2="170" y2="140"/><line x1="210" y1="75" x2="290" y2="40"/><line x1="290" y1="40" x2="320" y2="120"/><line x1="320" y1="120" x2="170" y2="140"/><line x1="170" y1="140" x2="40" y2="160"/><line x1="210" y1="75" x2="255" y2="170"/><line x1="255" y1="170" x2="320" y2="120"/><line x1="150" y1="30" x2="95" y2="105"/><line x1="290" y1="40" x2="210" y2="75"/><line x1="40" y1="160" x2="130" y2="195"/><line x1="130" y1="195" x2="255" y2="170"/><line x1="130" y1="195" x2="170" y2="140"/><line x1="70" y1="50" x2="30" y2="115"/><line x1="30" y1="115" x2="95" y2="105"/><line x1="320" y1="120" x2="340" y2="70"/><line x1="340" y1="70" x2="290" y2="40"/></g>
+            <g fill="#FFAB52">
+              <circle cx="40" cy="160" r="3"/><circle cx="95" cy="105" r="3.5"/><circle cx="70" cy="50" r="2.5" opacity=".8"/><circle cx="150" cy="30" r="4.5" class="svg-bloom"/><circle cx="210" cy="75" r="5" class="svg-bloom"/><circle cx="170" cy="140" r="3"/><circle cx="290" cy="40" r="3.5"/><circle cx="320" cy="120" r="2.5" opacity=".8"/><circle cx="255" cy="170" r="3"/><circle cx="130" cy="195" r="3.5"/><circle cx="30" cy="115" r="2.5" opacity=".7"/><circle cx="340" cy="70" r="2.5" opacity=".8"/></g>
+          </svg>
+          <div class="absolute right-3 top-3 flex flex-col gap-2.5 text-[12px]" style="color:var(--t-body)">
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[var(--orange)]"></span>离线数仓</span>
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[var(--orange)]"></span>实时计算</span>
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[var(--orange)]"></span>数据服务</span>
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[var(--orange)]"></span>数据应用</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2.5 mt-5"><span class="tag">数据湖</span><span class="tag">Flink</span><span class="tag">Spark</span><span class="tag">数仓</span><a href="#" class="link-arrow ml-auto">查看详情 <span>→</span></a></div>
+    </section>
+
+    <!-- 卡3 -->
+    <section class="card flex flex-col" data-beam="gov">
+  <i class="cf cf-tl"></i><i class="cf cf-tr"></i><i class="cf cf-bl"></i><i class="cf cf-br"></i>
+
+      <div class="flex items-start justify-between">
+        <div>
+          <h3 class="text-2xl font-bold" style="text-shadow:0 0 18px rgba(255,255,255,.15)">政企大客户交付</h3>
+          <p class="text-[15px] leading-relaxed mt-2 max-w-[560px]" style="color:var(--t-body)">面向政府与大型企业客户，涵盖数据中台、AI 应用、可视化大屏的全周期交付。</p>
+        </div>
+        <span class="chip"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FF9E2F" stroke-width="1.6" class="svg-glow"><path d="M3 21h18M4 10 12 4l8 6M6 10v8M10 10v8M14 10v8M18 10v8"/></svg></span>
+      </div>
+      <div class="grid grid-cols-3 gap-4 mt-5 flex-1">
+        <div class="panel flex items-center gap-4">
+          <div class="relative w-[64px] h-[64px] flex-none">
+            <svg viewBox="0 0 70 70" class="w-full h-full -rotate-90">
+              <circle cx="35" cy="35" r="29" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
+              <circle class="svg-bloom" cx="35" cy="35" r="29" fill="none" stroke="#FFAB52" stroke-width="7" stroke-linecap="round" stroke-dasharray="172" stroke-dashoffset="9"/>
+            </svg>
+            <span class="absolute inset-0 flex items-center justify-center mono text-sm font-semibold">99%</span>
+          </div>
+          <div><p class="text-[13px]" style="color:var(--t-muted)">客户满意度</p><p class="text-[12px] mt-1" style="color:var(--t-body)">政府 · 央企客户</p></div>
+        </div>
+        <div class="panel flex flex-col justify-between">
+          <span class="text-[13px]" style="color:var(--t-muted)">项目交付进度</span>
+          <svg viewBox="0 0 200 60" class="w-full h-12" preserveAspectRatio="none">
+            <path d="M0,52 34,46 62,49 96,38 130,41 166,26 200,10" fill="none" stroke="#FFB056" stroke-width="2.5" class="svg-bloom"/>
+            <circle cx="200" cy="10" r="3.5" fill="#FFC46B" class="svg-bloom"/>
+          </svg>
+          <div class="mono text-sm"><b class="text-[var(--orange)] font-semibold">96%</b> <span class="text-[12px] ml-1" style="color:var(--t-muted)">按期交付</span></div>
+        </div>
+        <div class="panel flex items-center gap-4">
+          <div class="relative w-[68px] h-[68px] flex-none">
+            <svg viewBox="0 0 72 72" class="w-full h-full"><g id="ticks"></g></svg>
+            <span class="absolute inset-0 flex items-center justify-center mono text-lg font-semibold">18</span>
+          </div>
+          <div><p class="text-[13px]" style="color:var(--t-muted)">已交付项目</p><p class="text-[12px] mt-1" style="color:var(--t-body)">城市大脑级平台</p></div>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2.5 mt-5"><span class="tag">数据中台</span><span class="tag">行业方案</span><span class="tag">AI 应用</span><span class="tag">咨询服务</span><a href="#" class="link-arrow ml-auto">查看详情 <span>→</span></a></div>
+    </section>
+  </div>
+
+  <!-- 右列 -->
+  <div class="flex flex-col gap-6">
+    <section class="card card-bright flex-1 flex flex-col" data-beam="timeline">
+  <i class="cf cf-tl"></i><i class="cf cf-tr"></i><i class="cf cf-bl"></i><i class="cf cf-br"></i>
+  <span class="pin pin-l" style="top:24%"></span><span class="pin pin-l" style="top:27%"></span><span class="pin pin-r" style="top:56%"></span><span class="pin pin-r" style="top:59%"></span>
+
+      <div class="flex items-center gap-0 -m-[1px]">
+        <span class="mono text-[13px] tracking-widest px-5 py-2.5" style="color:var(--orange-hi);border:1px solid rgba(255,183,94,.8);border-bottom-color:#1a1208;background:linear-gradient(180deg,rgba(255,158,46,.16),#1a1208);box-shadow:0 -4px 14px rgba(255,150,40,.15);clip-path:polygon(0 0,100% 0,calc(100% - 12px) 100%,0 100%);margin-top:-48px;margin-left:-13px">我的成长轨迹</span>
+      </div>
+      <div class="relative mt-7 flex-1 flex flex-col justify-between gap-9 pl-8 pb-2">
+        <span class="absolute left-[9px] top-2 bottom-2 w-[2px]" style="background:linear-gradient(180deg,#FFC46B,#FF9E2F 55%,rgba(255,158,47,.1));box-shadow:0 0 8px rgba(255,158,47,.8)"></span>
+        <div class="relative">
+          <span class="absolute -left-[33px] top-2 w-[12px] h-[12px] rounded-full" style="background:radial-gradient(circle,#FFE9C7 0%,#FFAB52 55%);box-shadow:0 0 0 3px #171009,0 0 28px rgba(255,170,60,1)"></span>
+          <p class="mono text-[38px] font-bold leading-none" style="color:var(--orange-hi)">2019</p>
+          <p class="text-[16px] font-bold mt-1.5">入行 · 城市交通大数据</p>
+          <p class="text-[13px] leading-relaxed mt-1.5" style="color:var(--t-body)">海量多源数据 ETL 与实时交通指数，工程能力的起点。</p>
+        </div>
+        <div class="relative">
+          <span class="absolute -left-[33px] top-2 w-[12px] h-[12px] rounded-full" style="background:radial-gradient(circle,#FFE9C7 0%,#FFAB52 55%);box-shadow:0 0 0 3px #171009,0 0 28px rgba(255,170,60,1)"></span>
+          <p class="mono text-[38px] font-bold leading-none" style="color:var(--orange-hi)">2021</p>
+          <p class="text-[16px] font-bold mt-1.5">阿里云 · FDE</p>
+          <p class="text-[13px] leading-relaxed mt-1.5" style="color:var(--t-body)">数据架构与政企大客户交付负责人，专有云现场攻坚。</p>
+        </div>
+        <div class="relative">
+          <span class="absolute -left-[33px] top-2 w-[12px] h-[12px] rounded-full" style="background:radial-gradient(circle,#FFE9C7 0%,#FFAB52 55%);box-shadow:0 0 0 3px #171009,0 0 28px rgba(255,170,60,1)"></span>
+          <p class="mono text-[38px] font-bold leading-none" style="color:var(--orange-hi)">2024</p>
+          <p class="text-[16px] font-bold mt-1.5">淘宝 · 数据工程</p>
+          <p class="text-[13px] leading-relaxed mt-1.5" style="color:var(--t-body)">数仓架构与 AB 实验平台，PB 级性能调优。</p>
+        </div>
+        <div class="relative">
+          <span class="absolute -left-[33px] top-2 w-[12px] h-[12px] rounded-full" style="background:radial-gradient(circle,#FFFFFF 0%,#FFD79A 60%);box-shadow:0 0 0 3px #171009,0 0 30px rgba(255,230,170,1)"></span>
+          <p class="mono text-[38px] font-bold leading-none" style="color:var(--orange-hi)">2026</p>
+          <p class="text-[16px] font-bold mt-1.5">独立开发 · 自媒体</p>
+          <p class="text-[13px] leading-relaxed mt-1.5" style="color:var(--t-body)">生产级 Agent 落地，持续创造有价值的内容。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+  <i class="cf cf-tl"></i><i class="cf cf-tr"></i><i class="cf cf-bl"></i><i class="cf cf-br"></i>
+      <span class="block text-5xl leading-none" style="color:var(--orange);font-weight:900">&ldquo;</span>
+      <p class="text-[17px] leading-[1.9] mt-1">数据让世界更透明，AI 让创造力更自由。我希望用技术和内容，帮助更多人看见更大的世界。</p>
+      <p class="text-right text-[14px] mt-4" style="color:var(--t-muted)">—— 李自在</p>
+    </section>
+  </div>
+</main>
+
+<!-- CTA：标题左 + 按钮右 -->
+<footer id="contact" class="card hud relative overflow-hidden mt-11 flex items-center justify-between gap-8 min-h-[240px]" style="padding:32px 44px">
+  <img src="asset-globe.png" alt="" class="absolute -left-[10%] top-1/2 -translate-y-1/2 w-[34%] max-w-none" style="mix-blend-mode:screen;opacity:.6;filter:brightness(.55) saturate(.9)">
+  <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(120% 150% at 82% 20%, rgba(8,6,4,.7) 45%, transparent 75%)"></div>
+  <div class="relative z-10 ml-[8%] min-w-0 flex-1" style="background:linear-gradient(90deg, rgba(8,6,4,0) 0, rgba(8,6,4,.88) 14%)">
+    <h2 class="font-black text-[clamp(44px,4vw,58px)] leading-none tracking-[-0.01em]">来聊聊<span style="color:var(--orange);margin-left:-0.06em">。</span></h2>
+    <p class="text-[16px] mt-4" style="color:#D8D8D8;opacity:.85">无论是合作、交流，还是技术问题，我都很乐意和你聊聊。</p>
+  </div>
+  <div class="relative z-10 flex flex-row gap-4 flex-none">
+    <a href="mailto:hello@example.com" class="btn-main">联系我 <span>→</span></a>
+    <a href="#" class="btn-ghost !py-3">订阅博客</a>
+  </div>
+</footer>
+<div class="relative h-0"><svg class="absolute left-[38%] top-0 w-[80px] h-[50px] pointer-events-none z-20" viewBox="0 0 80 50"><path d="M40 0 V18 L58 36" fill="none" stroke="rgba(255,158,47,.75)" stroke-width="1.6"/><circle cx="40" cy="0" r="2.5" fill="#FFB25E"/><circle cx="58" cy="36" r="3.2" fill="#FFAB52" style="filter:drop-shadow(0 0 8px rgba(255,170,70,.95))"/></svg></div>
+
+<!-- 页脚 -->
+<div class="flex items-center justify-between h-16 mono text-[12px] tracking-[.18em] mt-2" style="color:#C4C4C4">
+  <span>DATA <b class="text-[var(--orange)] not-italic font-medium">×</b> AI <b class="text-[var(--orange)] not-italic font-medium">×</b> CONTENT <b class="text-[var(--orange)] not-italic font-medium">×</b> GROWTH</span>
+  <span>李自在 / 2026 · CHINA</span>
+</div>
+</div>
+
+<script>
+// 尘埃粒子：Hero 内随机 36 个小光点
+(function(){
+  const g=document.getElementById('dust'); if(!g) return;
+  let s='';
+  for(let i=0;i<56;i++){
+    const x=Math.round(300+Math.random()*1000), y=Math.round(30+Math.random()*480);
+    const r=(Math.random()*1.6+0.6).toFixed(1), o=(Math.random()*.45+.4).toFixed(2);
+    s+=`<circle cx="${x}" cy="${y}" r="${r}" opacity="${o}"/>`;
+  }
+  g.innerHTML=s;
+})();
+
+// 刻度盘
+(function(){
+  const g=document.getElementById('ticks'); if(!g) return;
+  const cx=36,cy=36,total=30,lit=18;
+  for(let i=0;i<total;i++){
+    const a=(i/total)*Math.PI*2-Math.PI/2, r1=26, r2=33;
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',cx+r1*Math.cos(a)); l.setAttribute('y1',cy+r1*Math.sin(a));
+    l.setAttribute('x2',cx+r2*Math.cos(a)); l.setAttribute('y2',cy+r2*Math.sin(a));
+    l.setAttribute('stroke', i<lit ? '#FFAB52' : 'rgba(255,158,47,.22)');
+    l.setAttribute('stroke-width','2.2'); l.setAttribute('stroke-linecap','round');
+    if(i<lit) l.setAttribute('filter','drop-shadow(0 0 4px rgba(255,170,70,.85))');
+    g.appendChild(l);
+  }
+})();
+
+// 卡片间光束连线：按实际 DOM 位置动态绘制（横 + 45 度斜折线 + 端点光斑）
+(function(){
+  const svg=document.getElementById('beams'); if(!svg) return;
+  const main=document.getElementById('work');
+  function draw(){
+    const mr=main.getBoundingClientRect();
+    svg.setAttribute('width',mr.width); svg.setAttribute('height',mr.height);
+    svg.setAttribute('viewBox',`0 0 ${mr.width} ${mr.height}`);
+    const q=n=>{const el=main.querySelector(`[data-beam="${n}"]`); if(!el) return null;
+      const r=el.getBoundingClientRect();
+      return {l:r.left-mr.left, r:r.right-mr.left, t:r.top-mr.top, b:r.bottom-mr.top, h:r.height};};
+    const A=q('agent'), D=q('data'), T=q('timeline'); if(!A||!D||!T) return;
+    const gapMid=(A.r+T.l)/2;
+    const routes=[
+      // 卡1 右边 → 时间线卡左边（上部）
+      {pts:[[A.r+2, A.t+A.h*0.32],[gapMid+16, A.t+A.h*0.32],[gapMid, A.t+A.h*0.32-16],[gapMid, A.t+24],[T.l-2, A.t+24]], dots:[[A.r+2,A.t+A.h*0.32],[T.l-2,A.t+24]]},
+      // 卡1 底边 → 卡2 顶边（左 gutter）
+      {pts:[[110, A.b+2],[110, A.b+22],[126, A.b+38],[126, D.t-2]], dots:[[110,A.b+2],[126,D.t-2]]},
+      // 卡2 右上 → 时间线卡（中部）
+      {pts:[[D.r+2, D.t+70],[gapMid-10, D.t+70],[gapMid-10, D.t+86],[T.l-2, D.t+86]], dots:[[D.r+2,D.t+70],[T.l-2,D.t+86]]}
+    ];
+    let s='';
+    routes.forEach(rt=>{
+      s+=`<polyline points="${rt.pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="rgba(255,158,47,.95)" stroke-width="2" style="filter:drop-shadow(0 0 6px rgba(255,160,60,.95))"/>`;
+      rt.dots.forEach(d=>{s+=`<circle cx="${d[0]}" cy="${d[1]}" r="4.5" fill="#FFB25E" style="filter:drop-shadow(0 0 10px rgba(255,190,100,1))"/>`});
+    });
+    svg.innerHTML=s;
+  }
+  draw();
+  let t; addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(draw,150)});
+})();
+</script>
+</body>
+</html>

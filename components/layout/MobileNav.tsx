@@ -17,6 +17,7 @@ const NAV_LINKS: { href: string; labelKey: 'home' | 'aiNews' | 'ai' | 'cognition
   { href: '/category/premium-course', labelKey: 'premiumCourse' },
   { href: '/category/portfolio', labelKey: 'portfolio' },
   { href: '/archive', labelKey: 'archive' },
+  { href: '/resume', labelKey: 'resume', accent: true },
 ];
 
 export default function MobileNav() {

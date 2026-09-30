@@ -250,3 +250,260 @@
     display: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* 简历页（/resume）· 发光 Bento 控制台主题 — 类名 rz- 前缀防冲突       */
+/* ------------------------------------------------------------------ */
+.rz-page {
+  --rz-orange: #ff9e2f;
+  --rz-orange-hi: #ffc46b;
+  --rz-orange-deep: #f07818;
+  --rz-t-body: #9ba1a8;
+  --rz-t-muted: #6f757d;
+  --rz-green: #3ecf8e;
+  background-color: #080604;
+  background-image:
+    radial-gradient(900px 500px at 75% 12%, rgba(255, 120, 20, 0.1), transparent 70%),
+    radial-gradient(700px 420px at 12% 46%, rgba(255, 120, 20, 0.06), transparent 70%),
+    radial-gradient(900px 500px at 60% 92%, rgba(255, 110, 10, 0.07), transparent 70%);
+  background-repeat: no-repeat;
+}
+
+/* 简历页标题走无衬线（用户指定，覆盖全局衬线） */
+.rz-page h1, .rz-page h2, .rz-page h3 {
+  font-family: var(--font-noto-sans-sc), var(--font-instrument-sans), "PingFang SC", sans-serif;
+}
+
+/* 渐变描边发光卡：上亮下暗 */
+.rz-card {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  padding: 26px 30px;
+  background:
+    linear-gradient(170deg, #100c09 0%, #0a0a0c 60%, #09090b 100%) padding-box,
+    linear-gradient(180deg, rgba(255, 183, 94, 0.9) 0%, rgba(201, 118, 34, 0.6) 40%, rgba(110, 63, 18, 0.4) 75%, rgba(80, 46, 16, 0.55) 100%) border-box;
+  box-shadow:
+    0 0 36px -6px rgba(255, 150, 40, 0.55),
+    0 0 10px rgba(255, 170, 70, 0.4),
+    inset 0 0 18px rgba(255, 140, 30, 0.09);
+  transition: box-shadow 0.4s;
+}
+.rz-card:hover {
+  box-shadow:
+    0 0 48px -6px rgba(255, 160, 50, 0.7),
+    0 0 14px rgba(255, 190, 100, 0.5),
+    inset 0 0 26px rgba(255, 150, 40, 0.14);
+}
+.rz-card-bright {
+  background:
+    linear-gradient(170deg, #140f0a 0%, #0c0a08 60%, #0a0908 100%) padding-box,
+    linear-gradient(180deg, rgba(255, 196, 120, 1) 0%, rgba(230, 140, 50, 0.8) 45%, rgba(130, 74, 24, 0.5) 100%) border-box;
+  box-shadow:
+    0 0 46px -6px rgba(255, 160, 50, 0.68),
+    0 0 12px rgba(255, 190, 100, 0.5),
+    inset 0 0 24px rgba(255, 150, 40, 0.12);
+}
+.rz-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(90% 55% at 50% -12%, rgba(255,160,40,.19) 0%, rgba(255,160,40,.07) 45%, transparent 70%),
+    radial-gradient(30% 24% at 91% 7%, rgba(255,160,40,.12), transparent 70%),
+    radial-gradient(120% 45% at 50% 112%, rgba(255,140,25,.05), transparent 60%),
+    linear-gradient(180deg, transparent 62%, rgba(0,0,0,.3) 100%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0 1px, transparent 1px 96px);
+}
+.rz-panel {
+  background: linear-gradient(180deg, #15161a 0%, #101115 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+.rz-hud::before, .rz-hud::after {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+  z-index: 20;
+}
+.rz-hud::before {
+  top: -2px; left: -2px;
+  border-top: 2.5px solid var(--rz-orange-hi);
+  border-left: 2.5px solid var(--rz-orange-hi);
+  border-top-left-radius: 8px;
+  filter: drop-shadow(0 0 5px rgba(255, 183, 94, 0.9));
+}
+.rz-hud::after {
+  bottom: -2px; right: -2px;
+  border-bottom: 2.5px solid var(--rz-orange-hi);
+  border-right: 2.5px solid var(--rz-orange-hi);
+  border-bottom-right-radius: 8px;
+  filter: drop-shadow(0 0 5px rgba(255, 183, 94, 0.9));
+}
+.rz-chip {
+  width: 68px; height: 68px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 158, 47, 0.55);
+  background: rgba(255, 158, 46, 0.1);
+  display: flex; align-items: center; justify-content: center;
+  flex: none;
+  box-shadow: 0 0 10px rgba(255, 150, 40, 0.2);
+}
+.rz-tag {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  color: #a9afb6;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+.rz-btn-main {
+  background: linear-gradient(90deg, #ffab52, #f08312);
+  color: #3a1c00;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 16px 38px;
+  font-size: 16px;
+  display: inline-flex; align-items: center; gap: 8px;
+  box-shadow: 0 0 24px rgba(255, 140, 30, 0.5), 0 0 6px rgba(255, 160, 60, 0.3);
+  transition: box-shadow 0.3s;
+}
+.rz-btn-main:hover {
+  box-shadow: 0 0 34px rgba(255, 140, 30, 0.65), 0 0 10px rgba(255, 170, 70, 0.4);
+}
+.rz-btn-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #f5f5f5;
+  border-radius: 999px;
+  padding: 16px 38px;
+  font-size: 16px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.rz-btn-ghost:hover { border-color: var(--rz-orange); }
+.rz-link {
+  color: var(--rz-orange);
+  font-size: 14px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.rz-link span { transition: transform 0.3s; }
+.rz-link:hover span { transform: translateX(4px); }
+.rz-glow { filter: drop-shadow(0 0 4px rgba(255, 158, 47, 0.8)); }
+.rz-bloom { filter: drop-shadow(0 0 6px rgba(255, 170, 70, 0.9)) drop-shadow(0 0 14px rgba(255, 140, 40, 0.4)); }
+.rz-vertical { writing-mode: vertical-rl; letter-spacing: 0.28em; }
+.rz-grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* 边框引脚刻度 */
+.rz-pin { position: absolute; width: 13px; height: 2px; background: #ffab52; z-index: 15; box-shadow: 0 0 5px rgba(255,158,47,.7); }
+.rz-pin-l { left: -6.5px; }
+.rz-pin-r { right: -6.5px; }
+/* 边框阶梯连接器（电路端口） */
+.rz-port { position: absolute; right: 0; top: 17%; width: 18px; height: 14px; border-top: 1.5px solid rgba(255,190,100,.9); border-bottom: 1.5px solid rgba(255,190,100,.9); z-index: 15; filter: drop-shadow(0 0 4px rgba(255,158,47,.6)); }
+.rz-port::before { content: ""; position: absolute; right: 2px; top: 6px; width: 7px; height: 1.5px; background: rgba(255,190,100,.9); }
+@keyframes rz-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.rz-pulse { animation: rz-pulse 2.4s ease-in-out infinite; }
+@keyframes rz-eq { 0%, 100% { height: 6px; } 50% { height: 16px; } }
+.rz-eq i {
+  display: inline-block;
+  width: 3px;
+  background: var(--rz-orange);
+  border-radius: 2px;
+  margin: 0 1.5px;
+  animation: rz-eq 1.1s ease-in-out infinite;
+}
+.rz-eq i:nth-child(2) { animation-delay: 0.2s; }
+.rz-eq i:nth-child(3) { animation-delay: 0.4s; }
+.rz-eq i:nth-child(4) { animation-delay: 0.6s; }
+
+/* ------------------------------------------------------------------ */
+/* 时间线卡专属打磨                                                     */
+/* ------------------------------------------------------------------ */
+/* 熔核节点：描边环 + 偏心亮核 + 隔离环 + 双层光晕（指示灯质感） */
+.rz-node {
+  position: absolute;
+  left: -27px;
+  top: 12px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 201, 128, 0.95);
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #ffe9c7 35%, #ffab52 100%);
+  box-shadow:
+    0 0 0 3px rgba(26, 18, 8, 1),
+    0 0 10px 2px rgba(255, 170, 60, 0.95),
+    0 0 26px 8px rgba(255, 110, 0, 0.3);
+}
+/* 当前节点：呼吸扩散光环 */
+.rz-node-current::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 160, 46, 0.8);
+  animation: rz-ring 2.2s ease-out infinite;
+}
+@keyframes rz-ring {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+/* 年份渐变字 */
+.rz-year-grad {
+  background: linear-gradient(180deg, #ffc24d, #ff8a1e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.5px;
+}
+/* 条目关键词标签 */
+.rz-tl-tag {
+  font-size: 11.5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 158, 47, 0.35);
+  background: rgba(255, 158, 46, 0.06);
+  color: #d9a05b;
+}
+/* 进行中小徽章 */
+.rz-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: #ffd79a;
+  border: 1px solid rgba(255, 190, 100, 0.45);
+  border-radius: 999px;
+  padding: 2px 10px;
+  margin-left: 12px;
+  vertical-align: middle;
+  background: rgba(255, 158, 46, 0.08);
+}
+.rz-now::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffab52;
+  box-shadow: 0 0 6px rgba(255, 171, 82, 0.9);
+  animation: rz-pulse 2s ease-in-out infinite;
+}
+
+/* 图表：数据流虚线动画 */
+@keyframes rz-flow { to { stroke-dashoffset: -40; } }
+.rz-flow { stroke-dasharray: 5 15; animation: rz-flow 2.4s linear infinite; }
+/* 图表：微光刻度 */
+.rz-tick-soft { stroke: rgba(255, 183, 94, 0.22); stroke-width: 1; }
