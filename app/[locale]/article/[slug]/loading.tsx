@@ -2,9 +2,12 @@
  * 文章详情页骨架屏
  */
 
+import LoadingIndicatorV2 from '@/components/ui-v2/LoadingIndicatorV2';
+
 export default function ArticleLoading() {
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
+      <LoadingIndicatorV2 label="Loading" />
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_280px]">
         {/* 左栏：文章头部 + 内容骨架 */}
         <article className="max-w-3xl">

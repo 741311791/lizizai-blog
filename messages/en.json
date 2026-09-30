@@ -162,6 +162,7 @@
     "statsFree": "Forever"
   },
   "archive": {
+    "articles": "Articles",
     "title": "Archive",
     "searchPlaceholder": "Search articles...",
     "noResults": "No articles found matching \"{query}\"",

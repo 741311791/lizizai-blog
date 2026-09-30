@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { siteConfig } from '@/lib/seo';
+import AboutHeroV2 from '@/components/ui-v2/AboutHeroV2';
 
 export async function generateMetadata({
   params,
@@ -53,25 +54,8 @@ export default async function AboutPage({
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
-      {/* Hero */}
-      <div className="text-center mb-12 space-y-6">
-        <div className="mx-auto h-32 w-32 overflow-hidden rounded-full ring-1 ring-white/10">
-          <Image
-            src="/avator/avatar_smile.png"
-            alt="李自在 / Zizai Li"
-            width={128}
-            height={128}
-            sizes="128px"
-            className="h-full w-full object-cover"
-          />
-        </div>
-        <h1 className="text-4xl font-bold tracking-tight lg:text-5xl text-balance">
-          {t('title')}
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
-          {t('tagline')}
-        </p>
-      </div>
+      {/* Hero V2 */}
+      <AboutHeroV2 avatar="/avator/avatar_smile.png" name={t('title')} tagline={t('tagline')} />
 
       <Separator className="my-12" />
 

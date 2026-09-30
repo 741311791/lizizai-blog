@@ -1,28 +1,15 @@
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import NotFoundV2 from '@/components/ui-v2/NotFoundV2';
 
 export default function NotFound() {
   const t = useTranslations('notFound');
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
-      <h1 className="text-8xl font-bold text-primary/20 mb-4">404</h1>
-      <h2 className="text-2xl font-bold mb-2">{t('title')}</h2>
-      <p className="text-muted-foreground mb-8 max-w-md">{t('description')}</p>
-      <div className="flex items-center gap-4">
-        <Link
-          href="/"
-          className="px-6 py-2.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
-        >
-          {t('backHome')}
-        </Link>
-        <Link
-          href="/archive"
-          className="px-6 py-2.5 rounded-md border border-border hover:bg-muted transition-colors text-sm font-medium"
-        >
-          {t('browseArchive')}
-        </Link>
-      </div>
-    </div>
+    <NotFoundV2
+      title={t('title')}
+      description={t('description')}
+      backHome={t('backHome')}
+      browseArchive={t('browseArchive')}
+    />
   );
 }

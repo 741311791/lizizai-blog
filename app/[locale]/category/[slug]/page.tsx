@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/badge';
+import PageHeaderV2 from '@/components/ui-v2/PageHeaderV2';
 import CategoryArticlesSection from '@/components/article/CategoryArticlesSection';
 import { getCategories, getArticlesByCategory, getAllCategorySlugs } from '@/lib/blog-data';
 import { notFound } from 'next/navigation';
@@ -59,18 +59,13 @@ export default async function CategoryPage({
 
   return (
     <div className="container mx-auto max-w-[1200px] px-4 py-12">
-      {/* Category Header */}
-      <header className="mb-12 text-center space-y-4">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <Badge variant="secondary">{t('articleCount', { count: articleCount })}</Badge>
-        </div>
-        <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
-          {category.name}
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          {category.description}
-        </p>
-      </header>
+      {/* Category Header V2 */}
+      <PageHeaderV2
+        count={articleCount}
+        countLabel={t('articles')}
+        title={category.name}
+        description={category.description}
+      />
 
       {/* Articles Section */}
       {articles.length > 0 ? (

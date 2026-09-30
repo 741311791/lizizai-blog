@@ -1,7 +1,7 @@
 import ArchiveContent, { type ArchiveYearGroup, type ArchiveEntry } from '@/components/archive/ArchiveContent';
 import { getAllArticles } from '@/lib/blog-data';
 import { groupArticlesByYearMonth } from '@/lib/utils/archive';
-import { Badge } from '@/components/ui/badge';
+import PageHeaderV2 from '@/components/ui-v2/PageHeaderV2';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 export const revalidate = 3600; // ISR: 每小时重新验证
@@ -38,18 +38,13 @@ export default async function ArchivePage({
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
-      {/* Header */}
-      <header className="mb-12 text-center space-y-4">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <Badge variant="secondary">{t('articleCount', { count: articles.length })}</Badge>
-        </div>
-        <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
-          {t('title')}
-        </h1>
-        <p className="text-xl text-muted-foreground">
-          {t('subtitle')}
-        </p>
-      </header>
+      {/* Header V2 */}
+      <PageHeaderV2
+        count={articles.length}
+        countLabel={t('articles')}
+        title={t('title')}
+        description={t('subtitle')}
+      />
 
       {/* Archive Content with Search（数据已就绪，无需 Suspense） */}
       <ArchiveContent groups={groups} />

@@ -113,8 +113,16 @@ export default function ArticleSidebar({
       {/* 目录 */}
       {groups.length > 0 && (
         <div>
-          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-            {t('toc')}
+          <div>
+            <div className="font-mono text-[10px] font-medium tracking-[0.26em] text-primary uppercase">
+              Contents
+            </div>
+            <div className="mt-1 text-sm font-bold">{t('toc')}</div>
+            <span
+              className="mt-2.5 mb-3 block h-[2px] w-8 rounded-full"
+              style={{ background: 'linear-gradient(90deg, var(--color-primary), transparent)' }}
+              aria-hidden="true"
+            />
           </div>
           <nav>
             {groups.map((group) => {
@@ -132,7 +140,17 @@ export default function ArticleSidebar({
                         : 'text-muted-foreground hover:text-foreground'
                     )}
                   >
-                    <span className="text-xs tabular-nums min-w-[20px] text-muted-foreground">
+                    <span
+                      className={cn(
+                        'text-xs tabular-nums min-w-[20px] transition-colors',
+                        activeId === group.heading.id ? 'text-primary' : 'text-muted-foreground'
+                      )}
+                      style={
+                        activeId === group.heading.id
+                          ? { textShadow: '0 0 8px rgba(217,119,6,.6)' }
+                          : undefined
+                      }
+                    >
                       {String(group.index).padStart(2, '0')}
                     </span>
                     <a

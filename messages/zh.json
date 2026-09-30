@@ -162,6 +162,7 @@
     "statsFree": "永久免费"
   },
   "archive": {
+    "articles": "篇文章",
     "title": "归档",
     "searchPlaceholder": "搜索文章...",
     "noResults": "未找到匹配 \"{query}\" 的文章",

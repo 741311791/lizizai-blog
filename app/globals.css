@@ -507,3 +507,9 @@
 .rz-flow { stroke-dasharray: 5 15; animation: rz-flow 2.4s linear infinite; }
 /* 图表：微光刻度 */
 .rz-tick-soft { stroke: rgba(255, 183, 94, 0.22); stroke-width: 1; }
+
+/* 菱形加载指示（LoadingIndicatorV2） */
+@keyframes uv-diamond {
+  0%, 100% { opacity: 1; transform: rotate(45deg) scale(1); }
+  50% { opacity: 0.35; transform: rotate(45deg) scale(0.6); }
+}
