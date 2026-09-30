@@ -48,9 +48,9 @@ function ArticleCard({ article }: ArticleCardProps) {
   const contentType = article.contentType || 'article';
 
   return (
-    <Card className="group relative overflow-hidden border-border bg-card hover:bg-card transition-colors duration-200 h-full flex flex-col">
+    <Card className="group relative h-full flex flex-col overflow-hidden border-border bg-card transition-all duration-300 hover:border-primary/40 hover:bg-card hover:shadow-[0_0_28px_-8px_rgba(217,119,6,.22)]">
       {/* 封面图区域 — 纯白 1px 描边增加与卡片的层次 */}
-      <div className="relative aspect-video overflow-hidden bg-muted ring-1 ring-white/10">
+      <div className="relative aspect-video overflow-hidden bg-muted ring-1 ring-white/10 transition-shadow duration-300 group-hover:ring-primary/30">
         <Image
           src={imageUrl}
           alt={title}
@@ -109,7 +109,7 @@ function ArticleCard({ article }: ArticleCardProps) {
             {tags.slice(0, 3).map((tag) => (
               <span
                 key={tag.slug}
-                className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-md"
+                className="rounded-full border border-border/80 px-2 py-0.5 text-xs text-muted-foreground transition-colors group-hover:border-primary/30"
               >
                 {tag.name}
               </span>
@@ -121,8 +121,8 @@ function ArticleCard({ article }: ArticleCardProps) {
         <div className="mt-auto pt-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5 tabular-nums">
             <span className="font-medium">{author.name}</span>
-            <span>·</span>
-            <span>
+            <span className="h-1 w-1 rotate-45 bg-border" aria-hidden="true" />
+            <span className="font-mono tracking-wide">
               {dateFormatters[locale === 'zh' ? 'zh' : 'en'].format(new Date(publishedAt))}
             </span>
           </div>
