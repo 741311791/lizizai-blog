@@ -58,6 +58,7 @@
     "retry": "重试"
   },
   "article": {
+    "share": "分享",
     "toc": "目录",
     "tocWithCount": "目录 ({count})",
     "backToTop": "回到顶部",

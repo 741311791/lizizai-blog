@@ -58,6 +58,7 @@
     "retry": "Retry"
   },
   "article": {
+    "share": "Share",
     "toc": "Table of Contents",
     "tocWithCount": "Table of Contents ({count})",
     "backToTop": "Back to top",
