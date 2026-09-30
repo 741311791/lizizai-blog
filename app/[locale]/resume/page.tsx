@@ -301,8 +301,8 @@ export default async function ResumePage({
                       <span className="font-mono text-[22px] font-bold leading-none">↓ 9×</span>
                     </div>
                     <div className="flex items-end justify-between gap-2">
-                      <b className="pb-1 text-[12px] font-medium leading-none" style={{ color: 'var(--rz-orange)' }}>百亿级数据 · 湖仓一体</b>
-                      <svg viewBox="0 0 110 30" className="h-7 w-[110px] flex-none" preserveAspectRatio="none" aria-hidden="true">
+                      <b className="pb-0.5 text-[11px] font-medium leading-none" style={{ color: 'var(--rz-orange)' }}>百亿级数据</b>
+                      <svg viewBox="0 0 110 30" className="h-6 w-[96px] flex-none" preserveAspectRatio="none" aria-hidden="true">
                         <defs>
                           <linearGradient id="rz-af2" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0" stopColor="#FF9E2F" stopOpacity=".4" />
