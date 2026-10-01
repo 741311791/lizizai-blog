@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from 'next-intl/plugin';
 
+// DNS ipv4first 设置移至 instrumentation.ts（SSG worker 进程不继承主进程状态）
+
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
@@ -39,6 +41,10 @@ const nextConfig: NextConfig = {
   // 避免整个 barrel 文件进入构建 trace（vercel-react-best-practices: bundle-barrel-imports）
   experimental: {
     optimizePackageImports: ['lucide-react', 'date-fns'],
+    // SSG worker 数限制：本地直连 R2（Cloudflare）在高并发下连接超时频发，
+    // 降低并发 + blog-data 的退避重试保证构建可完成（Vercel 构建机上无此瓶颈，
+    // 但限制并发无明显代价，统一保留）
+    cpus: 4,
   },
 };
 

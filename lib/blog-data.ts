@@ -12,6 +12,35 @@ import { extractHeadings } from '@/lib/utils/heading';
 const R2_BASE = process.env.R2_PUBLIC_URL || 'https://lizizai-blog.lihehua.xyz';
 
 /**
+ * R2 请求带退避重试：本地直连 Cloudflare 在 SSG 高并发下偶发连接超时，
+ * 重试吸收毛刺（3 次尝试，300ms/800ms 退避；5xx/429 同样重试）
+ */
+async function fetchWithRetry(
+  url: string,
+  init?: Parameters<typeof fetch>[1],
+  retries = 2
+): Promise<Response> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, init);
+      if ((res.status >= 500 || res.status === 429) && attempt < retries) {
+        await new Promise((r) => setTimeout(r, 300 * 2 ** attempt));
+        continue;
+      }
+      return res;
+    } catch (err) {
+      lastError = err;
+      if (attempt < retries) {
+        await new Promise((r) => setTimeout(r, 300 * 2 ** attempt));
+        continue;
+      }
+    }
+  }
+  throw lastError;
+}
+
+/**
  * 数据源不可用错误：抛出后由 error.tsx 呈现错误页与重试，
  * 避免静默返回空数组导致"空站"假象并被 ISR 缓存。
  */
@@ -28,7 +57,7 @@ export class BlogDataUnavailableError extends Error {
 export const getAllArticles = cache(async (): Promise<Article[]> => {
   let res: Response;
   try {
-    res = await fetch(`${R2_BASE}/blog-data/articles.json`, {
+    res = await fetchWithRetry(`${R2_BASE}/blog-data/articles.json`, {
       next: { revalidate: 3600 },
     });
   } catch (err) {
@@ -79,7 +108,7 @@ export const getAllArticles = cache(async (): Promise<Article[]> => {
  * 获取分类列表（同一请求内缓存）
  */
 export const getCategories = cache(async (): Promise<Category[]> => {
-  const res = await fetch(`${R2_BASE}/blog-data/categories.json`, {
+  const res = await fetchWithRetry(`${R2_BASE}/blog-data/categories.json`, {
     next: { revalidate: 3600 },
   });
 
@@ -97,7 +126,7 @@ export const getCategories = cache(async (): Promise<Category[]> => {
  * 获取文章内容（Markdown）
  */
 async function getArticleContent(categorySlug: string, articleSlug: string): Promise<string> {
-  const res = await fetch(`${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/content.md`, {
+  const res = await fetchWithRetry(`${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/content.md`, {
     next: { revalidate: 3600 },
   });
 
@@ -126,7 +155,7 @@ function resolvePodcastUrls(categorySlug: string, articleSlug: string, items?: {
  * 获取幻灯片数据
  */
 async function getSlidesData(categorySlug: string, articleSlug: string): Promise<SlideData[]> {
-  const res = await fetch(`${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/slides.json`, {
+  const res = await fetchWithRetry(`${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/slides.json`, {
     next: { revalidate: 3600 },
   });
 
