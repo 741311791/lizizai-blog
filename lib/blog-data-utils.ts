@@ -8,9 +8,7 @@
 
 import type { PodcastItem } from '@/types/index';
 
-// 读侧走自定义域（CDN）。注意：写侧（同步器生成的封面 URL）生产 workflow 显式
-// 注入 r2.dev 免费子域，见 .github/workflows/feishu-sync.yml 与
-// workers/feishu-blog-sync/src/cli.ts —— 统一到自定义域需同步改 workflow 并重写存量 meta
+// R2 统一走自定义域（CF CDN，2026-10-01 从 r2.dev 免费子域迁移完毕，存量已全量重写）
 export const R2_BASE = process.env.R2_PUBLIC_URL || 'https://lizizai-blog.lihehua.xyz';
 
 /**

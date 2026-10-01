@@ -18,9 +18,10 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     # 增量恢复后常规一轮为分钟级；上限留余量应对偶尔的多文章重传。
+    # 全量重写（force_sync）实测约 1h40m，需临时调大——追赶完成后即回位。
     # 若再次逼近上限，先查增量是否失效（判断/检查点口径），不要直接调大。
     # public 仓库 Actions 分钟数无限制
-    timeout-minutes: 180
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@v4

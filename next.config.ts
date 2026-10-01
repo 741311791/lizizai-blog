@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
         hostname: 'picsum.photos',
         pathname: '/**',
       },
-      // R2 CDN（文章封面图和内容图片）
+      // R2 免费子域（2026-10-01 域名迁移完成，过渡期兼容 ISR 缓存中的旧封面 URL，观察期后可移除）
       {
         protocol: 'https',
         hostname: 'pub-7fc5ed7acc9844ab99297fa6b47f55e6.r2.dev',
