@@ -1,0 +1,32 @@
+{
+  "id": "batch-optimization",
+  "name": "batch-optimization",
+  "title": "批量优化：依赖/死代码/性能/DRY/质量基线",
+  "description": "基于全量审计（依赖扫描+性能+代码质量三路），按 P0→P3 依次执行五批优化；每批独立可验证，全部不 commit 由用户审查",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P0",
+  "creator": "louie",
+  "assignee": "louie",
+  "createdAt": "2026-10-01",
+  "completedAt": "2026-10-01",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "10-01-batch-deps-clean",
+    "10-01-batch-legacy-removal",
+    "10-01-batch-server-components",
+    "10-01-batch-dry-consolidation",
+    "10-01-batch-quality-baseline"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
