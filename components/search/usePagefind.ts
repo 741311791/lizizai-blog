@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 interface SearchResult {
   url: string;
@@ -34,23 +34,24 @@ let pagefindPromise: Promise<PagefindInstance> | null = null;
 function loadPagefind(): Promise<PagefindInstance> {
   if (pagefindPromise) return pagefindPromise;
 
-  pagefindPromise = new Promise((resolve) => {
-    if (typeof window !== 'undefined') {
-      // Pagefind 由构建后的 postbuild 脚本生成
-      const script = document.createElement('script');
-      script.src = '/pagefind/pagefind.js';
-      script.onload = () => {
-        resolve((window as any).pagefind as PagefindInstance);
-      };
-      script.onerror = () => {
-        // Pagefind 未生成时返回空搜索对象
-        resolve({
-          search: async () => ({ results: [] }),
-        });
-      };
-      document.head.appendChild(script);
+  // pagefind 1.5+ 打包为 ES module（内含 import.meta），须用动态 import 加载；
+  // 普通 <script> 标签会抛 "Cannot use 'import.meta' outside a module" 导致搜索永远为空
+  pagefindPromise = (async () => {
+    if (typeof window === 'undefined') {
+      return { search: async () => ({ results: [] }) };
     }
-  });
+    try {
+      // 变量路径让 tsc 不做模块解析（字面量会报 TS2307），打包器靠忽略注释跳过
+      const pagefindUrl = '/pagefind/pagefind.js';
+      const mod = (await import(
+        /* webpackIgnore: true */ /* turbopackIgnore: true */ pagefindUrl
+      )) as unknown as PagefindInstance & { pagefind?: PagefindInstance };
+      return mod.pagefind ?? mod;
+    } catch {
+      // Pagefind 未生成时返回空搜索对象
+      return { search: async () => ({ results: [] }) };
+    }
+  })();
 
   return pagefindPromise;
 }
