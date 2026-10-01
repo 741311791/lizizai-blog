@@ -20,7 +20,7 @@ jobs:
     # 增量恢复后常规一轮为分钟级；上限留余量应对偶尔的多文章重传。
     # 若再次逼近上限，先查增量是否失效（判断/检查点口径），不要直接调大。
     # public 仓库 Actions 分钟数无限制
-    timeout-minutes: 60
+    timeout-minutes: 180
 
     steps:
       - uses: actions/checkout@v4
@@ -55,7 +55,7 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_BUCKET_NAME: lizizai-blog
           R2_BASE_PATH: blog-data
-          R2_PUBLIC_URL: https://pub-7fc5ed7acc9844ab99297fa6b47f55e6.r2.dev
+          R2_PUBLIC_URL: https://lizizai-blog.lihehua.xyz
         run: npx tsx src/cli.ts ${{ inputs.force_sync == 'true' && '--force' || '' }}
         working-directory: workers/feishu-blog-sync
 
