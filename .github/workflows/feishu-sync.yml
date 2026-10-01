@@ -56,7 +56,8 @@ jobs:
           R2_BUCKET_NAME: lizizai-blog
           R2_BASE_PATH: blog-data
           R2_PUBLIC_URL: https://lizizai-blog.lihehua.xyz
-        run: npx tsx src/cli.ts ${{ inputs.force_sync == 'true' && '--force' || '' }}
+        # force_sync 为 boolean input，不可用 == 'true' 字符串比较（GH 表达式中恒 false）
+        run: npx tsx src/cli.ts ${{ inputs.force_sync && '--force' || '' }}
         working-directory: workers/feishu-blog-sync
 
       - name: 刷新前端缓存（ISR 按需 revalidate）
