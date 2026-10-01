@@ -13,9 +13,10 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Clock, LayoutGrid, List } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import ArticleListItem from '@/components/article/ArticleListItem';
-import ContentTypeBadge from '@/components/article/ContentTypeBadge';
+import ArticleListItem from '@/components/ui-v2/ArticleListItemV2';
+import ContentTypeBadge from '@/components/ui-v2/ContentTypeBadgeV2';
 import { getTimeLabel } from '@/lib/content-utils';
+import CardTechAccent from '@/components/ui-v2/CardTechAccent';
 import { getCardImageUrl, shouldSkipImageOptimization } from '@/lib/utils/image';
 import { getBatchViews, isWebvisoEnabled } from '@/lib/services';
 import type { Article } from '@/types/index';
@@ -204,7 +205,9 @@ const GridCard = memo(function GridCard({ article }: { article: Article }) {
 
   return (
     <Link href={`/article/${article.slug}`}>
-      <div className="group rounded-lg border border-border bg-card overflow-hidden hover:border-border/80 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
+      <div className="group relative rounded-lg border border-border bg-card overflow-hidden hover:border-border/80 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
+        {/* 科技感点缀：hover 电路节点 + 扫光 */}
+        <CardTechAccent />
         {/* 封面图 */}
         <div className="relative aspect-video bg-muted">
           <Image

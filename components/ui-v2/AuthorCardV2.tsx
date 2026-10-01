@@ -1,9 +1,13 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useLocale } from 'next-intl';
+/**
+ * AuthorCardV2 — 文章作者/日期卡（编辑风升级版，预览组件）
+ * 头像 + 名字 + mono 日期小标（ISO 式双语通用，与全站 mono 语言统一）
+ */
 
-interface AuthorCardProps {
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+interface AuthorCardV2Props {
   author: {
     name: string;
     avatar?: string;
@@ -12,8 +16,10 @@ interface AuthorCardProps {
   publishedAt: string;
 }
 
-export default function AuthorCard({ author, publishedAt }: AuthorCardProps) {
-  const locale = useLocale();
+export default function AuthorCardV2({
+  author,
+  publishedAt,
+}: AuthorCardV2Props) {
   const initials = author.name
     .split(' ')
     .map((n) => n[0])
@@ -30,12 +36,8 @@ export default function AuthorCard({ author, publishedAt }: AuthorCardProps) {
       </Avatar>
       <div className="flex flex-col">
         <span className="font-medium text-sm">{author.name}</span>
-        <span className="text-xs text-muted-foreground">
-          {new Date(publishedAt).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          })}
+        <span className="font-mono text-[11px] tracking-[0.14em] text-muted-foreground">
+          {new Date(publishedAt).toISOString().slice(0, 10)}
         </span>
       </div>
     </div>

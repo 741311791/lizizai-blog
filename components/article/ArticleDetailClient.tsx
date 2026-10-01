@@ -2,26 +2,27 @@
 
 import { useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import AuthorCard from './AuthorCard';
+import AuthorCard from '@/components/ui-v2/AuthorCardV2';
 import ArticleActions from './ArticleActions';
 import ArticleContent from './ArticleContent';
 import MobileToc from './MobileToc';
 import MobileChapterList from './MobileChapterList';
 import MobileSlideNav from './MobileSlideNav';
-import ContentTypeBadge from './ContentTypeBadge';
+import ContentTypeBadge from '@/components/ui-v2/ContentTypeBadgeV2';
 import ArticleBreadcrumb from './ArticleBreadcrumb';
 import ContentComingSoon from './ContentComingSoon';
 import ContentTypeSwitcher from './ContentTypeSwitcher';
 import ReadingProgress from './ReadingProgress';
-import RelatedArticles from './RelatedArticles';
+import RelatedArticles from '@/components/ui-v2/RelatedArticlesV2';
 import ArticleSidebar from './ArticleSidebar';
+import HtmlSidebarV2 from '@/components/ui-v2/HtmlSidebarV2';
 import type { Article, ArticleCardData } from '@/types/index';
 
 const AudioPlayer = dynamic(() => import('./AudioPlayer'), {
   loading: () => <div className="h-20 rounded-lg bg-muted animate-pulse mb-8" />,
 });
 
-const PodcastList = dynamic(() => import('./PodcastList'), {
+const PodcastList = dynamic(() => import('@/components/ui-v2/PodcastListV2'), {
   loading: () => <div className="h-40 rounded-lg bg-muted animate-pulse mb-8" />,
 });
 
@@ -147,6 +148,7 @@ export default function ArticleDetailClient({
             <PodcastList
               podcasts={article.podcasts}
               articleTitle={article.title}
+              articleCover={article.featuredImage || article.thumbnailImage}
             />
           );
         }
@@ -252,14 +254,8 @@ export default function ArticleDetailClient({
         );
 
       case 'html':
-        // HTML 目录由内容自带，侧边栏仅展示文章元信息
-        return (
-          <ArticleSidebar
-            article={article}
-            headings={article.headings ?? []}
-            contentKey={activeContentType}
-          />
-        );
+        // HTML 目录由内容自带（iframe 沙箱内父页锚点无法跳转），侧栏展示阅读指南
+        return <HtmlSidebarV2 article={article} />;
 
       default:
         return (

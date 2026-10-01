@@ -1,31 +1,35 @@
 'use client';
 
+/**
+ * LayoutToggleV2 — 网格/列表视图切换器（编辑风升级版，预览组件）
+ * 圆角锐化 rounded-sm，与订阅按钮等编辑风容器语言统一；交互逻辑同 LayoutToggle
+ */
+
 import { LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
+import type { ViewMode } from '@/hooks/useViewMode';
 
-export type ViewMode = 'grid' | 'list';
-
-interface LayoutToggleProps {
+interface LayoutToggleV2Props {
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
 }
 
-export default function LayoutToggle({
+export default function LayoutToggleV2({
   viewMode,
   onViewModeChange,
-}: LayoutToggleProps) {
+}: LayoutToggleV2Props) {
   const t = useTranslations('article');
 
   return (
-    <div className="flex items-center gap-1 rounded-lg border border-border bg-background p-1">
+    <div className="flex items-center gap-1 rounded-sm border border-border bg-background p-1">
       <Button
         variant="ghost"
         size="sm"
         aria-pressed={viewMode === 'list'}
         className={cn(
-          'h-9 gap-2',
+          'h-9 gap-2 rounded-sm',
           viewMode === 'list' && 'bg-accent'
         )}
         onClick={() => onViewModeChange('list')}
@@ -38,7 +42,7 @@ export default function LayoutToggle({
         size="sm"
         aria-pressed={viewMode === 'grid'}
         className={cn(
-          'h-9 gap-2',
+          'h-9 gap-2 rounded-sm',
           viewMode === 'grid' && 'bg-accent'
         )}
         onClick={() => onViewModeChange('grid')}

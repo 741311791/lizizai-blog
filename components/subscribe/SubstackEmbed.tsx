@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 /** Substack publication 地址（订阅跳转目标） */
-const SUBSTACK_URL = 'https://lizizai.substack.com';
+export const SUBSTACK_URL = 'https://lizizai.substack.com';
 
 interface SubstackEmbedProps {
   variant?: 'button' | 'form';

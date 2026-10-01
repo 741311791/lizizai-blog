@@ -20,11 +20,11 @@ function MobileNavPlaceholder() {
 }
 
 // 避免 Radix Dialog useId() hydration mismatch
-const MobileNav = dynamic(() => import('@/components/layout/MobileNav'), {
+const MobileNav = dynamic(() => import('@/components/ui-v2/MobileNavV2'), {
   ssr: false,
   loading: () => <MobileNavPlaceholder />,
 });
-const SearchDialog = dynamic(() => import('@/components/search/SearchDialog'), {
+const SearchDialog = dynamic(() => import('@/components/ui-v2/SearchDialogV2'), {
   ssr: false,
 });
 

@@ -33,7 +33,7 @@ export default function PodcastSidebar({
       {/* 章节导航 */}
       {chapters.length > 0 && (
         <div>
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          <h3 className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-primary mb-3">
             {t('chapters')}
           </h3>
           <ul className="space-y-0">

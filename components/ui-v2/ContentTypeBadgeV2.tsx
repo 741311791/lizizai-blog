@@ -1,11 +1,15 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
+/**
+ * ContentTypeBadgeV2 — 内容类型徽章（编辑风升级版，预览组件）
+ * 灰底 Badge → 透明底 hairline 胶囊 + 金色图标；类型推断逻辑同 ContentTypeBadge
+ */
+
 import { BookOpen, Mic, Presentation, Code2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { Article } from '@/types/index';
 
-interface ContentTypeBadgeProps {
+interface ContentTypeBadgeV2Props {
   /** 文章对象，自动推断所有内容类型 */
   article?: Article;
   /** 兼容旧调用：单个 contentType */
@@ -15,19 +19,17 @@ interface ContentTypeBadgeProps {
   className?: string;
 }
 
-/**
- * 内容类型徽章
- *
- * 支持同时展示多种类型（如 podcast + slides）。
- * article 类型在 compact 模式下不显示。
- */
-export default function ContentTypeBadge({
+/** hairline 胶囊基础样式：透明底 + 1px 边框，图标金色 */
+const pill =
+  'inline-flex items-center gap-1 rounded-full border border-border/70 px-2 py-0.5 text-[11px] leading-none text-muted-foreground';
+
+export default function ContentTypeBadgeV2({
   article,
   contentType,
   categoryName,
   compact = false,
   className,
-}: ContentTypeBadgeProps) {
+}: ContentTypeBadgeV2Props) {
   const t = useTranslations('article');
 
   // 从 article 对象推断类型集合
@@ -48,28 +50,28 @@ export default function ContentTypeBadge({
 
   if (types.has('podcast')) {
     badges.push(
-      <Badge key="podcast" variant="secondary" className={`gap-1 ${className || ''}`}>
-        <Mic className="size-3" />
+      <span key="podcast" className={`${pill} ${className || ''}`}>
+        <Mic className="size-3 text-primary/80" aria-hidden="true" />
         {t('podcast')}
-      </Badge>
+      </span>
     );
   }
 
   if (types.has('slides')) {
     badges.push(
-      <Badge key="slides" variant="secondary" className={`gap-1 ${className || ''}`}>
-        <Presentation className="size-3" />
+      <span key="slides" className={`${pill} ${className || ''}`}>
+        <Presentation className="size-3 text-primary/80" aria-hidden="true" />
         {t('slides')}
-      </Badge>
+      </span>
     );
   }
 
   if (types.has('html')) {
     badges.push(
-      <Badge key="html" variant="secondary" className={`gap-1 ${className || ''}`}>
-        <Code2 className="size-3" />
+      <span key="html" className={`${pill} ${className || ''}`}>
+        <Code2 className="size-3 text-primary/80" aria-hidden="true" />
         {t('html')}
-      </Badge>
+      </span>
     );
   }
 
@@ -77,17 +79,17 @@ export default function ContentTypeBadge({
   if (types.has('article') && !types.has('podcast') && !types.has('slides') && !types.has('html')) {
     if (categoryName) {
       badges.push(
-        <Badge key="article" variant="secondary" className={`gap-1 ${className || ''}`}>
-          <BookOpen className="size-3" />
+        <span key="article" className={`${pill} ${className || ''}`}>
+          <BookOpen className="size-3 text-primary/80" aria-hidden="true" />
           {categoryName}
-        </Badge>
+        </span>
       );
     } else if (!compact) {
       badges.push(
-        <Badge key="article" variant="secondary" className={`gap-1 ${className || ''}`}>
-          <BookOpen className="size-3" />
+        <span key="article" className={`${pill} ${className || ''}`}>
+          <BookOpen className="size-3 text-primary/80" aria-hidden="true" />
           {t('articleType')}
-        </Badge>
+        </span>
       );
     }
     return badges.length > 0 ? <>{badges}</> : null;
@@ -96,10 +98,10 @@ export default function ContentTypeBadge({
   // 如果 article 类型与 podcast/slides/html 共存，不显示 article badge
   if (types.has('article') && (types.has('podcast') || types.has('slides') || types.has('html')) && categoryName) {
     badges.push(
-      <Badge key="category" variant="secondary" className={`gap-1 ${className || ''}`}>
-        <BookOpen className="size-3" />
+      <span key="category" className={`${pill} ${className || ''}`}>
+        <BookOpen className="size-3 text-primary/80" aria-hidden="true" />
         {categoryName}
-      </Badge>
+      </span>
     );
   }
 

@@ -10,6 +10,7 @@ import { getCardImageUrl, shouldSkipImageOptimization } from '@/lib/utils/image'
 import dynamic from 'next/dynamic';
 const ShareMenu = dynamic(() => import('@/components/share/ShareMenu'), { ssr: false });
 import { config } from '@/lib/env';
+import CardTechAccent from '@/components/ui-v2/CardTechAccent';
 import type { ArticleCardData } from '@/types/index';
 
 interface ArticleCardProps {
@@ -49,6 +50,8 @@ function ArticleCard({ article }: ArticleCardProps) {
 
   return (
     <Card className="group relative h-full flex flex-col overflow-hidden border-border bg-card transition-all duration-300 hover:border-primary/40 hover:bg-card hover:shadow-[0_0_28px_-8px_rgba(217,119,6,.22)]">
+      {/* 科技感点缀：hover 电路节点 + 扫光（已预览确认） */}
+      <CardTechAccent />
       {/* 封面图区域 — 纯白 1px 描边增加与卡片的层次 */}
       <div className="relative aspect-video overflow-hidden bg-muted ring-1 ring-white/10 transition-shadow duration-300 group-hover:ring-primary/30">
         <Image

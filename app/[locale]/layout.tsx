@@ -6,6 +6,7 @@ import { Noto_Serif_SC, Noto_Sans_SC, Instrument_Sans } from 'next/font/google';
 import { GeistMono } from 'geist/font/mono';
 import { routing } from '@/i18n/routing';
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
+import SiteBackdrop from '@/components/ui-v2/SiteBackdrop';
 import CounterscaleScript from "@/components/analytics/CounterscaleScript";
 import { Toaster } from "sonner";
 import { generateDefaultMetadata, generateWebsiteJsonLd } from "@/lib/seo";
@@ -101,6 +102,8 @@ export default async function LocaleLayout({
         />
       </head>
       <body className={`${notoSerifSC.variable} ${notoSansSC.variable} ${instrumentSans.variable} ${GeistMono.variable} antialiased`}>
+        {/* 全站低调动态背景层（微尘漂移 + 顶部暖光，纯 CSS） */}
+        <SiteBackdrop />
         <NextIntlClientProvider messages={pickClientMessages(messages)}>
           <ConditionalLayout>
             {children}

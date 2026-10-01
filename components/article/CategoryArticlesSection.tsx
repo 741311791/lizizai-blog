@@ -3,8 +3,8 @@
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import ArticleGrid from '@/components/article/ArticleGrid';
-import ArticleListItem from '@/components/article/ArticleListItem';
-import LayoutToggle from '@/components/article/LayoutToggle';
+import ArticleListItem from '@/components/ui-v2/ArticleListItemV2';
+import LayoutToggle from '@/components/ui-v2/LayoutToggleV2';
 import ContentTypeFilter, { type ContentTypeFilter as FilterValue } from '@/components/article/ContentTypeFilter';
 import { useViewMode } from '@/hooks/useViewMode';
 import type { Article, ContentType } from '@/types/index';

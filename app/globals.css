@@ -513,3 +513,126 @@
   0%, 100% { opacity: 1; transform: rotate(45deg) scale(1); }
   50% { opacity: 0.35; transform: rotate(45deg) scale(0.6); }
 }
+
+/* ===== 全站背景层（SiteBackdrop）===== */
+/* 尘埃微动效：超慢往返漂移 + 亮度呼吸，transform/opacity 合成层动画 */
+@keyframes sd-drift {
+  0%, 100% { transform: translate3d(0, 0, 0); opacity: var(--sd-o, 0.14); }
+  50% { transform: translate3d(var(--sd-x, 24px), var(--sd-y, -64px), 0); opacity: calc(var(--sd-o, 0.14) * 1.6); }
+}
+.sd-dot {
+  animation: sd-drift var(--sd-dur, 90s) ease-in-out infinite;
+  animation-delay: var(--sd-delay, 0s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sd-dot { animation: none; }
+}
+
+/* 卡片科技感点缀（CardTechAccent）*/
+/* 扫光：hover 触发一次，透明度极低 */
+@keyframes cta-sweep {
+  from { transform: translateX(-120%) skewX(-18deg); }
+  to { transform: translateX(320%) skewX(-18deg); }
+}
+.group:hover .cta-sweep {
+  animation: cta-sweep 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cta-node {
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .cta-node {
+  opacity: 0.5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .cta-sweep { animation: none; }
+}
+
+/* ===== 背景/卡片变体实验室 ===== */
+/* 变体：极淡点阵网格（坐标纸感，顶部可见向下渐隐） */
+.sd-grid {
+  background-image: radial-gradient(rgba(217,119,6,.055) 1px, transparent 1.5px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.8), transparent 72%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.8), transparent 72%);
+}
+
+/* 变体：低频流星（约 26s 里闪现 2 秒，两颗错开） */
+@keyframes sd-meteor {
+  0%, 90% { transform: translate3d(105vw, -12vh, 0) rotate(-28deg); opacity: 0; }
+  91% { opacity: 0; }
+  93% { opacity: .5; }
+  100% { transform: translate3d(-35vw, 78vh, 0) rotate(-28deg); opacity: 0; }
+}
+.sd-meteor {
+  position: absolute;
+  height: 1px;
+  width: 90px;
+  background: linear-gradient(90deg, transparent, rgba(255,183,94,.5), transparent);
+  animation: sd-meteor var(--m-dur, 26s) linear infinite;
+  animation-delay: var(--m-delay, 0s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sd-meteor { animation: none; opacity: 0; }
+}
+
+/* 变体：光晕呼吸 */
+@keyframes sd-breathe {
+  0%, 100% { opacity: .5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+.sd-glow {
+  animation: sd-breathe var(--g-dur, 110s) ease-in-out infinite;
+  animation-delay: var(--g-delay, 0s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sd-glow { animation: none; }
+}
+
+/* 卡片变体：边框流光（conic 旋转金光沿边框流动） */
+@property --cta-a {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes cta-spin { to { --cta-a: 360deg; } }
+.cta-border {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--cta-a), transparent 0 68%, rgba(217,119,6,.5) 84%, transparent 96%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.group:hover .cta-border {
+  opacity: 1;
+  animation: cta-spin 2.6s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .cta-border { animation: none; }
+}
+
+/* 卡片变体：焊点涟漪（hover 时从右上节点扩散一圈） */
+@keyframes cta-ring {
+  from { transform: scale(0.4); opacity: 0.7; }
+  to { transform: scale(2.6); opacity: 0; }
+}
+.cta-ring {
+  position: absolute;
+  right: 14px;
+  top: 10px;
+  height: 10px;
+  width: 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255,183,94,.6);
+  opacity: 0;
+}
+.group:hover .cta-ring {
+  animation: cta-ring 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}

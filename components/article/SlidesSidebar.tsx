@@ -38,7 +38,7 @@ export default function SlidesSidebar({
     return (
       <div className="space-y-6">
         <div>
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          <h3 className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-primary mb-3">
             {t('slideNav')}
           </h3>
           <div className="grid grid-cols-2 gap-1.5">
@@ -85,7 +85,7 @@ export default function SlidesSidebar({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+        <h3 className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-primary mb-3">
           {t('slideNav')}
         </h3>
         <div className="grid grid-cols-2 gap-1.5">

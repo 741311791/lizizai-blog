@@ -9,8 +9,9 @@ import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Clock, ChevronRight } from 'lucide-react';
 import { getTranslations, getLocale } from 'next-intl/server';
-import ContentTypeBadge from '@/components/article/ContentTypeBadge';
+import ContentTypeBadge from '@/components/ui-v2/ContentTypeBadgeV2';
 import { getTimeLabel, shouldShowTimeLabel, type TranslateFn } from '@/lib/content-utils';
+import CardTechAccent from '@/components/ui-v2/CardTechAccent';
 import type { Article } from '@/types/index';
 
 interface DailyNewsProps {
@@ -74,7 +75,9 @@ function NewsCard({ article, locale, tArticle }: { article: Article; locale: str
 
   return (
     <Link href={`/article/${article.slug}`} className="flex-shrink-0 snap-start flex">
-      <div className="group flex flex-col w-72 md:w-80 p-4 rounded-lg border border-border bg-card hover:bg-card/80 hover:border-border/80 transition-[background-color,border-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
+      <div className="group relative flex flex-col w-72 md:w-80 p-4 rounded-lg border border-border bg-card hover:bg-card/80 hover:border-border/80 transition-[background-color,border-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20">
+        {/* 科技感点缀：hover 电路节点 + 扫光 */}
+        <CardTechAccent />
         {/* 标题 */}
         <h3 className="text-sm font-semibold leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors">
           {article.title}
