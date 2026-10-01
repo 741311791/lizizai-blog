@@ -4,6 +4,7 @@
  */
 
 import { Metadata } from 'next';
+import { config } from './env';
 
 // 网站基础信息
 export const siteConfig = {
@@ -16,12 +17,13 @@ export const siteConfig = {
     zh: '帮助你在快速变化的世界中保持竞争力。探索AI、写作、营销策略，打造一人企业，设计理想生活方式。',
     en: 'Stay competitive in a rapidly changing world. Explore AI, writing, marketing strategies, build a one-person business, and design your ideal lifestyle.',
   },
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://lizizai.xyz',
+  // 站点 URL 唯一来源 lib/env.ts（NEXT_PUBLIC_SITE_URL + 兜底）
+  url: config.siteUrl,
   ogImage: '/og-image.png',
   twitterHandle: '@zizaiblog',
   author: {
     name: 'Zizai Li',
-    url: 'https://lizizai.xyz/about',
+    url: `${config.siteUrl}/about`,
   },
   keywords: {
     zh: [

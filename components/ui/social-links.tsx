@@ -1,7 +1,8 @@
 import { Twitter, Youtube, Linkedin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const SOCIALS = [
+// 全站社交链接唯一来源（about 页等引用同一常量）
+export const SOCIALS = [
   { href: 'https://twitter.com/zizaiblog', Icon: Twitter, label: 'Twitter' },
   { href: 'https://youtube.com/@zizaili', Icon: Youtube, label: 'YouTube' },
   { href: 'https://www.linkedin.com/in/zizai-li', Icon: Linkedin, label: 'LinkedIn' },

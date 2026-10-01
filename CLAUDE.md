@@ -55,12 +55,9 @@ gh run list --workflow=feishu-sync.yml --limit=5
 
 daily-news 是普通分类，数据来自 R2 `articles.json`，无独立 API route。
 
-### 双数据层
+### 数据层
 
-项目存在两套数据访问层，**生产环境使用 R2 版本**：
-
-- `lib/blog-data.ts` — **生产用**：从 R2 获取文章 JSON，聚合 emaction 点赞 + Webviso 浏览量 + cf-comment 评论数
-- `lib/content.ts` — **遗留/备用**：从本地 `content/` 目录读取 MDX + YAML，开发调试可用
+`lib/blog-data.ts` 为**唯一**数据访问层：从 R2 获取文章 JSON，聚合 emaction 点赞 + Webviso 浏览量 + cf-comment 评论数。（历史上的本地 MDX 数据层 `lib/content.ts` + `content/` 已于 2026-10-01 删除，勿再引用）
 
 ### 内容类型与飞书文件夹结构
 
@@ -149,7 +146,7 @@ GitHub Actions 同步额外用的 secrets（`FEISHU_APP_SECRET`、`R2_*` 凭证�
 - 语言：所有 UI 文本和代码注释使用中文 (zh-CN)
 - Server Components 默认，Client Components 仅用于交互
 - **不要主动执行 git commit/push**，除非用户明确要求
-- ISR revalidate：文章列表/分类 3600s，浏览量 300s，点赞 60s
+- ISR revalidate：页面（文章/列表/分类/标签/feed/sitemap）统一 3600s；浏览量与点赞为客户端直连各服务（无服务端缓存），紧急更新走 `/api/revalidate` 全量清除
 - 内容更新链路：飞书编辑 → GitHub Actions 同步 → R2 → ISR 自动更新（紧急用手动 workflow_dispatch）
 - 新增 ContentType 需同步：`types/index.ts` + `sync.ts`（FOLDER_NAMES/syncXxxFolder）+ `lib/rss.ts`（FEED_CONTENT_TYPES）+ 渲染组件
 - HTML 内容必须符合 `/lizizai-html` 规范（主题 CSS + 字体 + 高度同步 + 内置目录四要素），否则 iframe 渲染异常

@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { Maximize2, X } from 'lucide-react';
+import { IframeFrame } from './IframeFrame';
 import type { SlideData } from '@/types/index';
 
 // react-markdown 仅 markdown 模式加载，html_slides 模式不打包
@@ -116,11 +117,10 @@ export default function SlideViewer({
       <>
         <div className="relative w-full rounded-lg overflow-hidden border border-border">
           <div className="aspect-video bg-background">
-            <iframe
+            <IframeFrame
               key={slideUrl}
               src={slideUrl}
-              className="w-full h-full border-0"
-              sandbox="allow-scripts"
+              className="w-full h-full"
               loading="lazy"
               allowFullScreen
               title={`幻灯片 - ${slideLabel}`}
@@ -236,11 +236,10 @@ export default function SlideViewer({
                 style={{ width: 'min(92vw, calc((100dvh - 180px) * 16 / 9))' }}
               >
                 {/* 全屏帧为当前可视内容，保持 eager 立即加载 */}
-                <iframe
+                <IframeFrame
                   key={`fullscreen-${slideUrl}`}
                   src={slideUrl}
-                  className="absolute inset-0 w-full h-full border-0"
-                  sandbox="allow-scripts"
+                  className="absolute inset-0 w-full h-full"
                   allowFullScreen
                   title={`幻灯片全屏 - ${slideLabel}`}
                 />

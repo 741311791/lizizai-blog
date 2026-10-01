@@ -1,15 +1,14 @@
 /**
  * 博客数据访问层（从 R2 读取）
  *
- * 替代原来的 lib/content.ts，从 Cloudflare R2 获取文章数据
+ * 从 Cloudflare R2 获取文章数据（唯一数据层）
  */
 
 import { cache } from 'react';
-import type { Article, Category, ContentTypes, SlideData, PodcastItem } from '@/types/index';
+import type { Article, Category, ContentTypes, SlideData } from '@/types/index';
 import { renderMarkdown } from '@/lib/markdown';
 import { extractHeadings } from '@/lib/utils/heading';
-
-const R2_BASE = process.env.R2_PUBLIC_URL || 'https://lizizai-blog.lihehua.xyz';
+import { R2_BASE, resolvePodcastUrls } from './blog-data-utils';
 
 /**
  * R2 请求带退避重试：本地直连 Cloudflare 在 SSG 高并发下偶发连接超时，
@@ -51,6 +50,32 @@ export class BlogDataUnavailableError extends Error {
   }
 }
 
+/** R2 articles.json 条目（飞书同步器写入的结构，仅声明前端消费字段） */
+interface RawArticle {
+  feishuDocToken?: string;
+  slug: string;
+  title?: string;
+  excerpt?: string;
+  coverImage?: string;
+  coverThumbnail?: string;
+  publishedAt?: string;
+  readingTime?: number;
+  category?: Article['category'];
+  tags?: Article['tags'];
+  contentType?: Article['contentType'];
+  audioDuration?: Article['audioDuration'];
+  chapters?: Article['chapters'];
+  slideCount?: Article['slideCount'];
+  contentTypes?: ContentTypes;
+}
+
+/** R2 categories.json 条目 */
+interface RawCategory {
+  name: string;
+  slug: string;
+  description?: string;
+}
+
 /**
  * 获取所有文章（同一请求内缓存，避免重复调用）
  */
@@ -72,7 +97,7 @@ export const getAllArticles = cache(async (): Promise<Article[]> => {
 
   const data = await res.json();
 
-  const articles: Article[] = data.map((item: any): Article => ({
+  const articles: Article[] = data.map((item: RawArticle): Article => ({
     id: item.feishuDocToken || item.slug,
     title: item.title || '',
     subtitle: item.excerpt || undefined,
@@ -81,7 +106,7 @@ export const getAllArticles = cache(async (): Promise<Article[]> => {
     excerpt: item.excerpt,
     featuredImage: item.coverImage || item.coverThumbnail || undefined,
     thumbnailImage: item.coverThumbnail || undefined,
-    publishedAt: item.publishedAt,
+    publishedAt: item.publishedAt || '',
     likes: 0,
     views: undefined,
     readingTime: item.readingTime,
@@ -115,7 +140,7 @@ export const getCategories = cache(async (): Promise<Category[]> => {
   if (!res.ok) return [];
 
   const data = await res.json();
-  return data.map((c: any, index: number) => ({
+  return data.map((c: RawCategory, index: number) => ({
     id: String(index + 1),
     name: c.name,
     slug: c.slug,
@@ -132,23 +157,6 @@ async function getArticleContent(categorySlug: string, articleSlug: string): Pro
 
   if (!res.ok) return '';
   return res.text();
-}
-
-/**
- * 解析播客列表：将 contentTypes.podcast.items 中的文件名转为完整 R2 URL
- */
-function resolvePodcastUrls(categorySlug: string, articleSlug: string, items?: { name: string; slug: string; audioFile: string; coverFile?: string; scriptFile?: string; audioSize?: number }[]): PodcastItem[] {
-  if (!items || items.length === 0) return [];
-  const base = `${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/podcast`;
-
-  return items.map(item => ({
-    name: item.name,
-    slug: item.slug,
-    audioFile: `${base}/${item.audioFile}`,
-    coverFile: item.coverFile ? `${base}/${item.coverFile}` : undefined,
-    scriptFile: item.scriptFile ? `${base}/${item.scriptFile}` : undefined,
-    audioSize: item.audioSize,
-  }));
 }
 
 /**

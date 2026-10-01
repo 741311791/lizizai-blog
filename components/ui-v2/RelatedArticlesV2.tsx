@@ -1,4 +1,3 @@
-'use client';
 
 /**
  * RelatedArticlesV2 — 相关文章推荐（编辑风升级版，预览组件）

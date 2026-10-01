@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
+import { socialShare } from '@/lib/utils/share';
 
 // Bluesky 图标组件
 function BlueskyIcon({ className }: { className?: string }) {
@@ -110,34 +111,29 @@ export default function ShareMenu({
       handleCopyLink();
       return;
     }
-    const notesUrl = `notes://new?text=${encodeURIComponent(`${title}\n${url}`)}`;
-    window.open(notesUrl, '_blank', 'noopener,noreferrer');
+    window.open(socialShare.notes(`${title}\n${url}`), '_blank', 'noopener,noreferrer');
     onShare?.();
   };
 
   const shareToFacebook = () => {
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-    window.open(facebookUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
+    window.open(socialShare.facebook(url), '_blank', 'noopener,noreferrer,width=600,height=400');
     onShare?.();
   };
 
   const shareToLinkedIn = () => {
-    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-    window.open(linkedInUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
+    window.open(socialShare.linkedin(url), '_blank', 'noopener,noreferrer,width=600,height=400');
     onShare?.();
   };
 
   const shareToBluesky = () => {
     const text = `${title}${description ? '\n' + description : ''}`;
-    const blueskyUrl = `https://bsky.app/intent/compose?text=${encodeURIComponent(text + '\n' + url)}`;
-    window.open(blueskyUrl, '_blank', 'noopener,noreferrer,width=600,height=600');
+    window.open(socialShare.bluesky(text, url), '_blank', 'noopener,noreferrer,width=600,height=600');
     onShare?.();
   };
 
   const shareToX = () => {
     const text = `${title}${description ? '\n' + description : ''}`;
-    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-    window.open(xUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
+    window.open(socialShare.twitter(url, text), '_blank', 'noopener,noreferrer,width=600,height=400');
     onShare?.();
   };
 

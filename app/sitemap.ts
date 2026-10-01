@@ -1,3 +1,6 @@
+// ISR：与文章列表页同频（3600s），紧急更新走 /api/revalidate
+export const revalidate = 3600;
+
 /**
  * 多语言 Sitemap 生成
  * 为 en 和 zh 两种语言生成网站地图

@@ -1,7 +1,7 @@
 /**
  * 博客数据类型定义
  *
- * 前端显示类型，由 lib/content.ts 提供
+ * 前端显示类型，由 lib/blog-data.ts 提供
  */
 
 import type { Heading } from '@/lib/utils/heading';

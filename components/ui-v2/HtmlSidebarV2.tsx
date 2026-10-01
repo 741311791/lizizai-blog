@@ -1,4 +1,3 @@
-'use client';
 
 /**
  * HtmlSidebarV2 — HTML 内容类型侧栏（预览组件）

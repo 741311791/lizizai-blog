@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any -- rehype/hast AST 节点为动态结构，逐节点强类型断言成本高于收益 */
 /**
  * 服务端 Markdown 渲染（unified pipeline）
  *
@@ -21,8 +20,17 @@ import { visit } from 'unist-util-visit';
 import { renderMermaidSVG } from 'beautiful-mermaid';
 import { headingSlug } from '@/lib/utils/heading';
 
+/** rehype/hast AST 节点（局部最小类型：仅声明插件用到的字段；client 侧 type-only 复用） */
+export interface HastNode {
+  type: string;
+  tagName?: string;
+  value?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+}
+
 /** 提取 hast 节点的纯文本 */
-function nodeToText(node: any): string {
+function nodeToText(node: HastNode): string {
   if (node.type === 'text') return node.value || '';
   if (Array.isArray(node.children)) return node.children.map(nodeToText).join('');
   return '';
@@ -30,12 +38,12 @@ function nodeToText(node: any): string {
 
 /** rehype 插件：服务端渲染 Mermaid 代码块为内联 SVG */
 function rehypeMermaid() {
-  return (tree: any) => {
-    visit(tree, 'element', (node: any, index: number | undefined, parent: any) => {
-      if (node.tagName !== 'pre' || index === undefined) return;
+  return (tree: HastNode) => {
+    visit(tree, 'element', (node: HastNode, index: number | undefined, parent: HastNode | undefined) => {
+      if (node.tagName !== 'pre' || index === undefined || !parent) return;
 
       const codeChild = node.children?.find(
-        (child: any) =>
+        (child: HastNode) =>
           child.tagName === 'code' &&
           Array.isArray(child.properties?.className) &&
           child.properties.className.includes('language-mermaid')
@@ -44,8 +52,8 @@ function rehypeMermaid() {
 
       const codeText =
         codeChild.children
-          ?.filter((child: any) => child.type === 'text')
-          .map((child: any) => child.value)
+          ?.filter((child: HastNode) => child.type === 'text')
+          .map((child: HastNode) => child.value)
           .join('') || '';
 
       try {
@@ -58,6 +66,7 @@ function rehypeMermaid() {
           transparent: true,
         });
 
+        parent.children = parent.children ?? [];
         parent.children[index] = {
           type: 'raw',
           value: `<div class="mermaid-container my-6 overflow-x-auto rounded-lg p-6 bg-muted/50">${svg}</div>`,
@@ -71,9 +80,9 @@ function rehypeMermaid() {
 
 /** rehype 插件：为标题生成 id（与 lib/utils/heading 的 extractHeadings 规则保持一致） */
 function rehypeHeadingIds() {
-  return (tree: any) => {
+  return (tree: HastNode) => {
     const counter = new Map<string, number>();
-    visit(tree, 'element', (node: any) => {
+    visit(tree, 'element', (node: HastNode) => {
       const levelMatch = /^h([1-6])$/.exec(node.tagName || '');
       if (!levelMatch) return;
 
@@ -90,8 +99,8 @@ function rehypeHeadingIds() {
 
 /** rehype 插件：为正文图片添加懒加载与异步解码（恢复原 react-markdown 的 loading="lazy"） */
 function rehypeLazyImages() {
-  return (tree: any) => {
-    visit(tree, 'element', (node: any) => {
+  return (tree: HastNode) => {
+    visit(tree, 'element', (node: HastNode) => {
       if (node.tagName === 'img' && node.properties) {
         node.properties.loading = 'lazy';
         node.properties.decoding = 'async';

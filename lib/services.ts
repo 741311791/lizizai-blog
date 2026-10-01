@@ -91,15 +91,15 @@ export async function getViews(pageKey: string): Promise<number> {
 
 /**
  * 批量获取多篇文章浏览数
+ * 仅客户端调用（ArticlesSection useEffect），fetch 的 next.revalidate 属服务端
+ * Data Cache 配置、浏览器端无效，故不配置
  */
 export async function getBatchViews(pageKeys: string[]): Promise<Record<string, number>> {
   if (!WEBVISO_URL || pageKeys.length === 0) return {};
 
   try {
     const params = pageKeys.map(k => `pageKey=${encodeURIComponent(k)}`).join('&');
-    const res = await fetch(`${WEBVISO_URL}/count/batch?${params}`, {
-      next: { revalidate: 300 },
-    });
+    const res = await fetch(`${WEBVISO_URL}/count/batch?${params}`);
     if (!res.ok) return {};
     return await res.json();
   } catch {

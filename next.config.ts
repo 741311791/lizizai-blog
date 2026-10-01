@@ -37,10 +37,10 @@ const nextConfig: NextConfig = {
   },
   // 隐藏 X-Powered-By 响应头（安全卫生项）
   poweredByHeader: false,
-  // 优化 barrel imports：让 webpack 对 lucide-react/date-fns 按需打包，
+  // 优化 barrel imports：让 webpack 对 lucide-react 按需打包，
   // 避免整个 barrel 文件进入构建 trace（vercel-react-best-practices: bundle-barrel-imports）
   experimental: {
-    optimizePackageImports: ['lucide-react', 'date-fns'],
+    optimizePackageImports: ['lucide-react'],
     // SSG worker 数限制：本地直连 R2（Cloudflare）在高并发下连接超时频发，
     // 降低并发 + blog-data 的退避重试保证构建可完成（Vercel 构建机上无此瓶颈，
     // 但限制并发无明显代价，统一保留）

@@ -1,4 +1,3 @@
-'use client';
 
 import { Mic, Presentation } from 'lucide-react';
 import { useTranslations } from 'next-intl';

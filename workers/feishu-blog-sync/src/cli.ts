@@ -35,6 +35,8 @@ async function main() {
     FEISHU_APP_SECRET: process.env.FEISHU_APP_SECRET!,
     FEISHU_FOLDER_TOKEN: process.env.FEISHU_FOLDER_TOKEN || 'RnSDfNdqZlcEtud4JjpcjtpKncg',
     R2_BASE_PATH: process.env.R2_BASE_PATH || 'blog-data',
+    // 写侧兜底与生产 workflow 一致（r2.dev）；前端读侧用自定义域 lizizai-blog.lihehua.xyz，
+    // 统一域名需改 workflow 并重写存量 meta（见前端 lib/blog-data.ts 注释）
     R2_PUBLIC_URL: process.env.R2_PUBLIC_URL || 'https://pub-7fc5ed7acc9844ab99297fa6b47f55e6.r2.dev',
   };
 

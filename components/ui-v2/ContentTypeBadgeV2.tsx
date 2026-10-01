@@ -1,4 +1,3 @@
-'use client';
 
 /**
  * ContentTypeBadgeV2 — 内容类型徽章（编辑风升级版，预览组件）

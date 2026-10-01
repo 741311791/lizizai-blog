@@ -1,7 +1,5 @@
 'use client';
 
-/* eslint-disable @typescript-eslint/no-explicit-any -- react-markdown 组件 props 与 rehype AST 节点为动态结构 */
-
 /**
  * Client 端 Markdown 渲染（react-markdown）
  *
@@ -24,18 +22,20 @@ import { renderMermaidSVG } from 'beautiful-mermaid';
 import { visit } from 'unist-util-visit';
 import hljs from '@/lib/highlight-config';
 import { headingSlug, buildHeadingIdMap } from '@/lib/utils/heading';
+// type-only：不将服务端 markdown 管线拉入 client bundle
+import type { HastNode } from '@/lib/markdown';
 import 'highlight.js/styles/github-dark-dimmed.css';
 // KaTeX 样式仅在含公式的路由加载（文章页），不进全局关键 CSS
 import 'katex/dist/katex.min.css';
 
 /** 自定义 rehype 插件：拦截 mermaid 代码块，渲染为内联 SVG */
 function rehypeMermaid() {
-  return (tree: any) => {
-    visit(tree, 'element', (node: any, index: number | undefined, parent: any) => {
-      if (node.tagName !== 'pre' || index === undefined) return;
+  return (tree: HastNode) => {
+    visit(tree, 'element', (node: HastNode, index: number | undefined, parent: HastNode | undefined) => {
+      if (node.tagName !== 'pre' || index === undefined || !parent) return;
 
       const codeChild = node.children?.find(
-        (child: any) =>
+        (child: HastNode) =>
           child.tagName === 'code' &&
           Array.isArray(child.properties?.className) &&
           child.properties.className.includes('language-mermaid')
@@ -43,8 +43,8 @@ function rehypeMermaid() {
       if (!codeChild) return;
 
       const codeText = codeChild.children
-        ?.filter((child: any) => child.type === 'text')
-        .map((child: any) => child.value)
+        ?.filter((child: HastNode) => child.type === 'text')
+        .map((child: HastNode) => child.value)
         .join('') || '';
 
       try {
@@ -57,6 +57,7 @@ function rehypeMermaid() {
           transparent: true,
         });
 
+        parent.children = parent.children ?? [];
         parent.children[index] = {
           type: 'raw',
           value: `<div class="mermaid-container my-6 overflow-x-auto rounded-lg p-6 bg-muted/50">${svg}</div>`,
@@ -73,12 +74,13 @@ const REMARK_PLUGINS = [remarkGfm, remarkMath];
 const REHYPE_PLUGINS = [rehypeMermaid, rehypeRaw, rehypeKatex];
 
 /** 递归提取 React 子树的纯文本（标题含 code/链接时避免 "[object Object]"） */
-function extractText(node: any): string {
-  if (node == null) return '';
-  if (typeof node === 'string' || typeof node === 'number') return String(node);
+function extractText(node: React.ReactNode): string {
+  if (node == null || typeof node === 'boolean') return '';
+  if (typeof node === 'string' || typeof node === 'number' || typeof node === 'bigint') return String(node);
   if (Array.isArray(node)) return node.map(extractText).join('');
-  if (typeof node === 'object' && node.props?.children !== undefined) {
-    return extractText(node.props.children);
+  if (typeof node === 'object' && 'props' in node) {
+    const el = node as { props?: { children?: React.ReactNode } };
+    return extractText(el.props?.children);
   }
   return '';
 }
@@ -122,7 +124,7 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
               {...props}
             />
           ),
-          code: ({ className, children, ...props }: any) => {
+          code: ({ className, children }: React.ComponentProps<'code'> & { node?: unknown }) => {
             const codeText = String(children).replace(/\n$/, '');
             const hasNewline = String(children).includes('\n');
             const match = /language-(\w+)/.exec(className || '');
@@ -157,7 +159,7 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
               );
             }
           },
-          pre: ({ children }: any) => (
+          pre: ({ children }: React.ComponentProps<'pre'> & { node?: unknown }) => (
             <div className="code-block-wrapper group relative my-6 rounded-lg overflow-hidden border border-border bg-[#22272e]">
               <pre className="!m-0 !p-4 overflow-x-auto text-sm leading-relaxed">
                 {children}

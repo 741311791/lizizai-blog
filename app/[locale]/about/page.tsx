@@ -1,7 +1,7 @@
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Mail, Twitter, Linkedin, Youtube, Globe } from 'lucide-react';
+import { Mail, Globe } from 'lucide-react';
+import { SOCIALS } from '@/components/ui/social-links';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
@@ -29,12 +29,6 @@ export async function generateMetadata({
     },
   };
 }
-
-const SOCIALS = [
-  { href: 'https://twitter.com/zizaiblog', Icon: Twitter, label: 'Twitter' },
-  { href: 'https://youtube.com/@zizaili', Icon: Youtube, label: 'YouTube' },
-  { href: 'https://www.linkedin.com/in/zizai-li', Icon: Linkedin, label: 'LinkedIn' },
-] as const;
 
 export default async function AboutPage({
   params,

@@ -30,9 +30,9 @@ export async function shareContent(data: ShareData): Promise<boolean> {
         url: data.url,
       });
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       // 用户取消分享
-      if (error.name === 'AbortError') {
+      if (error instanceof Error && error.name === 'AbortError') {
         return false;
       }
       console.error('Share failed:', error);
@@ -66,7 +66,7 @@ export const socialShare = {
   facebook: (url: string) =>
     `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
 
-  linkedin: (url: string, title: string) =>
+  linkedin: (url: string) =>
     `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
 
   email: (url: string, subject: string, body: string) =>
@@ -77,4 +77,11 @@ export const socialShare = {
 
   hackernews: (url: string, title: string) =>
     `https://news.ycombinator.com/submitlink?u=${encodeURIComponent(url)}&t=${encodeURIComponent(title)}`,
+
+  bluesky: (text: string, url: string) =>
+    `https://bsky.app/intent/compose?text=${encodeURIComponent(text + '\n' + url)}`,
+
+  // notes:// 协议仅 macOS 有效（调用方需自行判断平台降级）
+  notes: (text: string) =>
+    `notes://new?text=${encodeURIComponent(text)}`,
 };

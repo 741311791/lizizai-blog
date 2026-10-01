@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { ExternalLink, RefreshCw, Maximize, Minimize } from 'lucide-react';
+import { IframeFrame } from './IframeFrame';
 
 interface HtmlViewerProps {
   htmlUrl: string;
@@ -158,16 +159,15 @@ export default function HtmlViewer({ htmlUrl }: HtmlViewerProps) {
       ref={containerRef}
       className="relative w-full overflow-hidden border border-border rounded-lg group [&:fullscreen]:rounded-none [&:fullscreen]:border-0 [&:fullscreen]:bg-background"
     >
-      <iframe
+      <IframeFrame
         ref={iframeRef}
         src={htmlUrl}
-        sandbox="allow-scripts"
         loading="lazy"
         title="HTML 内容查看器"
         aria-label="HTML 内容"
         tabIndex={0}
         onLoad={handleLoad}
-        className="w-full border-0"
+        className="w-full"
         style={{
           height: iframeHeightStyle,
           transition: isFullscreen ? 'none' : status === 'loaded' ? 'height 0.2s ease-out' : 'none',

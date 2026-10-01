@@ -1,4 +1,3 @@
-'use client';
 
 /**
  * AuthorCardV2 — 文章作者/日期卡（编辑风升级版，预览组件）
