@@ -57,3 +57,10 @@ nimbalyst-local/
 .video/
 .video-review/
 /shot*.png
+# 系列写作中间产物（终稿在 final/，上传副本与 AI 生成过程文件不入库）
+blog-series/.upload/
+blog-series/.gemini/
+# herdr 会话产物
+.herdr/
+# 根目录临时截图
+/resume-mobile-*.png
