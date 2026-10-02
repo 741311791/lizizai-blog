@@ -81,24 +81,24 @@ function ArticleListItemV2({ article, priority = false }: ArticleListItemV2Props
             </span>
           ))}
         </div>
-        <div className="flex items-center gap-4">
-          {/* 作者、日期（mono 小标）、时间描述 — 纯留白分隔 */}
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span className="font-medium">{author.name}</span>
-            <span className="font-mono text-[11px] tracking-[0.1em] tabular-nums">
+        <div className="flex items-center gap-2 sm:gap-4">
+          {/* 作者、日期（mono 小标）、时间描述 — 纯留白分隔；窄屏收紧间距防折行，阅读时间 <420px 让位 */}
+          <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-4 text-xs text-muted-foreground">
+            <span className="font-medium whitespace-nowrap">{author.name}</span>
+            <span className="font-mono text-[11px] tracking-[0.1em] tabular-nums whitespace-nowrap">
               {new Date(publishedAt).toISOString().slice(0, 10)}
             </span>
             {(readingTime || contentType === 'slides') && (
               <>
-                <div className="flex items-center gap-1">
+                <div className="hidden min-[420px]:flex items-center gap-1">
                   <Clock className="h-3 w-3" aria-hidden="true" />
-                  <span className="tabular-nums">{timeLabel}</span>
+                  <span className="tabular-nums whitespace-nowrap">{timeLabel}</span>
                 </div>
               </>
             )}
           </div>
           {/* 分享按钮 */}
-          <div className="relative z-10 flex items-center gap-2 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+          <div className="relative z-10 flex flex-shrink-0 items-center gap-2 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
             <ShareMenu
               title={title}
               description={description}

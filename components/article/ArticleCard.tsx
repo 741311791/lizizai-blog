@@ -121,15 +121,15 @@ function ArticleCard({ article }: ArticleCardProps) {
         )}
 
         {/* 底部信息 */}
-        <div className="mt-auto pt-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center gap-1.5 tabular-nums">
-            <span className="font-medium">{author.name}</span>
-            <span className="h-1 w-1 rotate-45 bg-border" aria-hidden="true" />
-            <span className="font-mono tracking-wide">
+        <div className="mt-auto pt-3 border-t border-border flex items-center justify-between gap-2 text-xs text-muted-foreground">
+          <div className="flex min-w-0 items-center gap-1.5 tabular-nums">
+            <span className="font-medium whitespace-nowrap">{author.name}</span>
+            <span className="h-1 w-1 rotate-45 bg-border flex-shrink-0" aria-hidden="true" />
+            <span className="font-mono tracking-wide truncate">
               {dateFormatters[locale === 'zh' ? 'zh' : 'en'].format(new Date(publishedAt))}
             </span>
           </div>
-          <div className="flex items-center gap-3 tabular-nums">
+          <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3 tabular-nums">
             {/* 移动端显示互动数据 */}
             <span className="flex items-center gap-1 sm:hidden">
               <Heart className="h-3 w-3" aria-hidden="true" />{likes}
