@@ -276,7 +276,7 @@ export default async function ResumePage({
                 <p className="text-center text-[12px] leading-relaxed" style={{ color: 'var(--rz-t-muted)' }}>多智能体<br />常驻编排</p>
               </div>
             </div>
-            <div className="mt-5 flex flex-wrap items-center gap-2.5"><span className="rz-tag">LLM</span><span className="rz-tag">Agent</span><span className="rz-tag">工具调用</span><span className="rz-tag">监控</span><a href="#" className="rz-link ml-auto">查看详情 <span>→</span></a></div>
+            <div className="mt-5 flex flex-wrap items-center gap-2.5"><span className="rz-tag">LLM</span><span className="rz-tag">Agent</span><span className="rz-tag">工具调用</span><span className="rz-tag">监控</span><a href="/article/生产级-agent-系统落地实录-多智能体协作与-7-24h-常驻调度" className="rz-link ml-auto">查看详情 <span>→</span></a></div>
             </section>
 
             {/* 卡2 PB 级数据底座：左数据 + 右 mesh 拓扑 */}
@@ -367,7 +367,7 @@ export default async function ResumePage({
               </div>
               <div className="mt-5 flex flex-wrap items-center gap-2.5">
                 <span className="rz-tag">数据湖</span><span className="rz-tag">Flink</span><span className="rz-tag">Spark</span><span className="rz-tag">数仓</span>
-                <a href="#" className="rz-link ml-auto">查看详情 <span>→</span></a>
+                <a href="/article/pb-级数据底座架构实录-湖仓一体与-p99-9-调优" className="rz-link ml-auto">查看详情 <span>→</span></a>
               </div>
             </section>
 
@@ -450,7 +450,7 @@ export default async function ResumePage({
               </div>
               <div className="mt-5 flex flex-wrap items-center gap-2.5">
                 <span className="rz-tag">数据中台</span><span className="rz-tag">行业方案</span><span className="rz-tag">AI 应用</span><span className="rz-tag">咨询服务</span>
-                <a href="#" className="rz-link ml-auto">查看详情 <span>→</span></a>
+                <a href="/article/政企大客户交付实录-4-城城市大脑与专有云现场" className="rz-link ml-auto">查看详情 <span>→</span></a>
               </div>
             </section>
           </div>
@@ -517,7 +517,7 @@ export default async function ResumePage({
           </div>
           <div className="relative z-10 flex flex-none flex-col gap-4 sm:flex-row">
             <a href="mailto:hello@example.com" className="rz-btn-main">联系我 <span>→</span></a>
-            <a href="#" className="rz-btn-ghost">订阅博客</a>
+            <a href="/subscribe" className="rz-btn-ghost">订阅博客</a>
           </div>
         </footer>
 
