@@ -280,7 +280,8 @@
   isolation: isolate;
   border: 1px solid transparent;
   border-radius: 16px;
-  padding: 26px 30px;
+  /* 移动端收窄内边距：360px 屏下大 padding 会把内容区压到 300px 以内 */
+  padding: 20px 18px;
   background:
     linear-gradient(170deg, #100c09 0%, #0a0a0c 60%, #09090b 100%) padding-box,
     linear-gradient(180deg, rgba(255, 183, 94, 0.9) 0%, rgba(201, 118, 34, 0.6) 40%, rgba(110, 63, 18, 0.4) 75%, rgba(80, 46, 16, 0.55) 100%) border-box;
@@ -289,6 +290,11 @@
     0 0 10px rgba(255, 170, 70, 0.4),
     inset 0 0 18px rgba(255, 140, 30, 0.09);
   transition: box-shadow 0.4s;
+}
+@media (min-width: 768px) {
+  .rz-card {
+    padding: 26px 30px;
+  }
 }
 .rz-card:hover {
   box-shadow:

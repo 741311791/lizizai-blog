@@ -187,10 +187,10 @@ export default async function ResumePage({
           {/* 左列文字 */}
           <div className="relative z-10 flex max-w-[560px] flex-col justify-center gap-5 py-14 pl-8 md:pl-[72px]">
             <div className="flex items-center gap-4">
-              <h1 className="text-6xl font-black tracking-tight">李自在</h1>
+              <h1 className="text-5xl font-black tracking-tight sm:text-6xl">李自在</h1>
               <span className="rounded-full px-3 py-1 text-[14px] font-bold" style={{ background: 'linear-gradient(180deg,#FFB03A,#F68E1E)', color: '#241303' }}>笔名</span>
             </div>
-            <h2 className="text-[34px] font-bold leading-tight text-white md:text-[36px]">数据与 AI 自媒体博主</h2>
+            <h2 className="text-[26px] font-bold leading-tight text-white sm:text-[34px] md:text-[36px]">数据与 AI 自媒体博主</h2>
             <div className="mt-1 flex items-center gap-2.5 text-[16px]" style={{ color: '#C8CDD2' }}>
               <Briefcase className="h-[18px] w-[18px]" style={{ color: 'var(--rz-orange)' }} strokeWidth={1.8} />
               <span>7 年工程经验</span>
@@ -229,13 +229,13 @@ export default async function ResumePage({
               </g>
             </svg>
             <div className="flex items-center justify-between gap-6">
-              <h3 className="text-2xl font-bold" style={{ textShadow: '0 0 18px rgba(255,255,255,.15)' }}>生产级 Agent 系统</h3>
+              <h3 className="text-2xl font-bold [word-break:keep-all]" style={{ textShadow: '0 0 18px rgba(255,255,255,.15)' }}>生产级 Agent 系统</h3>
               <span className="rz-chip"><Package className="h-[34px] w-[34px]" style={{ color: 'var(--rz-orange)' }} strokeWidth={1.6} /></span>
             </div>
             <p className="mt-3 text-[15px] leading-relaxed" style={{ color: 'var(--rz-t-body)' }}>基于大模型的企业级 Agent 平台，支持多智能体协作、工具调用与工作流编排，支撑数字分身与商业化项目稳定落地。</p>
             <div className="mt-5 flex flex-1 items-stretch gap-8">
               <div className="rz-panel flex min-w-0 flex-1 flex-col justify-between">
-                  <div className="flex items-baseline justify-between">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                     <span className="text-[13px]" style={{ color: 'var(--rz-t-muted)' }}>AI 辅助研发提效</span>
                     <span className="font-mono text-lg font-semibold text-white"><b className="text-sm font-medium" style={{ color: 'var(--rz-orange)' }}>↑ 60%+</b> 迭代周期缩短</span>
                   </div>
@@ -293,8 +293,8 @@ export default async function ResumePage({
                   <span className="rz-chip"><Database className="h-[34px] w-[34px]" style={{ color: 'var(--rz-orange)' }} strokeWidth={1.6} /></span>
                 </div>
                 <p className="mt-3 text-[15px] leading-relaxed" style={{ color: 'var(--rz-t-body)' }}>构建湖仓一体的数据平台，支撑海量数据存储、实时计算与多维分析，服务业务全链路。</p>
-              <div className="mt-4 flex min-h-0 flex-1 gap-4">
-                <div className="flex w-[210px] flex-none flex-col gap-4">
+              <div className="mt-4 flex min-h-0 flex-1 flex-col gap-4 md:flex-row">
+                <div className="flex w-full flex-none flex-col gap-4 md:w-[210px]">
                   <div className="rz-panel flex flex-1 flex-col justify-center gap-3">
                     <div className="flex items-baseline justify-between gap-2">
                       <span className="text-[13px]" style={{ color: 'var(--rz-t-muted)' }}>核心查询 P99 延迟</span>
@@ -326,12 +326,12 @@ export default async function ResumePage({
                     </div>
                   </div>
                 </div>
-                <div className="rz-panel relative flex-1 overflow-hidden">
+                <div className="rz-panel relative min-h-[190px] flex-1 overflow-hidden md:h-auto">
                   <div className="absolute left-4 top-3 z-10 flex items-baseline gap-2">
                     <span className="text-[12px] font-medium" style={{ color: '#D9A05B' }}>数据血缘</span>
                     <span className="font-mono text-[10px] tracking-[.18em]" style={{ color: 'var(--rz-t-muted)' }}>DATA LINEAGE</span>
                   </div>
-                  <svg viewBox="0 0 640 200" className="h-full w-full pt-4" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <svg viewBox="0 0 640 200" className="h-full w-full pt-4" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                     <g fill="none" stroke="rgba(255,158,47,.45)" strokeWidth="1.2">
                       {LINEAGE.edges.map((e, i) => (
                         <path key={i} d={e.d} className={('flow' in e) ? 'rz-flow' : undefined} />
@@ -429,7 +429,7 @@ export default async function ResumePage({
                   <div className="flex justify-between font-mono text-[9.5px]" style={{ color: 'var(--rz-t-muted)' }}>
                     <span>Q1</span><span>Q2</span><span>Q3</span><span>Q4</span>
                   </div>
-                  <div className="mt-1 font-mono text-sm"><b className="font-semibold" style={{ color: 'var(--rz-orange)' }}>↑ 60%+</b> <span className="ml-1 text-[12px]" style={{ color: 'var(--rz-t-muted)' }}>迭代周期缩短</span></div>
+                  <div className="mt-1 font-mono text-sm"><b className="font-semibold" style={{ color: 'var(--rz-orange)' }}>↑ 60%+</b> <span className="ml-1 text-[12px]" style={{ color: 'var(--rz-t-muted)' }}>交付周期缩短</span></div>
                 </div>
                 <div className="rz-panel flex items-center gap-4">
                   <div className="relative h-[72px] w-[72px] flex-none">
@@ -499,8 +499,8 @@ export default async function ResumePage({
           </div>
         </main>
 
-        {/* CTA：标题左 + 按钮右 */}
-        <footer id="contact" className="rz-card rz-hud relative mt-11 flex min-h-[240px] items-center justify-between gap-8 overflow-hidden" style={{ padding: '32px 44px' }}>
+        {/* CTA：标题左 + 按钮右（移动端纵向堆叠） */}
+        <footer id="contact" className="rz-card rz-hud relative mt-11 flex flex-col justify-center gap-8 overflow-hidden px-6 py-10 sm:min-h-[240px] sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:px-11 sm:py-8">
           <Image
             src="/resume/globe.webp"
             alt=""
@@ -511,7 +511,7 @@ export default async function ResumePage({
             style={{ mixBlendMode: 'screen', opacity: 0.72, filter: 'brightness(.72) saturate(.95)' }}
           />
           <div className="pointer-events-none absolute inset-0" style={{ background: 'radial-gradient(120% 150% at 82% 20%, rgba(8,6,4,.7) 45%, transparent 75%)' }} />
-          <div className="relative z-10 ml-[8%] min-w-0 flex-1" style={{ background: 'linear-gradient(90deg, rgba(8,6,4,0) 0, rgba(8,6,4,.88) 14%)' }}>
+          <div className="relative z-10 min-w-0 flex-1 sm:ml-[8%]" style={{ background: 'linear-gradient(90deg, rgba(8,6,4,0) 0, rgba(8,6,4,.88) 14%)' }}>
             <h2 className="text-[clamp(44px,4vw,58px)] font-black leading-none tracking-[-0.01em]">来聊聊<span style={{ color: 'var(--rz-orange)', marginLeft: '-0.06em' }}>.</span></h2>
             <p className="mt-4 text-[16px]" style={{ color: '#D8D8D8', opacity: 0.85 }}>无论是合作、交流，还是技术问题，我都很乐意和你聊聊。</p>
           </div>
@@ -522,9 +522,9 @@ export default async function ResumePage({
         </footer>
 
         {/* 页脚 */}
-        <div className="mt-2 flex h-16 items-center justify-between font-mono text-[12px] tracking-[.18em]" style={{ color: '#C4C4C4' }}>
+        <div className="mt-2 flex h-16 items-center justify-between font-mono text-[12px] tracking-[.08em] sm:tracking-[.18em]" style={{ color: '#C4C4C4' }}>
           <span>DATA <b className="font-medium not-italic text-[var(--rz-orange)]">×</b> AI <b className="font-medium not-italic text-[var(--rz-orange)]">×</b> CONTENT <b className="font-medium not-italic text-[var(--rz-orange)]">×</b> GROWTH</span>
-          <span>李自在 / 2026 · CHINA</span>
+          <span className="hidden sm:inline">李自在 / 2026 · CHINA</span>
         </div>
       </div>
     </div>
