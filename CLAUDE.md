@@ -155,6 +155,7 @@ GitHub Actions 同步额外用的 secrets（`FEISHU_APP_SECRET`、`R2_*` 凭证�
 
 - `/lizizai-html` — 生成与博客设计系统一致的独立 HTML 文件（iframe 嵌入用）。产物含主题 CSS（R2 CDN）、Google Fonts、高度同步 postMessage、内置浮动目录。规范见 `.claude/skills/lizizai-html/SKILL.md`
 - `/ai-daily-extract` — AI 日报 Markdown → 结构化 JSON（供 `templates/ai-daily/template.html` 渲染）
+- `/tech-blog-writer` — 技术博客写作流水线：事实素材包 → Gemini(gemini-2.5-flash) 生成 → 程序化质检（禁语/加粗/围栏/数字/编造）→ 修正落稿 → lark-cli 上传飞书分类 → 同步上线。含禁语清单、风格规则指针、分类 token、踩坑记录。规范见 `.claude/skills/tech-blog-writer/SKILL.md`
 
 ## Design System
 
