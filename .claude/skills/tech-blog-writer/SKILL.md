@@ -95,7 +95,18 @@ curl -s https://lizizai-blog.lihehua.xyz/blog-data/articles.json | python3 -c ".
 |---|---|---|
 | `scripts/detect.py`（本 skill 自带） | **中文主信号**：禁语 grep（实测每篇必中）+ 数字/短语加粗 + 句长 CV（弱信号只看趋势） | `python3 .claude/skills/tech-blog-writer/scripts/detect.py <文章.md> [--json]`，退出码 0 干净/1 有疑似 |
 | `avoid-ai-writing`（~/.claude/skills/，4830★，54.9k★ awesome 合集收录） | **英文 AI-isms**：49+ 模式类别、detect/rewrite/edit 三模式、确定性 0-100 检测引擎（npm: avoid-ai-writing-detector，CI 测试）。规则校准于英文——中文正文用我们的 detect.py，英文段落/术语句用它 | detect 模式扫描；重写循环只用它的检测不用它的重写（中文语感归 Gemini） |
-| **腾讯朱雀**（matrix.tencent.com） | **中文检测的事实标准**（分句染色疑似度）。无公开 API，走人工环节：打开网页 → 微信/QQ 扫码登录 → 粘贴全文 → 把总分和标红句子回报会话 | **改写前测一次、终审前再测一次**，只看趋势不看绝对值（防过拟合：为骗检测器改写会产出新的怪味） |
+| **腾讯朱雀** | **中文检测的事实标准**（labels_ratio：0=人工 / 1=AI / 2=疑似AI，softmax_confidence 置信度）。三层接入按优先级：① **EdgeOne API**（有凭证时，见下）② zhuque CLI（社区 `uv tool install git+https://github.com/Sophomoresty/zhuque.git`，网页自动化方案备选）③ 人工兜底：matrix.tencent.com 网页（登录后每天免费 20 次文本） | **改写前测一次、终审前再测一次**，只看趋势不看绝对值（防过拟合：为骗检测器改写会产出新的怪味） |
+
+**朱雀 EdgeOne API 调用模板**（需先开通：EdgeOne 控制台 → 创建 AI 网关 → 记录网关域名与 API Key，建议存 `EDGEOONE_GATEWAY` / `EDGEOONE_API_KEY` 环境变量；开发者每月 50 万 token 免费额度，文本检测约 40 EIU/千字符）：
+
+```bash
+curl -s -X POST "https://$EDGEOONE_GATEWAY/v1/providers/zhuque-text/classify" \
+  -H "Authorization: Bearer $EDGEOONE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "<待检测文本，每次最多1000字符，超出按千字符取整>", "is_merge": true}'
+# 响应：labels_ratio（"0"人工/"1"AI/"2"疑似AI）+ softmax_confidence；同步模式约 10s
+# 循环用法：文章分千字符块逐块检测 → 平均置信度做改写前/终审前对比；凭证未配置时降级人工环节
+```
 
 ### 循环执行
 
