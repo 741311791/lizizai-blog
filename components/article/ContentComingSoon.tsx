@@ -1,13 +1,13 @@
 
-import { Mic, Presentation } from 'lucide-react';
+import { Code2, Mic, Presentation } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface ContentComingSoonProps {
-  type: 'podcast' | 'slides';
+  type: 'podcast' | 'slides' | 'html';
 }
 
 /**
- * 播客/幻灯片内容类型兜底页
+ * 播客/幻灯片/HTML 内容类型兜底页
  * 功能开发中，显示"即将上线"占位
  */
 export default function ContentComingSoon({ type }: ContentComingSoonProps) {
@@ -23,6 +23,11 @@ export default function ContentComingSoon({ type }: ContentComingSoonProps) {
       Icon: Presentation,
       title: t('slidesComingSoonTitle'),
       desc: t('slidesComingSoonDesc'),
+    },
+    html: {
+      Icon: Code2,
+      title: t('htmlComingSoonTitle'),
+      desc: t('htmlComingSoonDesc'),
     },
   };
 

@@ -78,6 +78,8 @@
     "podcastComingSoonDesc": "我们正在开发播客收听体验，支持章节导航和逐字稿同步。敬请期待！",
     "slidesComingSoonTitle": "幻灯片功能即将上线",
     "slidesComingSoonDesc": "我们正在开发交互式幻灯片浏览体验，支持全屏演示和章节跳转。敬请期待！",
+    "htmlComingSoonTitle": "HTML 版本即将上线",
+    "htmlComingSoonDesc": "这篇文章的 HTML 交互版本正在准备中，敬请期待！",
     "articleType": "文章",
     "nowPlaying": "正在播放",
     "chapters": "章节导航",

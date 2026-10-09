@@ -61,6 +61,7 @@ export default async function CategoryPage({
     <div className="container mx-auto max-w-[1200px] px-4 py-12">
       {/* Category Header V2 */}
       <PageHeaderV2
+        variant="rails"
         count={articleCount}
         countLabel={t('articles')}
         title={category.name}

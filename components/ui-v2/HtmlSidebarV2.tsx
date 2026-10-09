@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import { List, Maximize2, MoveVertical } from 'lucide-react';
 import type { Article } from '@/types/index';
 import SidebarStats from '@/components/article/SidebarStats';
+import SidebarSectionTitle from '@/components/article/SidebarSectionTitle';
 
 interface HtmlSidebarV2Props {
   article: Article;
@@ -27,18 +28,7 @@ export default function HtmlSidebarV2({ article }: HtmlSidebarV2Props) {
     <div className="space-y-7">
       {/* 阅读指南（替代 TOC） */}
       <div>
-        <div className="font-mono text-[10px] font-medium uppercase tracking-[0.26em] text-primary">
-          Guide
-        </div>
-        <div className="mt-1 text-sm font-bold">{t('guideTitle')}</div>
-        <span
-          className="mt-2.5 mb-3 block h-[2px] w-8 rounded-full"
-          style={{
-            background:
-              'linear-gradient(90deg, var(--color-primary), transparent)',
-          }}
-          aria-hidden="true"
-        />
+        <SidebarSectionTitle eyebrow="Guide" title={t('guideTitle')} />
         <div>
           {guides.map((guide) => (
             <div
@@ -60,27 +50,8 @@ export default function HtmlSidebarV2({ article }: HtmlSidebarV2Props) {
         </div>
       </div>
 
-      {/* 阅读数据 */}
-      <SidebarStats article={article} />
-
-      {/* 标签 */}
-      {article.tags && article.tags.length > 0 && (
-        <div>
-          <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            {t('tagsLabel')}
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {article.tags.map((tag) => (
-              <span
-                key={tag.slug}
-                className="rounded-full border border-border bg-card px-2.5 py-0.5 text-xs text-muted-foreground"
-              >
-                {tag.name}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* 阅读数据 + 标签（HTML 类型无对应 RSS feed，隐藏订阅区块） */}
+      <SidebarStats article={article} showFeeds={false} />
     </div>
   );
 }

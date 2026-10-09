@@ -137,7 +137,7 @@ export default function ArticleDetailClient({
   const renderMainContent = () => {
     // 兜底页
     if (showComingSoon) {
-      return <ContentComingSoon type={activeContentType as 'podcast' | 'slides'} />;
+      return <ContentComingSoon type={activeContentType as 'podcast' | 'slides' | 'html'} />;
     }
 
     switch (activeContentType) {
@@ -280,7 +280,7 @@ export default function ArticleDetailClient({
       <ImageLightbox />
       <div className="container mx-auto max-w-7xl px-4 py-8">
         <ArticleBreadcrumb article={article} />
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_280px]">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_320px]">
           {/* 左栏：头部 + 内容 */}
           <article className={isFullWidth ? 'max-w-none' : 'max-w-3xl'}>
             {/* 文章头部（所有类型共用） */}

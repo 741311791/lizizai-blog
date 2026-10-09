@@ -4,11 +4,14 @@ import { memo } from 'react';
 import { useTranslations } from 'next-intl';
 import type { Article } from '@/types/index';
 import FeedSubscription from './FeedSubscription';
+import SidebarSectionTitle from './SidebarSectionTitle';
 import { getContentType } from '@/lib/rss';
 import { useArticleStats } from '@/hooks/useArticleStats';
 
 interface SidebarStatsProps {
   article: Article;
+  /** HTML 内容类型没有对应 RSS feed，传 false 隐藏订阅区块 */
+  showFeeds?: boolean;
 }
 
 /**
@@ -16,7 +19,7 @@ interface SidebarStatsProps {
  * 被 PodcastSidebar 和 SlidesSidebar 复用
  * 浏览量/点赞数客户端获取（避免服务端短 revalidate 拉低文章页 ISR）
  */
-function SidebarStats({ article }: SidebarStatsProps) {
+function SidebarStats({ article, showFeeds = true }: SidebarStatsProps) {
   const t = useTranslations('article');
   // 与 ArticleActions 共享模块级去重缓存，双挂载只发一次请求；服务端值作种子避免 0 闪变
   const stats = useArticleStats(article.id, { likes: article.likes, views: article.views || 0 });
@@ -27,9 +30,7 @@ function SidebarStats({ article }: SidebarStatsProps) {
     <>
       {/* 浏览数据 */}
       <div>
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-          {t('readingStats')}
-        </h3>
+        <SidebarSectionTitle eyebrow="Stats" title={t('readingStats')} />
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-lg bg-card p-2.5 text-center">
             <div className="text-lg font-bold tabular-nums">{views}</div>
@@ -45,9 +46,7 @@ function SidebarStats({ article }: SidebarStatsProps) {
       {/* 标签 */}
       {article.tags && article.tags.length > 0 && (
         <div>
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-            {t('tagsLabel')}
-          </h3>
+          <SidebarSectionTitle eyebrow="Tags" title={t('tagsLabel')} />
           <div className="flex flex-wrap gap-1.5">
             {article.tags.map(tag => (
               <span
@@ -62,11 +61,13 @@ function SidebarStats({ article }: SidebarStatsProps) {
       )}
 
       {/* RSS 订阅 */}
-      <FeedSubscription
-        contentType={getContentType(article)}
-        categorySlug={article.category?.slug || ''}
-        categoryName={article.category?.name || ''}
-      />
+      {showFeeds && (
+        <FeedSubscription
+          contentType={getContentType(article)}
+          categorySlug={article.category?.slug || ''}
+          categoryName={article.category?.name || ''}
+        />
+      )}
     </>
   );
 }

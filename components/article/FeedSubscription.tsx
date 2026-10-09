@@ -2,11 +2,12 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Rss, Copy, Check } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 import { siteConfig } from '@/lib/seo';
 import { copyToClipboard } from '@/lib/utils/share';
-import { FEED_ENABLED_CATEGORIES, getContentType } from '@/lib/rss';
+import { FEED_ENABLED_CATEGORIES } from '@/lib/rss';
 import type { ContentType } from '@/types/index';
+import SidebarSectionTitle from './SidebarSectionTitle';
 
 interface FeedSubscriptionProps {
   contentType: ContentType;
@@ -46,10 +47,7 @@ export default function FeedSubscription({
 
   return (
     <div>
-      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1">
-        <Rss className="h-3 w-3" />
-        {t('feedLabel')}
-      </div>
+      <SidebarSectionTitle eyebrow="RSS" title={t('feedLabel')} />
       <div className="space-y-1.5">
         {feedLinks.map((link) => (
           <div

@@ -6,8 +6,8 @@
  * 数据源：R2 articles.json，通过 getArticlesByCategory('daily-news') 获取。
  */
 
-import { Badge } from '@/components/ui/badge';
 import CategoryArticlesSection from '@/components/article/CategoryArticlesSection';
+import PageHeaderV2 from '@/components/ui-v2/PageHeaderV2';
 import { getCategories, getArticlesByCategory } from '@/lib/blog-data';
 import { generateCategoryMetadata } from '@/lib/seo';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -57,20 +57,14 @@ export default async function DailyNewsPage({
 
   return (
     <div className="container mx-auto max-w-[1200px] px-4 py-12">
-      {/* 分类头部 */}
-      <header className="mb-12 text-center space-y-4">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <Badge variant="secondary">{t('articleCount', { count: articleCount })}</Badge>
-        </div>
-        <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
-          {categoryName}
-        </h1>
-        {categoryDesc && (
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            {categoryDesc}
-          </p>
-        )}
-      </header>
+      {/* 分类头部（与其他导航页共用 PageHeaderV2，pulse 走线变体） */}
+      <PageHeaderV2
+        variant="pulse"
+        count={articleCount}
+        countLabel={t('articles')}
+        title={categoryName}
+        description={categoryDesc || undefined}
+      />
 
       {/* 文章列表 */}
       {articles.length > 0 ? (

@@ -7,6 +7,7 @@ import { ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { Article } from '@/types/index';
 import SidebarStats from './SidebarStats';
+import SidebarSectionTitle from './SidebarSectionTitle';
 
 interface ArticleSidebarProps {
   article: Article;
@@ -113,17 +114,7 @@ export default function ArticleSidebar({
       {/* 目录 */}
       {groups.length > 0 && (
         <div>
-          <div>
-            <div className="font-mono text-[10px] font-medium tracking-[0.26em] text-primary uppercase">
-              Contents
-            </div>
-            <div className="mt-1 text-sm font-bold">{t('toc')}</div>
-            <span
-              className="mt-2.5 mb-3 block h-[2px] w-8 rounded-full"
-              style={{ background: 'linear-gradient(90deg, var(--color-primary), transparent)' }}
-              aria-hidden="true"
-            />
-          </div>
+          <SidebarSectionTitle eyebrow="Contents" title={t('toc')} />
           <nav>
             {groups.map((group) => {
               const isExpanded = expandedIds.has(group.heading.id);
@@ -206,27 +197,8 @@ export default function ArticleSidebar({
         </div>
       )}
 
-      {/* 阅读数据 + 标签（客户端拉取真实浏览/点赞） */}
+      {/* 阅读数据 + 标签 + RSS（标签由 SidebarStats 统一渲染，此处不重复） */}
       <SidebarStats article={article} />
-
-      {/* 标签 */}
-      {article.tags && article.tags.length > 0 && (
-        <div>
-          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-            {t('tagsLabel')}
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {article.tags.map(tag => (
-              <span
-                key={tag.slug}
-                className="px-2.5 py-0.5 bg-card border border-border rounded-full text-xs text-muted-foreground"
-              >
-                {tag.name}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

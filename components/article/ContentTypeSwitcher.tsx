@@ -3,6 +3,7 @@
 import { BookOpen, Mic, Presentation, Code2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { ContentTypes } from '@/types/index';
+import SidebarSectionTitle from './SidebarSectionTitle';
 
 interface ContentTypeSwitcherProps {
   contentTypes?: ContentTypes;
@@ -42,21 +43,19 @@ export default function ContentTypeSwitcher({ contentTypes, activeType, onTypeCh
 
   return (
     <>
-      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-        {t('contentFormat')}
-      </div>
+      <SidebarSectionTitle eyebrow="Format" title={t('contentFormat')} />
       <div className="flex gap-1 bg-card rounded-lg p-1">
         {options.map(opt => (
           <button
             key={opt.key}
             onClick={() => onTypeChange?.(opt.key)}
-            className={`flex-1 min-h-10 flex items-center justify-center gap-1.5 px-1 text-center text-[11px] rounded-md transition-colors cursor-pointer ${
+            className={`flex-1 min-w-0 min-h-10 flex items-center justify-center gap-1.5 px-1 text-center text-[11px] rounded-md transition-colors cursor-pointer ${
               activeType === opt.key
                 ? 'bg-secondary text-primary'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <opt.Icon className="size-3.5" />
+            <opt.Icon className="size-3.5 shrink-0" />
             {opt.label}
           </button>
         ))}

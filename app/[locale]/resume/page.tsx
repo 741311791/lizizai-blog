@@ -169,7 +169,7 @@ export default async function ResumePage({
               height={1152}
               priority
               sizes="(max-width: 768px) 0px, 864px"
-              className="absolute bottom-0 right-0 h-[96%] max-w-none object-contain"
+              className="absolute bottom-0 right-0 h-[96%] w-auto max-w-none object-contain"
               style={{ filter: 'brightness(1.18) saturate(1.4) drop-shadow(0 0 28px rgba(255,140,40,.32))', WebkitMaskImage: 'linear-gradient(90deg,transparent 0,#000 18%),linear-gradient(180deg,#000 82%,transparent 100%)', WebkitMaskComposite: 'source-in', maskImage: 'linear-gradient(90deg,transparent 0,#000 18%),linear-gradient(180deg,#000 82%,transparent 100%)', maskComposite: 'intersect' }}
             />
           </div>

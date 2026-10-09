@@ -37,7 +37,7 @@ export default async function ArchivePage({
   }));
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-12">
+    <div className="container mx-auto max-w-[1200px] px-4 py-12">
       {/* Header V2 */}
       <PageHeaderV2
         count={articles.length}

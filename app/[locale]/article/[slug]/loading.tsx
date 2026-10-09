@@ -8,7 +8,7 @@ export default function ArticleLoading() {
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
       <LoadingIndicatorV2 label="Loading" />
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_280px]">
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_320px]">
         {/* 左栏：文章头部 + 内容骨架 */}
         <article className="max-w-3xl">
           <header className="mb-8 space-y-4">
