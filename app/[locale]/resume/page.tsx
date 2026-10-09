@@ -7,7 +7,7 @@ import ResumeBeams from '@/components/resume/ResumeBeams';
 export const metadata: Metadata = {
   title: '李自在 · 个人简历',
   description:
-    '数据与 AI 自媒体博主 · 7 年工程经验。生产级 Agent 系统、PB 级数据底座、政企大客户交付。曾任职阿里云、淘宝。',
+    '数据与 AI 自媒体博主 · 7 年工程经验。生产级 Agent 系统、PB 级数据底座、政企大客户交付。现就职于淘宝，曾任职深城交、阿里云。',
   openGraph: {
     title: '李自在 · 数据与 AI 自媒体博主',
     description: '7 年工程经验 · 生产级 Agent 系统 · PB 级数据底座 · 政企大客户交付',
@@ -78,27 +78,28 @@ const LINEAGE = {
 const TIMELINE: { year: string; title: string; desc: string; tags: string[]; current?: boolean }[] = [
   {
     year: '2019',
-    title: '入行 · 城市交通大数据',
-    desc: '城市级多源交通数据 ETL 架构，实时拥堵指数系统的核心算法工程落地。',
-    tags: ['海量 ETL', '实时指数'],
+    title: '深城交 · 城市交通大数据',
+    desc: '城市级多源交通数据 ETL 架构，实时交通拥堵指数系统的核心算法工程落地。',
+    tags: ['数据 ETL', '地图匹配', '实时交通拥堵指数'],
   },
   {
     year: '2021',
     title: '阿里云 · FDE',
-    desc: '城市大脑交通数据底座与孪生计算平台架构，专有云政企大客户现场交付。',
-    tags: ['数据底座', '孪生平台', '政企交付'],
+    desc: '城市大脑与孪生计算引擎架构，专有云政企大客户现场交付。',
+    tags: ['城市大脑', '孪生计算引擎', '政企交付'],
   },
   {
     year: '2024',
     title: '淘宝 · 数据工程',
-    desc: '在离线统一打标平台与 AB 实验体系，PB 级链路性能深度调优。',
-    tags: ['数仓架构', 'AB 实验', 'P99 ↓9×'],
+    desc: '面向直播和内容场域的敏捷 AB 实验数据研发体系，PB 级链路性能深度调优。',
+    tags: ['数仓架构', 'AB 实验', 'OLAP'],
+    current: true,
   },
   {
     year: '2026',
     title: '独立开发 · 自媒体',
-    desc: '生产级 Agent 系统落地与 GraphRAG 记忆中枢，持续输出数据与 AI 内容。',
-    tags: ['Agent 工程', 'GraphRAG', '内容创作'],
+    desc: '生产级 Agent 系统落地与 AI 教育产品，持续输出数据与 AI 内容。',
+    tags: ['Agent 工程', 'AI 教育', '内容创作'],
     current: true,
   },
 ];
@@ -195,15 +196,31 @@ export default async function ResumePage({
               <Briefcase className="h-[18px] w-[18px]" style={{ color: 'var(--rz-orange)' }} strokeWidth={1.8} />
               <span>7 年工程经验</span>
             </div>
-            <div className="mt-1 flex items-center gap-5">
-              <span className="text-[13px]" style={{ color: 'var(--rz-t-muted)' }}>曾任职于</span>
-              <span className="flex items-center gap-2.5">
-                <Image src="/resume/alibabacloud.svg" alt="阿里云" width={32} height={32} className="h-8 w-8" />
-                <span className="text-[15px] font-medium text-white">阿里云</span>
-              </span>
-              <span className="flex items-center gap-2.5">
-                <Image src="/resume/taobao.svg" alt="淘宝" width={36} height={36} className="h-9 w-9" />
-              </span>
+            <div className="mt-1 flex flex-col gap-2">
+              <div className="flex items-center gap-5">
+                <span className="text-[13px]" style={{ color: 'var(--rz-t-muted)' }}>现就职于</span>
+                <span className="flex items-center gap-2.5">
+                  <Image src="/resume/taobao.svg" alt="淘宝" width={36} height={36} className="h-9 w-9" />
+                  <span className="text-[15px] font-medium text-white">淘宝</span>
+                </span>
+              </div>
+              <div className="flex items-center gap-5">
+                <span className="text-[13px]" style={{ color: 'var(--rz-t-muted)' }}>曾任职于</span>
+                <span className="flex items-center gap-2.5">
+                  <Image src="/resume/alibabacloud.svg" alt="阿里云" width={32} height={32} className="h-8 w-8" />
+                  <span className="text-[15px] font-medium text-white">阿里云</span>
+                </span>
+                <span className="flex items-center gap-2.5">
+                  <Image
+                    src="/resume/sutpc.png"
+                    alt="深城交"
+                    width={524}
+                    height={63}
+                    className="h-4 w-auto"
+                    style={{ filter: 'invert(1) hue-rotate(180deg)' }}
+                  />
+                </span>
+              </div>
             </div>
             <div className="mt-6 flex flex-wrap gap-4">
               <a href="#work" className="rz-btn-main">查看项目经历 <span>→</span></a>
