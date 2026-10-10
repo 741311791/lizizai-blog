@@ -12,26 +12,28 @@ import { R2_BASE, resolvePodcastUrls } from './blog-data-utils';
 
 /**
  * R2 请求带退避重试：本地直连 Cloudflare 在 SSG 高并发下偶发连接超时，
- * 重试吸收毛刺（3 次尝试，300ms/800ms 退避；5xx/429 同样重试）
+ * 重试吸收毛刺（5 次尝试，500ms 起指数退避；5xx/429 同样重试）。
+ * 每次尝试 20s 超时：Vercel 构建机到 R2 偶发整段网络不通，
+ * 无超时的挂起会让重试失效并拖垮整个构建。
  */
 async function fetchWithRetry(
   url: string,
   init?: Parameters<typeof fetch>[1],
-  retries = 2
+  retries = 4
 ): Promise<Response> {
   let lastError: unknown;
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const res = await fetch(url, init);
+      const res = await fetch(url, { ...init, signal: AbortSignal.timeout(20_000) });
       if ((res.status >= 500 || res.status === 429) && attempt < retries) {
-        await new Promise((r) => setTimeout(r, 300 * 2 ** attempt));
+        await new Promise((r) => setTimeout(r, 500 * 2 ** attempt));
         continue;
       }
       return res;
     } catch (err) {
       lastError = err;
       if (attempt < retries) {
-        await new Promise((r) => setTimeout(r, 300 * 2 ** attempt));
+        await new Promise((r) => setTimeout(r, 500 * 2 ** attempt));
         continue;
       }
     }
