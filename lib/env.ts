@@ -14,7 +14,6 @@ export const config = {
   emactionUrl: process.env.NEXT_PUBLIC_EMACTION_URL || '',
   webvisoUrl: process.env.NEXT_PUBLIC_WEBVISO_URL || '',
   cfCommentUrl: process.env.NEXT_PUBLIC_CF_COMMENT_URL || '',
-  counterscaleUrl: process.env.NEXT_PUBLIC_COUNTERSCALE_URL || '',
 
   // 环境
   isDevelopment: process.env.NODE_ENV === 'development',

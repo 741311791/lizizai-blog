@@ -7,7 +7,7 @@ import { GeistMono } from 'geist/font/mono';
 import { routing } from '@/i18n/routing';
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
 import SiteBackdrop from '@/components/ui-v2/SiteBackdrop';
-import CounterscaleScript from "@/components/analytics/CounterscaleScript";
+import { Analytics } from '@vercel/analytics/next';
 import { Toaster } from "sonner";
 import { generateDefaultMetadata, generateWebsiteJsonLd } from "@/lib/seo";
 
@@ -109,7 +109,7 @@ export default async function LocaleLayout({
             {children}
           </ConditionalLayout>
         </NextIntlClientProvider>
-        <CounterscaleScript />
+        <Analytics />
         <Toaster richColors position="top-center" />
       </body>
     </html>
