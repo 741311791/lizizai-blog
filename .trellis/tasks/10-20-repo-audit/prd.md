@@ -2,7 +2,7 @@
 
 **优先级**:P1 | **类型**:epic | **创建**:2026-10-20
 
-> **执行结果（2026-10-20）**: 6/6 子任务全部完成并验收（详见各子任务 prd.md 执行记录）。共改 15 文件（新增 2：NewsletterCta.tsx、/api/og/route.tsx；新增资产 public/covers/default-cover.png）。全批改动 lint 0 error（2 个 warning 为既有遗留）；dev 下首页/文章/分类/daily-news/订阅页回归 200；blog-data 测试 16/16。未 git commit（遵守约束）。生产社交平台 OG 抓取预览待部署后验证。
+> **执行结果（2026-10-20）**: 6/6 子任务全部完成并验收（详见各子任务 prd.md 执行记录）。共改 15 文件（新增 2：NewsletterCta.tsx、/api/og/route.tsx；新增资产 public/covers/default-cover.png）。全批改动 lint 0 error（2 个 warning 为既有遗留）；dev 下首页/文章/分类/daily-news/订阅页回归 200；blog-data 测试 16/16。已上线（be27ba2 + 修复 7c2cc9a）。上线插曲：首次推送后 Vercel 构建失败——Hero.tsx 存在 getArticleImageUrl 遗漏调用方（ESLint 不查跨文件参数个数，仅 tsc/build 阶段暴露），修复后部署成功。经验教训：上线前必跑 npx tsc --noEmit。生产验证全过：/api/og 200 PNG 中文正常、文章页 CTA 上线、og:image 指向动态卡、sitemap 补齐、默认封面生效。
 
 > 2026-10-20 全仓自查产出。总评：仓库健康度高（服务端 markdown 预渲染、R2 重试、admin 安全、同步 revalidate 回调、双语 sitemap、JSON-LD 均就位），本批次聚焦剩余软失败盲区、SEO 缺口与 Substack 上线后的转化闭环。
 
