@@ -1,6 +1,6 @@
 # 订阅系统架构设计
 
-> 状态：2026-07 设计稿，MVP 阶段（Substack 免费订阅）
+> 状态：2026-07 设计稿，2026-10-16 更新——Substack publication 已上线（首个栏目为 AI 日报，如 https://lizizai.substack.com/p/ai-daily1015-anthropic-git），全部订阅跳转已实际可用
 > 定位：订阅功能的专项设计文档。整体架构见 `docs/architecture.md`（第 7 节指向本文档）。
 
 ## 1. 背景与平台选型
@@ -43,6 +43,7 @@ Substack 在中国大陆访问受限：
 | Header 右上角"订阅"按钮 | 不变，指向 `/subscribe` 页 |
 | Footer 订阅区 | Resend 邮箱表单 → SubstackEmbed |
 | `/subscribe` 页 | 清理虚假社交证明 + Resend DOI 流程 → SubstackEmbed |
+| `/daily-news` 分类页 | 2026-10-16 新增：页头下方 Substack 订阅引导条（SubscribeFormV2）——AI 日报即 Substack 栏目内容形态 |
 
 **不做（YAGNI，留待未来）**：
 - 文章级 `substack` frontmatter 标记（`substack: free/pay` + `substackUrl`）
@@ -60,7 +61,7 @@ Substack 在中国大陆访问受限：
 | variant | 用途 | 状态 |
 |---------|------|------|
 | `button`（默认） | 深色跳转按钮 → `lizizai.substack.com` | ✅ 稳定，推荐 |
-| `form` | 自定义深色邮箱框，提交跳 `subscribe?email=xxx` | ⚠️ email 预填待验证，验证有效后启用 |
+| `form` | 自定义深色邮箱框，提交跳 `subscribe?email=xxx` | ✅ email 预填已验证（2026-10-16，subscribe 页会读 `?email=` 参数回显邮箱） |
 | `iframe` | 官方 embed（`lizizai.substack.com/embed`） | ❌ 白底，与深色模式冲突，不推荐 |
 
 ### 为什么不用官方 iframe embed

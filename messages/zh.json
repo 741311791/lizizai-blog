@@ -202,6 +202,7 @@
     "subscribeForFree": "免费订阅",
     "emailPlaceholder": "你的邮箱地址",
     "confirmHint": "提交后将跳转 Substack 完成订阅，请检查收件箱（含垃圾邮件）确认。",
+    "dailyNewsHint": "AI 日报同步发布于 Substack 栏目，邮件订阅第一时间收到每期更新。",
     "benefitWeekly": "每周洞察",
     "benefitWeeklyDesc": "精心策划的 AI 工具、生产力和一人企业建议",
     "benefitEarly": "抢先阅读",
