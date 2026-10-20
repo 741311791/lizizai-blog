@@ -14,7 +14,7 @@ import type { Article } from '@/types/index';
 export default async function Hero({ article, locale }: { article: Article; locale: string }) {
   const t = await getTranslations('home');
   const tArticle = await getTranslations('article');
-  const imageUrl = getArticleImageUrl(article.featuredImage, article.id);
+  const imageUrl = getArticleImageUrl(article.featuredImage);
   const date = article.publishedAt
     ? new Date(article.publishedAt).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', {
         month: 'short',
