@@ -110,7 +110,7 @@ HTML 内容通过 iframe 嵌入展示，**目录由 HTML 自带**，不再跨 fr
 
 ### 国际化 (i18n)
 
-- next-intl，默认 locale `en`，中文路径 `/zh`；`localePrefix: 'as-needed'`（默认语言不带前缀）
+- next-intl，默认 locale `zh`（中文无路径前缀），英文路径 `/en`；`localePrefix: 'as-needed'`（默认语言不带前缀，显式前缀会被 307 到规范路径）
 - 修改 UI 文本时需同时更新 `messages/zh.json` 和 `messages/en.json`
 
 ### 外部服务集成

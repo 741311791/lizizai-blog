@@ -203,6 +203,7 @@
     "emailPlaceholder": "Your email address",
     "confirmHint": "You'll be redirected to Substack to complete your subscription. Check your inbox (and spam folder) to confirm.",
     "dailyNewsHint": "AI Daily is published on Substack — subscribe to get every issue in your inbox.",
+    "articleCtaHint": "Enjoyed this? Subscribe and get the next issue straight to your inbox.",
     "benefitWeekly": "Weekly Insights",
     "benefitWeeklyDesc": "Curated tips on AI tools, productivity, and building a one-person business",
     "benefitEarly": "Early Access",

@@ -34,7 +34,6 @@ function ArticleListItemV2({ article, priority = false }: ArticleListItemV2Props
   const t = useTranslations('article');
   const locale = useLocale();
   const {
-    id,
     title,
     subtitle,
     excerpt,
@@ -50,7 +49,7 @@ function ArticleListItemV2({ article, priority = false }: ArticleListItemV2Props
 
   const [shares, setShares] = useState(sharesCount);
   const description = subtitle || excerpt;
-  const imageUrl = getCardImageUrl(thumbnailImage, featuredImage, id);
+  const imageUrl = getCardImageUrl(thumbnailImage, featuredImage);
   const contentType = article.contentType || 'article';
   const timeLabel = getTimeLabel(t, article.contentType, readingTime || 0, article.slideCount);
 

@@ -45,12 +45,15 @@ async function ensureCommentAreas(slugs: string[]): Promise<void> {
           method: 'POST',
           body: formData,
           headers,
-        }).catch(() => {});
+        }).catch((err) => {
+          console.error(`评论区创建失败 (${slug}):`, err);
+        });
       });
 
     await Promise.allSettled(createPromises);
-  } catch {
-    // 创建评论区失败不影响同步结果
+  } catch (err) {
+    // 创建评论区失败不影响同步结果，但留痕便于排查
+    console.error('评论区自动创建失败:', err);
   }
 }
 

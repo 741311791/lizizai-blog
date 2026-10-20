@@ -142,9 +142,7 @@ export function generateArticleMetadata({
   publishedAt,
   modifiedAt,
   author,
-  category,
   tags,
-  imageUrl,
   slug,
   locale = 'en',
 }: {
@@ -153,9 +151,7 @@ export function generateArticleMetadata({
   publishedAt: string;
   modifiedAt?: string;
   author: string;
-  category?: string;
   tags?: string[];
-  imageUrl?: string;
   slug: string;
   locale?: string;
 }): Metadata {
@@ -163,7 +159,9 @@ export function generateArticleMetadata({
   // defaultLocale 为 zh：zh 无前缀，en 带 /en（与 i18n/routing.ts 保持一致）
   const url = `${siteConfig.url}/article/${slug}`;
   const enUrl = `${siteConfig.url}/en/article/${slug}`;
-  const ogImage = imageUrl || siteConfig.ogImage;
+  // OG 统一走动态排印卡（/api/og 按标题生成，品牌一致、不依赖封面质量）；
+  // imageUrl 保留给 JSON-LD（封面语义），字体源故障时 /api/og 自行回退静态站图
+  const ogImage = `${siteConfig.url}/api/og?title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}`;
 
   return {
     title,

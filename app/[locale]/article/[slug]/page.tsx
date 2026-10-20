@@ -32,9 +32,7 @@ export async function generateMetadata({
     description: article.subtitle || article.excerpt,
     publishedAt: article.publishedAt,
     author: article.author.name,
-    category: article.category?.name,
     tags: article.tags?.map((tag) => tag.name),
-    imageUrl: article.featuredImage,
     slug: article.slug,
   });
 }

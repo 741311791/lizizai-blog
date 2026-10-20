@@ -189,7 +189,7 @@ function LoadingList() {
 const GridCard = memo(function GridCard({ article }: { article: Article }) {
   const locale = useLocale();
   const t = useTranslations('article');
-  const imageUrl = getCardImageUrl(article.thumbnailImage, article.featuredImage, article.id);
+  const imageUrl = getCardImageUrl(article.thumbnailImage, article.featuredImage);
   const date = useMemo(
     () =>
       article.publishedAt

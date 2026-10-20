@@ -135,11 +135,22 @@ export const getAllArticles = cache(async (): Promise<Article[]> => {
  * 获取分类列表（同一请求内缓存）
  */
 export const getCategories = cache(async (): Promise<Category[]> => {
-  const res = await fetchWithRetry(`${R2_BASE}/blog-data/categories.json`, {
-    next: { revalidate: 3600 },
-  });
+  let res: Response;
+  try {
+    res = await fetchWithRetry(`${R2_BASE}/blog-data/categories.json`, {
+      next: { revalidate: 3600 },
+    });
+  } catch (err) {
+    console.error('Failed to fetch categories (network):', err);
+    throw new BlogDataUnavailableError('Blog data source unreachable');
+  }
 
-  if (!res.ok) return [];
+  // 分类源异常直接抛错（对齐 getAllArticles 策略）：
+  // 静默空数组会让导航/分类页空转并被 ISR 缓存
+  if (!res.ok) {
+    console.error('Failed to fetch categories:', res.status);
+    throw new BlogDataUnavailableError(`Blog data source returned ${res.status}`);
+  }
 
   const data = await res.json();
   return data.map((c: RawCategory, index: number) => ({
@@ -153,11 +164,23 @@ export const getCategories = cache(async (): Promise<Category[]> => {
  * 获取文章内容（Markdown）
  */
 async function getArticleContent(categorySlug: string, articleSlug: string): Promise<string> {
-  const res = await fetchWithRetry(`${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/content.md`, {
-    next: { revalidate: 3600 },
-  });
+  let res: Response;
+  try {
+    res = await fetchWithRetry(`${R2_BASE}/blog-data/articles/${categorySlug}/${articleSlug}/content.md`, {
+      next: { revalidate: 3600 },
+    });
+  } catch (err) {
+    console.error('Failed to fetch article content (network):', err);
+    throw new BlogDataUnavailableError('Blog data source unreachable');
+  }
 
-  if (!res.ok) return '';
+  // 404 = 文章确无正文（纯播客/幻灯片形态），合法空；
+  // 其余异常（403/5xx 残留）抛错——静默空正文会渲染成"标题齐全但正文空白"的 200 页并被 ISR 缓存
+  if (res.status === 404) return '';
+  if (!res.ok) {
+    console.error('Failed to fetch article content:', res.status);
+    throw new BlogDataUnavailableError(`Blog data source returned ${res.status}`);
+  }
   return res.text();
 }
 

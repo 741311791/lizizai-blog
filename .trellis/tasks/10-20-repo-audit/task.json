@@ -1,0 +1,33 @@
+{
+  "id": "repo-audit",
+  "name": "repo-audit",
+  "title": "全仓自查优化（数据层/SEO/转化/卫生）",
+  "description": "2026-10-20 全仓自查产出的优化批次：数据层软失败对齐、sitemap 修复、Substack 转化闭环、动态 OG、品牌占位封面、卫生项清理",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "louie",
+  "assignee": "louie",
+  "createdAt": "2026-10-20",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "10-20-data-layer-failfast",
+    "10-20-sitemap-fix",
+    "10-20-article-newsletter-cta",
+    "10-20-dynamic-og-image",
+    "10-20-brand-placeholder-cover",
+    "10-20-hygiene-cleanup"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

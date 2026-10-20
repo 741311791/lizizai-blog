@@ -8,17 +8,6 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        pathname: '/**',
-      },
-      // R2 免费子域（2026-10-01 域名迁移完成，过渡期兼容 ISR 缓存中的旧封面 URL，观察期后可移除）
-      {
-        protocol: 'https',
-        hostname: 'pub-7fc5ed7acc9844ab99297fa6b47f55e6.r2.dev',
-        pathname: '/**',
-      },
       // Worker 同步域名（兼容旧数据中残留的图片 URL）
       {
         protocol: 'https',

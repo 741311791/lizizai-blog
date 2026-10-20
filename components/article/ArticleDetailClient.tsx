@@ -16,6 +16,7 @@ import ReadingProgress from './ReadingProgress';
 import RelatedArticles from '@/components/ui-v2/RelatedArticlesV2';
 import ArticleSidebar from './ArticleSidebar';
 import HtmlSidebarV2 from '@/components/ui-v2/HtmlSidebarV2';
+import NewsletterCta from '@/components/subscribe/NewsletterCta';
 import type { Article, ArticleCardData } from '@/types/index';
 
 const AudioPlayer = dynamic(() => import('./AudioPlayer'), {
@@ -318,6 +319,11 @@ export default function ArticleDetailClient({
 
             {/* 内容区（根据类型渲染） */}
             {renderMainContent()}
+
+            {/* 正文尾 newsletter CTA：article/podcast 有"读完"节点，html/slides 无正文尾概念不显示 */}
+            {(activeContentType === 'article' || activeContentType === 'podcast') && (
+              <NewsletterCta className="mt-12" />
+            )}
 
             {/* 评论区 */}
             <CommentSection slug={article.slug} />

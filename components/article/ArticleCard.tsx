@@ -27,7 +27,6 @@ function ArticleCard({ article }: ArticleCardProps) {
   const t = useTranslations('article');
   const locale = useLocale();
   const {
-    id,
     title,
     subtitle,
     excerpt,
@@ -45,7 +44,7 @@ function ArticleCard({ article }: ArticleCardProps) {
 
   const [shares, setShares] = useState(sharesCount);
   const description = subtitle || excerpt;
-  const imageUrl = getCardImageUrl(thumbnailImage, featuredImage, id);
+  const imageUrl = getCardImageUrl(thumbnailImage, featuredImage);
   const contentType = article.contentType || 'article';
 
   return (

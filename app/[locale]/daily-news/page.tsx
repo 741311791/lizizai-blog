@@ -8,7 +8,7 @@
 
 import CategoryArticlesSection from '@/components/article/CategoryArticlesSection';
 import PageHeaderV2 from '@/components/ui-v2/PageHeaderV2';
-import SubscribeFormV2 from '@/components/ui-v2/SubscribeFormV2';
+import NewsletterCta from '@/components/subscribe/NewsletterCta';
 import { getCategories, getArticlesByCategory } from '@/lib/blog-data';
 import { generateCategoryMetadata } from '@/lib/seo';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -44,7 +44,6 @@ export default async function DailyNewsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('category');
-  const ts = await getTranslations('subscribe');
 
   // 并行获取，避免串行瀑布
   const [categories, articles] = await Promise.all([
@@ -69,36 +68,7 @@ export default async function DailyNewsPage({
       />
 
       {/* Substack 订阅引导（AI 日报同步发布于 Substack 栏目，邮件推送每期更新） */}
-      <div className="relative mb-10 overflow-hidden rounded-xl border border-border bg-card p-6">
-        {/* 卡片顶部暖光（与 /subscribe 订阅卡同构） */}
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-20"
-          aria-hidden="true"
-          style={{
-            background:
-              'radial-gradient(300px 80px at 20% -40%, rgba(217,119,6,.10), transparent 70%)',
-          }}
-        />
-        <div className="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-          <div className="space-y-1">
-            <p className="font-mono text-[10px] font-medium uppercase tracking-[0.26em] text-primary">
-              Newsletter
-            </p>
-            <h2 className="font-serif text-lg font-bold tracking-tight">
-              {ts('subscribeOnSubstack')}
-            </h2>
-            <p className="max-w-md text-sm text-muted-foreground">
-              {ts('dailyNewsHint')}
-            </p>
-          </div>
-          <SubscribeFormV2
-            className="w-full md:w-80"
-            buttonText={ts('subscribeForFree')}
-            placeholder={ts('emailPlaceholder')}
-            emailLabel={ts('emailPlaceholder')}
-          />
-        </div>
-      </div>
+      <NewsletterCta hintKey="dailyNewsHint" className="mb-10" />
 
       {/* 文章列表 */}
       {articles.length > 0 ? (
